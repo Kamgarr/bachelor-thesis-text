@@ -12,7 +12,7 @@ Most common implementation of destructible objects in 3D games have not changed 
 \emph{Geo-Mod} \cite{geomod} or \emph{Geometry Modification Technology} is an engine developed for the \emph{Red Faction (2001)} \cite{redfaction} video game. It allows players to modify and make holes in the terrain using then unique solution of creating objects representing an empty space. Even though the engine doesn't work well with the buildings and other objects, it represents the first major attempt to create fully destructible 3D environment in real time constraints.
 
 \section{Geo-Mod 2}
-bla bla
+Unlike it's predecessor \emph{Geo-Mod 2} \cite{geomod}\footnote{Geo-Mod 2.0 presentation video https://www.youtube.com/watch?v=lICurOVsNv0} does not feature destructible terrain, instead it uses physics simulation on specially prepared objects. A set of objects is used as a ragdoll for stress-based simulation model. This limits the engine in the scale of the game world and mutual proximity of destructible objects.
 
 \section{Frostbite}
 \emph{Frostbite} \cite{frostbite} engine and mainly it's component \emph{Destruction} \cite{destruction} is currently one of the most popular destruction engines out there. It supports destruction on different scales, the dynamic micro-destruction on the surface and the large scale predetermined destruction on whole buildings. The buildings are created from smaller parts linked together. Each part can disappear on it's own and when there is not much left the whole building goes away under cover of animation. 
@@ -20,8 +20,10 @@ It doesn't use inner body stress or basically any physics while doing this simul
 
 \section{Precomputed fractures}
 
+
 \section{Material Point method}
 
 \section{Voronoi fracture}
 
 \section{Finite Element Method}
+Finite Element Method(FEM) \cite{brittlefracture,ductilefracture,femingames}
