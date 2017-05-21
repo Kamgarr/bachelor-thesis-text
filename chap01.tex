@@ -26,4 +26,8 @@ It doesn't use inner body stress or basically any physics while doing this simul
 \section{Voronoi fracture}
 
 \section{Finite Element Method}
-Finite Element Method(FEM) \cite{brittlefracture,ductilefracture,femingames}
+Finite Element Method(FEM) is a means to simulate behavior of complex objects and systems.  It uses a large number of finite volumes(cells), interconnected or not, to simulate the reaction of material to inner and outside forces. Each cell computes it's own physics states like stress or temperature and propagates the results to neighboring cells. This allow for simulation of fluid dynamics, brittle fractures \cite{brittlefracture}, ductility \cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is very useful in engineering and in modeling and rendering scenes for computer generated images but FEM requires a lot of computational resources and therefore until recently it wasn't possible to implement it in real-time environment of computer game. Now with better hardware and optimized algorithms specially developed for real-time animation, like the one O'Brien \cite{femingames} describes this method is making it's way into modern games.
+
+
+
+
