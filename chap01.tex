@@ -10,7 +10,7 @@ The first 2D games featuring destructible environment are arcade games like the 
 The most common implementation of destructible objects in 3D games has not changed much over the years. Every object that the player is able to modify has a set of other models prepared. Based on how much damage is applied, the models are swapped and eventually removed completely \ref{doors}. To make the removal look natural it is usually accompanied by animations, debris and dust generation. The downfall of this method is the necessity to replace the whole in-game object. In order to make the game look realistic, there has to be a large number of objects pre-made for different scenarios and it has little flexibility to react to specific player actions. As an example, in the \emph{Source} engine, you can see that the hole in the doors \ref{doors} is always in the same place without considering the point of impact.
 
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 \label{doors}
 \includegraphics[width=\textwidth]{img/doors}
 \caption{Source engine swapping door models}
@@ -25,13 +25,14 @@ The most common implementation of destructible objects in 3D games has not chang
 \item \textbf{\emph{Frostbite}} \footnote{http://www.frostbite.com/about/frostbite-3} engine and mainly it's component \emph{Destruction} \cite{destruction} is currently featured in the most titles featuring destructible environment. It supports the dynamic micro-destruction on the surface and the large scale predetermined destruction on whole buildings. The buildings are created from smaller parts linked together. Each part can disappear on its own and when there is not much left the whole building collapses. It doesn't use inner body stress or  any physics while doing this simulation.
 
 \end{itemize}
-\section{Simulation approaches}
+
+\section{Soft body dynamics}
 
 \begin{itemize}
 
 \item \textbf{Finite Element Method} (FEM) is a means to simulate the behavior of complex objects and systems.  It uses a large number of finite volumes(cells), interconnected or not, to simulate the reaction of material to inner and outside forces. Each cell computes it's own physics states like stress or temperature and propagates the results to neighboring cells. This allows for simulation of fluid dynamics, brittle fractures \cite{brittlefracture}, ductility \cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is very useful in engineering and in modeling and rendering scenes for computer generated images but FEM requires a lot of computational resources and therefore until recently it wasn't possible to implement it in real-time environment of the computer game. Now with better hardware and optimized algorithms especially developed for real-time animation, like the one O'Brien \cite{femingames} describes this method is making its way into modern games.
 
-\item \textbf{Material Point method} (MPM) is used to simulate behavior of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is  primary representation with position, velocity and deformation gradient. Here is the simplified overview of algorithm step, for more details see \cite{jiang2015material} 
+\item \textbf{Material Point method} (MPM) is used to simulate behavior of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is  primary representation with position, velocity and deformation gradient. Here is the simplified overview of algorithm step, for more details see Jiangs thesis\cite{jiang2015material} 
 \begin{enumerate}
 	\item Grid data are reinitialized to default values.
     \item Weights and weight gradients are computed on every particle.
@@ -49,7 +50,12 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
 \caption{MPM algorithm overview}
 \end{figure}
 
-\item \textbf{Voronoi fracture} TODO
+\section{Rigid body}
+
+\item \textbf{Voronoi fracture} 
+
+
+clipped \cite{yan2010efficient}
 
 \item \textbf{Precomputed fractures} TODO
 
