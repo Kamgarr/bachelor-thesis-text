@@ -12,6 +12,7 @@ The most common implementation of destructible objects in 3D games has not chang
 
 \begin{figure}[ht!]
 \label{doors}
+\centering
 \includegraphics[width=\textwidth]{img/doors}
 \caption{Source engine swapping door models}
 \end{figure}
@@ -46,6 +47,7 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
 
 \begin{figure}[h!]
 \label{mpm}
+\centering
 \includegraphics[width=\textwidth]{img/MPM}
 \caption{MPM algorithm overview}
 \end{figure}
@@ -56,12 +58,14 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
 \begin{enumerate}
 	\item Delaunay tetrahedralization \\ given points P in general position (the vertices of input mesh and a set of points inside its volume), tetrahedral mesh DT(P) can be generated satisfying following condition: no point in P is inside the circumsphere of any tetrahedra in DT(P).
     \item Creating Voronoi diagram \\ for Delaunay tetrahedralization, its dual graph (with vertices in the center of tetrahedron circumsphere) is Voronoi diagram
-    \begin{figure}[h!]
+    \begin{figure}[ht!]
 		\label{DT}
-        \includegraphics[width=\textwidth]{img/voro}
+        \centering
+        \includegraphics[width=0.4\textwidth]{img/delaunay}
+        \includegraphics[width=0.4\textwidth]{img/voronoi}
 		\caption{Tranformation of 2D Delaunay triangularization to Voronoi diagram}
 	\end{figure}
-    \item Clipping Voronoi diagram
+    \item Clipping Voronoi diagram \\ 
     
 \end{enumerate}
 
