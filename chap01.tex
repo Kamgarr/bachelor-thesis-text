@@ -52,8 +52,18 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
 
 \section{Rigid body}
 
-\item \textbf{Voronoi fracture} 
-
+\item \textbf{Voronoi tessellation} is a method of decomposing an object into a smaller parts. It can also be used for terrain generation but we will focus on object decomposition. There are simpler solutions for decomposition, for example slicing by planes or tetrahedralization, but voronoi cells look more natural. The tessellation can be done in following three steps, assuming the input is a closed triangular mesh with non-empty volume.
+\begin{enumerate}
+	\item Delaunay tetrahedralization \\ given points P in general position (the vertices of input mesh and a set of points inside its volume), tetrahedral mesh DT(P) can be generated satisfying following condition: no point in P is inside the circumsphere of any tetrahedra in DT(P).
+    \item Creating Voronoi diagram \\ for Delaunay tetrahedralization, its dual graph (with vertices in the center of tetrahedron circumsphere) is Voronoi diagram
+    \begin{figure}[h!]
+		\label{DT}
+        \includegraphics[width=\textwidth]{img/voro}
+		\caption{Tranformation of 2D Delaunay triangularization to Voronoi diagram}
+	\end{figure}
+    \item Clipping Voronoi diagram
+    
+\end{enumerate}
 
 clipped \cite{yan2010efficient}
 
