@@ -33,13 +33,35 @@ The position $\mathbf{x}_I$ and velocity $\mathbf{v}_I$ of the element $\mathit{
 Here, $\mathbf{g}$ is the gravitational vector, $\mathbf{F}^c_{JI}$ is the contact force, $\mathbf{F}^p_{KI}$ is the force due to the pore springs and $\mathit{M}$ is the element’s mass. Contact contains elements \{I, J\} if they are closer than the diameter of a single element, while pore
 contains a pair of elements \{I, K\} when they are connected by a pore spring.
 
-\item Fine debris generation and simulation \\after fracture between EDEM elements we can determine if the energy was big enough to break EDEM element into smaller debris. The Gaudin–Schuhmann distribution is used to determine the size of debris. Debris is taken out of EDEM simulation and put into particle simulation, where each piece is represented as a particle without volume.
+\item Fine debris generation and simulation \\after fracture between EDEM elements we can determine if the energy was big enough to break EDEM element into smaller debris. The Gaudin-Schuhmann distribution is used to determine the size of debris. Debris is taken out of EDEM simulation and put into particle simulation, where each piece is represented as a particle without volume.
 
-\item Dust generation and simulation \\ bleh
+\item Dust generation and simulation \\ amount of generated dust is based on fracture energy and results of debris generation. Instead of simulating particles smaller than predetermined margin, they are represented as dust in a grid-based fluid simulation. The density of particular cell represents the amount of dust.
 
 \end{enumerate}
 
-
+ \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.49\textwidth]{img/edem_real}
+        \includegraphics[width=0.49\textwidth]{img/edem}
+        \caption{Result of this method with generated dust and debris (left) and EDEM elements (right) \cite{edem}}
+        \label{edem}
+    \end{figure}
+   
+\begin{table}[ht!]
+    \begin{center}
+  \begin{tabular}{ |c|c|c|c|c|c| } 
+  \hline
+  EDEM elements & 128 & 256 & 512 & 1024 & 2048 \\ 
+  \hline
+  FPS & 320 & 160 & 75 & 30 & 9.1 \\ 
+  \hline
+  
+  \end{tabular}
+  \end{center}
+  \caption{Performance of EDEM element method without rendering \cite{edem}}
+  \label{table1}
+\end{table}
+In conclusion, based on table \ref{table1}, the frames per second (fps) drop proportionally with growing number of EDEM elements. That makes this approach unusable in large scale environments in real time game which demands constant 30fps at least.
 
 \section{Real Time Dynamic Fracture
 with Volumetric Approximate Convex Decompositions}
