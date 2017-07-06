@@ -12,7 +12,7 @@ The most common implementation of destructible objects in 3D games has not chang
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=\textwidth]{img/doors}
+%\includegraphics[width=\textwidth]{img/doors}
 \caption{\emph{Source} engine swapping door models}
 \label{doors}
 \end{figure}
@@ -60,11 +60,11 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
     \item Creating Voronoi diagram \\ for Delaunay tetrahedral decomposition, its dual graph (with vertices in the centre of tetrahedrons circumscribed sphere) is Voronoi diagram
     \begin{figure}[ht!]
         \centering
-        \includegraphics[width=0.4\textwidth]{img/delaunay}
-        \includegraphics[width=0.4\textwidth]{img/voronoi}
+        %\includegraphics[width=0.4\textwidth]{img/delaunay}
+        %\includegraphics[width=0.4\textwidth]{img/voronoi}
         \caption{Transformation of 2D Delaunay triangulation to Voronoi diagram. Source: https://en.wikipedia.org/wiki/Delaunay\_triangulation}
         \label{DT}
-    \end{figure}
+    \end{figure}0
     \item Clipping Voronoi diagram \\ boundary cells of the Voronoi diagram are infinite (see the figure above~\ref{DT}) and they need to be clipped by the original input triangular mesh. The efficient algorithm~\cite{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighbourhood propagation to determine all intersections. 
 \end{enumerate}
 
