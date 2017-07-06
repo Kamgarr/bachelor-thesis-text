@@ -1,38 +1,34 @@
 \chapter{Overview of techniques}
 This chapter introduces the techniques used to simulate destructible environments. First, we will talk about the development of the destructible environment in several games and game engines, and then about general approaches to this problem.
 
-We will repeatedly categorize the content of the game world in following way: We will use the word object to refer to any kind of building, crate, door, tree or other item that occurs in the game environment, but excluding terrain, distant environment like skyboxes, and any in-game characters.
+We will repeatedly categorise the content of the game world in following way: We will use the word object to refer to any building, crate, door, tree or other items that occur in the game environment, but excluding terrain, distant environment like skyboxes and any in-game characters. Most of the modern 3D games use the term destructible environment as a reference to destructible objects because they do not support the destruction of terrain. We will comply with this terminology and use destructible environment as a reference to destruction of objects and not the terrain
 
-%mozna by bylo fajn vedet proc zduraznujes ze to sou objekty a proc to je rozdilny od "normalni" definice objektu "cokoliv co jde uchopit dostatecne velkou rukou"
+\section{Implementations in mainstream gaming}
 
-\section{Implementations in mainstream gaming} % tenhle nadpis je tezkej vymyslet dobre no :]
-
-%Je fajn uvyst nasledujici seznam --- Tady ukazeme par metod ktery moh videt hrac ve hrach za poslednich 20 let a hodne her je pouziva docela silne.
+In this brief overview we introduce most common approaches to environment destruction that can be seen through the games released in last 40 years. More common approaches can be regularly seen in newly released games. 
 
 \para{Object replacement or removal} was the first method used to simulate the destructible environment in a computer game, mostly because it is straightforward and undemanding. Despite its simplicity, it can still produce a very desirable result. In fact, it is still most widely used approach to the destructible environment in computer games.
 
 %tady chybi definice proc to je object replacement/removal
 %otazka: Jak poznam z nejaky hry ze to je object replacement/removal?
+In 2D setting, we will not differentiate between objects and terrain and refer to both as environment.
+First 2D games featuring destructible environment are arcade games like the \emph{Space Invaders (1978)}~\footnote{https://en.wikipedia.org/wiki/Space\_Invaders} where the environment is represented by cells in a grid. After taking damage, the texture of the cell is replaced by another one and the finally completely removed. A few years later, new environment destruction technique was introduced in games like \emph{Scorched Earth (1991)}~\footnote{https://en.wikipedia.org/wiki/Scorched\_Earth\_(video\_game)} and \emph{Worms (1995)}~\footnote{https://www.team17.com/games/worms-original}. Collision and removal of terrain in those games is based on individual pixels which creates a more realistic visual effect.
 
-The first 2D games featuring destructible environment are arcade games like the \emph{Space Invaders (1978)}~\footnote{https://en.wikipedia.org/wiki/Space\_Invaders} where the environment is represented by cells in a grid. After taking damage, the texture of the cell is replaced by another one and the finally completely removed. The next\todo{in what ordering? isn't it just similar?} environment destruction technique in 2D games came with games like \emph{Scorched Earth (1991)}~\footnote{https://en.wikipedia.org/wiki/Scorched\_Earth\_(video\_game)} and \emph{Worms (1995)}~\footnote{https://www.team17.com/games/worms-original}. Collision and removal of terrain in those games is based on individual pixels which create a more realistic visual effect.
-
-%problem s kategorizaci: pred chvilkou se mluvi o destrukci celych prostredi, tady najednou jen o destrukci objektu. Bylo by fajn rovnou zminit ze ve 3d hrach se niceni prostredi moc nepouziva a likvidujou se jen ty objekty.
 The most common implementation of destructible objects in 3D games has not changed much over the years. Every object that the player can modify has a set of more damaged models prepared. Based on how much damage is applied, the models are swapped and eventually completely removed, as seen in \cref{fig:doors}. It is usually accompanied by animations, debris and dust generation to make the process look realistic. The downfall of this method is the necessity to replace the whole in-game object. There has to be a significant number of objects pre-made for different scenarios to make the game look realistic and it has little flexibility to react to specific player actions. As an example, in the \emph{Source} engine, the hole in the door (\cref{fig:doors}) is always in the same place, regardless of the point of impact.
 
 %Co by melo bejt doplneny:
 %Magic carpet (1994?) a Starfighter3000 (1991?) byl 3D a de tam likvidovat teren. (potencialni rozpor s predchozim odstavcem)
 %Duke Nukem 3D: Predpripraveny "popraskany steny" ktery jdou prostrelit bazukou.
 
-\begin{figure} %na parametry {figure} je dobry se uplne vykaslat, tex ty mista vetsinou zvoli nejlip, aby nerusily tok textu. Doporucuju [t] kdyz automaticka volba mista fakt hodne selze, [p] kdyz mas hodne obrazku a je dobry je odhazet na jednu stranku (viz niz), a [b] v krizi. Pokud neco potrebujes fakt primo do textu, tak to vubec nedavej do {figure} environmentu
+\begin{figure} 
 \centering
 \includegraphics[width=\textwidth]{img/doors}
-% k obrazkum je vzdycky potreba napsat neco co si z nich ma odnyst nahodnej kolemjdouci kterej kouka jen na obrazky. Napr.:
-\caption{\emph{Source} engine swaps door models. Image taken from ???. Successively damaging any doors in the game will always produce this sequence of models, regardless of the exact point where the damage is applied.}
+\caption{\emph{Source} engine swaps door models. Image taken from \emph{Counter Strike: Global Offensive}. Successively damaging any doors in the game will always produce this sequence of models, regardless of the exact point where the damage is applied.}
 \label{fig:doors}
 \end{figure}
 
 %tady zduraznit ze to je prvni 3d hra ktera s tim vysla fakt na povrch
-\para{\emph{Geo-Mod}} (\emph{Geometry Modification Technology}\cite{geomod}) is an engine developed for the \emph{Red Faction (2001)}\footnote{http://redfaction.wikia.com/wiki/Red\_Faction} video game. It allows players to modify and make holes in the terrain using the solution of creating objects representing an empty space. The difference of meshes is calculated in real time to represent the terrain with a hole. Even though the engine does not work well with the buildings and other objects, it represents one of the first significant attempts to create the fully destructible 3D environment in real time constraints.
+\para{\emph{Geo-Mod}} (\emph{Geometry Modification Technology}\cite{geomod}) is an engine developed for the \emph{Red Faction (2001)}\footnote{http://redfaction.wikia.com/wiki/Red\_Faction} video game. It allows players to modify and make holes in the terrain using the solution of creating objects representing an empty space. The difference of meshes is calculated in real time to represent the terrain with a hole. Even though the engine does not work well with the buildings and other objects, it represents the first significant attempt to create the fully destructible 3D environment in real time constraints.
 
 \para{\emph{Geo-Mod 2}}~\cite{geomod}\footnote{Geo-Mod 2.0 presentation video https://www.youtube.com/watch?v=lICurOVsNv0} does not feature destructible terrain, instead, it uses physics simulation on specially prepared objects. A set of smaller objects is used as a ragdoll for the stress-based simulation model. The complexity of simulation limits the engine in the scale of the game world and mutual proximity of destructible objects.
 
@@ -41,15 +37,17 @@ The most common implementation of destructible objects in 3D games has not chang
 
 \section{Methods and algorithms}
 
-Here we give a short overview of several more rigorous methods commonly used in current games.
+Here we give a short overview of several more rigorous methods commonly used for simulations of destructible environment.
 
 \subsection{Soft body deformation}
 
+
+\label{sec:softBody}
 % Je textove-strukturni chyba mit pod nadpisem hned seznam bez vysvetleni co ten seznam dela.
 
 \para{Finite Element Method} (FEM) is an approach to simulate the behaviour of complex objects and systems\todo{jak moc komplexni musej bejt aby na ne byla potreba FEM?}. It uses a large number of finite volumes (cells), interconnected or not, to simulate the reaction of material to inner and outside forces. Each cell calculates its physics states like stress or temperature and propagates the results to neighbouring cells. This model allows for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images but FEM requires a lot of computational resources and therefore until recently it was not possible to implement it in real-time environment of a computer game. Now with better hardware and optimised algorithms especially developed for real-time animation, like the one O'Brien~\cite{femingames} describes this method is making its way into modern games.
 
-\para{Material Point method} (MPM) is used to simulate the behaviour of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is the primary representation possessing position, velocity and deformation gradient. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
+\para{Material point method} (MPM) is used to simulate the behaviour of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is the primary representation possessing position, velocity and deformation gradient. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
 
 \begin{enumerate}
     \item Grid data are reinitialized to default values.
@@ -67,20 +65,18 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{img/MPM}
-\caption{MPM algorithm overview. The top and the bottom rows operate in particle domain (Lagrangian) while the middle depicts grid-based (Eulerian) operations \cite{disney}.
+\caption{Material point method algorithm overview. The top and the bottom rows operate in particle domain (Lagrangian) while the middle depicts grid-based (Eulerian) operations \cite{disney}.
 }
 \label{fig:mpm}
 \end{figure}
 
 \subsection{Rigid body decomposition}
 
-%Proc se kapitola jmenuje R.b.d. a jak to souvisi s tim ze najednou tady je Voronoi tesselation?
-%Treba:
 Decomposition of rigid bodies is used to make the object appear broken, or introduce damage into a 3D polyhedral solid. The most common method used today is Voronoi tesselation.
-% (asi to prepis. :D )
+
 There are also other solutions for decomposition, \eg slicing by planes or convex decomposition, but Voronoi cells are considered to look better and more natural than other methods. 
 
-\para{Voronoi tessellation} is a method of decomposing an object into a smaller parts, as shown on \cref{fig:voro}. It is also applicable for \eg terrain generation\todo{referenci na definici "terrain generation"}, but we will focus on object decomposition. The tessellation can be done in following three steps, assuming the input is a closed triangular mesh with non-empty volume:
+\para{Voronoi tessellation} is a method of decomposing an object into a smaller parts, as shown on \cref{fig:voro}. It is also applicable for \eg terrain generation~\cite{voronoiterrainrealtime}, but we will focus on object decomposition. The tessellation can be done in following three steps, assuming the input is a closed triangular mesh with non-empty volume:
 \begin{description}
     \item[Delaunay tetrahedral decomposition] Given points $P$ in general position (the vertices of input mesh and a set of points inside its volume), tetrahedral mesh $DT(P)$ can be generated satisfying the following condition: no point in $P$ is inside the circumscribed sphere of any tetrahedra in $DT(P)$.
     \item[Creating Voronoi diagram] For a Delaunay tetrahedral decomposition, its dual graph (with vertices in the centre of tetrahedrons circumscribed sphere) is a Voronoi diagram.
@@ -101,3 +97,73 @@ There are also other solutions for decomposition, \eg slicing by planes or conve
         \label{fig:voro}
 \end{figure}
 
+\section{Related research}
+
+%Nejakej uvod o cem ta kapitola vlastne je
+
+\subsection{A fast method for simulating destruction and the generated dust
+and debris}
+This method \cite{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
+
+\begin{description}
+\item[Destruction on coarse scale] on this level we use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. The behaviour of the entire system is calculated based on interactions of individual elements. EDEM extends the method formerly using only contact force by adding pore springs connecting the adjacent elements. If we imagine the elements as individual bricks, then the pore springs represent a mortar holding them together. If the applied force is sufficient and elements move apart far enough, the fraction takes place. Pore springs also help the object retain its original shape after applied force.
+\begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/spring}
+        \caption{The force between two EDEM elements \cite{edem}}
+        \label{spring}
+\end{figure}
+\\Algorithm for creating EDEM elements
+\begin{enumerate}
+\item Represent the original object as a closed surface model.
+\item Arbitrarily arrange the EDEM elements inside the object.
+The elements are allowed to overlap at this point.
+\item Move the elements by performing the EDEM simulation. However, we only consider the contact force in this simulation.
+\item Perform collision detection between the object’s surface
+and the elements, making sure that the elements always
+stay inside the object.
+\item Repeat (3)–(4) until the elements are stabilised.
+\item Construct a Delaunay diagram from the set of elements
+and put the pore springs on the Delaunay edges that connect
+the elements
+\end{enumerate}
+The position $\mathbf{x}_I$ and velocity $\mathbf{v}_I$ of the element $\mathit{I}$ can be found using Newton’s equation of motion as follows:
+ 
+\[M\frac{d\mathbf{v}_I}{dt} = \sum_{J \in contact}^{} \mathbf{F}_{JI}^c + \sum_{K \in pore}^{} \mathbf{F}_{KI}^p + M\mathbf{g} \]
+\[ \frac{d\mathbf{x}_I}{dt} = \mathbf{v}_I \]
+Here, $\mathbf{g}$ is the gravitational vector, $\mathbf{F}^c_{JI}$ is the contact force, $\mathbf{F}^p_{KI}$ is the force due to the pore springs and $\mathit{M}$ is the element’s mass. Contact contains elements \{I, J\} if they are closer than the diameter of a single element, while pore
+contains a pair of elements \{I, K\} when they are connected by a pore spring.
+
+\item[Fine debris generation and simulation] After fracture between EDEM elements we can determine if the energy was big enough to break EDEM element into smaller debris. The Gaudin-Schuhmann distribution is used to determine the size of debris. Debris is taken out of EDEM simulation and put into particle simulation, where each piece is represented as a particle without volume.
+
+\item[Dust generation and simulation] Amount of generated dust is based on fracture energy and results of debris generation. Instead of simulating particles smaller than predetermined margin, they are represented as dust in a grid-based fluid simulation. The density of particular cell represents the amount of dust.
+
+\end{description}
+
+ \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.49\textwidth]{img/edem_real}
+        \includegraphics[width=0.49\textwidth]{img/edem}
+        \caption{Result of this method with generated dust and debris (left) and EDEM elements (right) \cite{edem}}
+        \label{fig:edem}
+    \end{figure}
+   
+\begin{table}[ht!]
+    \begin{center}
+  \begin{tabular}{ |l|c|c|c|c|c| } 
+  \hline
+  EDEM elements & 128 & 256 & 512 & 1024 & 2048 \\ 
+  \hline
+  FPS & 320 & 160 & 75 & 30 & 9.1 \\ 
+  \hline
+  
+  \end{tabular}
+  \end{center}
+  \caption{Performance of EDEM element method without rendering \cite{edem}}
+  \label{table1}
+\end{table}
+In conclusion, based on table \ref{table1}, the frames per second (fps) drop proportionally with growing number of EDEM elements. That makes this approach unusable in large scale environments in real time game which demands constant 30fps at least.
+
+\subsection{Real Time Dynamic Fracture
+with Volumetric Approximate Convex Decompositions}
+\cite{nvidia}
