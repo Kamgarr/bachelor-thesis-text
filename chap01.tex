@@ -5,21 +5,21 @@ We will repeatedly categorise the content of the game world in following way: We
 
 \section{Implementations in mainstream gaming}
 
-In this brief overview we introduce most common approaches to environment destruction that can be seen through the games released in last 40 years. More common approaches can be regularly seen in newly released games. 
+In this brief overview, we introduce most common approaches to environment destruction that can be seen through the games released in last 40 years. More common approaches can be regularly seen in newly released games. 
 
 \para{Object replacement or removal} was the first method used to simulate the destructible environment in a computer game, mostly because it is straightforward and undemanding. Despite its simplicity, it can still produce a very desirable result. In fact, it is still most widely used approach to the destructible environment in computer games.
 
 %tady chybi definice proc to je object replacement/removal
 %otazka: Jak poznam z nejaky hry ze to je object replacement/removal?
-In 2D setting, we will not differentiate between objects and terrain and refer to both as environment.
-First 2D games featuring destructible environment are arcade games like the \emph{Space Invaders (1978)}~\footnote{https://en.wikipedia.org/wiki/Space\_Invaders} where the environment is represented by cells in a grid. After taking damage, the texture of the cell is replaced by another one and the finally completely removed. A few years later, new environment destruction technique was introduced in games like \emph{Scorched Earth (1991)}~\footnote{https://en.wikipedia.org/wiki/Scorched\_Earth\_(video\_game)} and \emph{Worms (1995)}~\footnote{https://www.team17.com/games/worms-original}. Collision and removal of terrain in those games is based on individual pixels which creates a more realistic visual effect.
+In 2D setting, we will not differentiate between objects and terrain and refer to both as the environment.
+First, 2D games featuring destructible environment are arcade games like the \emph{Space Invaders (1978)}~\footnote{https://en.wikipedia.org/wiki/Space\_Invaders} where the environment is represented by cells in a grid. After taking damage, the texture of the cell is replaced by another one and the finally completely removed. A few years later, new environment destruction technique was introduced in games like \emph{Scorched Earth (1991)}~\footnote{https://en.wikipedia.org/wiki/Scorched\_Earth\_(video\_game)} and \emph{Worms (1995)}~\footnote{https://www.team17.com/games/worms-original}. Collision and removal of terrain in those games is based on individual pixels, which creates a more realistic visual effect.
 
 The most common implementation of destructible objects in 3D games has not changed much over the years. Every object that the player can modify has a set of more damaged models prepared. Based on how much damage is applied, the models are swapped and eventually completely removed, as seen in \cref{fig:doors}. It is usually accompanied by animations, debris and dust generation to make the process look realistic. The downfall of this method is the necessity to replace the whole in-game object. There has to be a significant number of objects pre-made for different scenarios to make the game look realistic and it has little flexibility to react to specific player actions. As an example, in the \emph{Source} engine, the hole in the door (\cref{fig:doors}) is always in the same place, regardless of the point of impact.
 
-%Co by melo bejt doplneny:
+%Co by melo bejt doplneny: 
 %Magic carpet (1994?) a Starfighter3000 (1991?) byl 3D a de tam likvidovat teren. (potencialni rozpor s predchozim odstavcem)
 %Duke Nukem 3D: Predpripraveny "popraskany steny" ktery jdou prostrelit bazukou.
-
+\todo{ono ten starfighter mi nesedi ani do jedneho odseku }
 \begin{figure} 
 \centering
 \includegraphics[width=\textwidth]{img/doors}
@@ -45,7 +45,7 @@ Here we give a short overview of several more rigorous methods commonly used for
 \label{sec:softBody}
 % Je textove-strukturni chyba mit pod nadpisem hned seznam bez vysvetleni co ten seznam dela.
 
-\para{Finite Element Method} (FEM) is an approach to simulate the behaviour of complex objects and systems\todo{jak moc komplexni musej bejt aby na ne byla potreba FEM?}. It uses a large number of finite volumes (cells), interconnected or not, to simulate the reaction of material to inner and outside forces. Each cell calculates its physics states like stress or temperature and propagates the results to neighbouring cells. This model allows for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images but FEM requires a lot of computational resources and therefore until recently it was not possible to implement it in real-time environment of a computer game. Now with better hardware and optimised algorithms especially developed for real-time animation, like the one O'Brien~\cite{femingames} describes this method is making its way into modern games.
+\para{Finite Element Method} (FEM) is an approach to simulate the behaviour of complex objects and systems \todo{jak moc komplexni musej bejt aby na ne byla potreba FEM?}. It uses a large number of finite volumes (cells), interconnected or not, to simulate the reaction of material to inner and outside forces. Each cell calculates its physics states like stress or temperature and propagates the results to neighbouring cells. This model allows for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images but FEM requires a lot of computational resources and therefore until recently it was not possible to implement it in real-time environment of a computer game. Now with better hardware and optimised algorithms especially developed for real-time animation, like the one O'Brien~\cite{femingames} describes this method is making its way into modern games.
 
 \para{Material point method} (MPM) is used to simulate the behaviour of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is the primary representation possessing position, velocity and deformation gradient. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
 
@@ -53,7 +53,7 @@ Here we give a short overview of several more rigorous methods commonly used for
     \item Grid data are reinitialized to default values.
     \item Weights and weight gradients are computed on every particle.
     \item Mass and momentum are transferred from the particles to the grid.
-    \item The explicit forces on nodes are computed
+    \item The explicit forces on nodes are calculated
     \item The explicit nodal velocity update is performed
     \item Grid based collision is performed on vertices.
     \item Particles are updated from grid velocities.
@@ -84,11 +84,11 @@ There are also other solutions for decomposition, \eg slicing by planes or conve
 \end{description}
 
 \begin{figure}
-	\centering
-	\includegraphics[width=0.4\textwidth]{img/delaunay}
-	\includegraphics[width=0.4\textwidth]{img/voronoi}
-	\caption{Transformation of 2D Delaunay triangulation to Voronoi diagram. Source: \url{https://en.wikipedia.org/wiki/Delaunay\_triangulation}}
-	\label{fig:DT}
+    \centering
+    \includegraphics[width=0.4\textwidth]{img/delaunay}
+    \includegraphics[width=0.4\textwidth]{img/voronoi}
+    \caption{Transformation of 2D Delaunay triangulation to Voronoi diagram. Source: \url{https://en.wikipedia.org/wiki/Delaunay\_triangulation}}
+    \label{fig:DT}
 \end{figure}
 \begin{figure}
         \centering
@@ -106,7 +106,7 @@ and debris}
 This method \cite{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
 
 \begin{description}
-\item[Destruction on coarse scale] on this level we use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. The behaviour of the entire system is calculated based on interactions of individual elements. EDEM extends the method formerly using only contact force by adding pore springs connecting the adjacent elements. If we imagine the elements as individual bricks, then the pore springs represent a mortar holding them together. If the applied force is sufficient and elements move apart far enough, the fraction takes place. Pore springs also help the object retain its original shape after applied force.
+\item[Destruction on a coarse scale] on this level we use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. The behaviour of the entire system is calculated based on interactions of individual elements. EDEM extends the method formerly using only contact force by adding pore springs connecting the adjacent elements. If we imagine the elements as individual bricks, then the pore springs represent a mortar holding them together. If the applied force is sufficient and elements move apart far enough, the fraction takes place. Pore springs also help the object retain its original shape after applied force.
 \begin{figure}[ht!]
         \centering
         \includegraphics[width=0.7\textwidth]{img/spring}
