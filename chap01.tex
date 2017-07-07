@@ -11,6 +11,7 @@ In this brief overview, we introduce most common approaches to environment destr
 
 %tady chybi definice proc to je object replacement/removal
 %otazka: Jak poznam z nejaky hry ze to je object replacement/removal?
+\todo{a nevypliva to z textu podtym? sa bojim ze ak by som to tu popisal tak by som sa potom zas opakoval pri jednotlivych hrach}
 In 2D setting, we will not differentiate between objects and terrain and refer to both as the environment.
 First, 2D games featuring destructible environment are arcade games like the \emph{Space Invaders (1978)}~\footnote{https://en.wikipedia.org/wiki/Space\_Invaders} where the environment is represented by cells in a grid. After taking damage, the texture of the cell is replaced by another one and the finally completely removed. A few years later, new environment destruction technique was introduced in games like \emph{Scorched Earth (1991)}~\footnote{https://en.wikipedia.org/wiki/Scorched\_Earth\_(video\_game)} and \emph{Worms (1995)}~\footnote{https://www.team17.com/games/worms-original}. Collision and removal of terrain in those games is based on individual pixels, which creates a more realistic visual effect.
 
@@ -19,7 +20,7 @@ The most common implementation of destructible objects in 3D games has not chang
 %Co by melo bejt doplneny: 
 %Magic carpet (1994?) a Starfighter3000 (1991?) byl 3D a de tam likvidovat teren. (potencialni rozpor s predchozim odstavcem)
 %Duke Nukem 3D: Predpripraveny "popraskany steny" ktery jdou prostrelit bazukou.
-\todo{ono ten starfighter mi nesedi ani do jedneho odseku }
+\todo{ten starfighter mi nesedi ani do jedneho odseku a hlavne neviem ako je implementovany}
 \begin{figure} 
 \centering
 \includegraphics[width=\textwidth]{img/doors}
@@ -44,9 +45,8 @@ Here we give a short overview of several more rigorous methods commonly used for
 
 \label{sec:softBody}
 % Je textove-strukturni chyba mit pod nadpisem hned seznam bez vysvetleni co ten seznam dela.
-
+\todo{uvod}
 \para{Finite Element Method} (FEM) is an approach to simulate the behaviour of complex objects and systems \todo{jak moc komplexni musej bejt aby na ne byla potreba FEM?}. It uses a large number of finite volumes (cells), interconnected or not, to simulate the reaction of material to inner and outside forces. Each cell calculates its physics states like stress or temperature and propagates the results to neighbouring cells. This model allows for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images but FEM requires a lot of computational resources and therefore until recently it was not possible to implement it in real-time environment of a computer game. Now with better hardware and optimised algorithms especially developed for real-time animation, like the one O'Brien~\cite{femingames} describes this method is making its way into modern games.
-
 \para{Material point method} (MPM) is used to simulate the behaviour of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is the primary representation possessing position, velocity and deformation gradient. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
 
 \begin{enumerate}
@@ -100,7 +100,7 @@ There are also other solutions for decomposition, \eg slicing by planes or conve
 \section{Related research}
 
 %Nejakej uvod o cem ta kapitola vlastne je
-
+\todo{uvod}
 \subsection{A fast method for simulating destruction and the generated dust
 and debris}
 This method \cite{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
