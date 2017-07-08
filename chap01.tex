@@ -4,7 +4,7 @@ This chapter introduces the techniques used to simulate destructible environment
 We will repeatedly categorise the content of the game world in following way: We will use the word object to refer to any building, crate, door, tree or other items that occur in the game environment, but excluding terrain, distant environment like skyboxes and any in-game characters. Most of the modern 3D games use the term destructible environment as a reference to destructible objects because they do not support the destruction of terrain. We will comply with this terminology and use destructible environment as a reference to destruction of objects and not the terrain
 
 \section{Implementations in mainstream gaming}
-
+\label{sec:common}
 In this brief overview, we introduce most common approaches to environment destruction that can be seen through the games released in last 40 years. More common approaches can be regularly seen in newly released games. 
 
 \para{Object replacement or removal} was the first method used to simulate the destructible environment in a computer game, mostly because it is straightforward and undemanding. Despite its simplicity, it can still produce a very desirable result. In fact, it is still most widely used approach to the destructible environment in computer games.
@@ -30,6 +30,7 @@ The most common implementation of destructible objects in 3D games has not chang
 
 %tady zduraznit ze to je prvni 3d hra ktera s tim vysla fakt na povrch
 \para{\emph{Geo-Mod}} (\emph{Geometry Modification Technology}\cite{geomod}) is an engine developed for the \emph{Red Faction (2001)}\footnote{http://redfaction.wikia.com/wiki/Red\_Faction} video game. It allows players to modify and make holes in the terrain using the solution of creating objects representing an empty space. The difference of meshes is calculated in real time to represent the terrain with a hole. Even though the engine does not work well with the buildings and other objects, it represents the first significant attempt to create the fully destructible 3D environment in real time constraints.
+
 
 \para{\emph{Geo-Mod 2}}~\cite{geomod}\footnote{Geo-Mod 2.0 presentation video https://www.youtube.com/watch?v=lICurOVsNv0} does not feature destructible terrain, instead, it uses physics simulation on specially prepared objects. A set of smaller objects is used as a ragdoll for the stress-based simulation model. The complexity of simulation limits the engine in the scale of the game world and mutual proximity of destructible objects.
 
@@ -99,10 +100,10 @@ There are also other solutions for decomposition, \eg slicing by planes or conve
 
 \section{Related research}
 
-%Nejakej uvod o cem ta kapitola vlastne je
 \todo{uvod}
 \subsection{A fast method for simulating destruction and the generated dust
 and debris}
+\label{sec:edem}
 This method \cite{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
 
 \begin{description}
