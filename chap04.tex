@@ -1,27 +1,28 @@
 \chapter{Used Technology}
-In this chapter we will define the requirements for running our application and introduce used libraries .
+\label{chapt:technology}
+In this chapter, we will define the requirements for running our application and introduce used libraries.
 
 All selected libraries support running on both \emph{Linux} and \emph{Windows} systems. This demo was implemented and tested on \emph{Ubuntu 17.04} with packages described in this chapter. Code of our application is entirely written in \emph{C++} using C++14 standard, to compile the code we used \emph{g++} version 4:6.3.0.
 
-To properly run our application requires a computer with processor having at least 4 threads and 8GB of RAM.
+To properly run our application requires a computer with a processor having at least four threads and 8GB of RAM.
 
 \section{Bullet Physics}
 \begin{itemize}
-\item version: 2.83.7
 \item package: libbullet-dev
+\item version: 2.83.7
 \end{itemize}
 
 
 \section{Irrlicht Engine}
 \begin{itemize}
-\item version: 1.8.4
 \item package: libirrlicht-dev
+\item version: 1.8.4
 \end{itemize}
 
 \section{CGAL}
 \begin{itemize}
-\item version: 4.9
 \item package: libcgal-dev
+\item version: 4.9
 \end{itemize}
 
 \section{Voro++}
@@ -31,7 +32,7 @@ To properly run our application requires a computer with processor having at lea
 \end{itemize}
 Voro++ is a library for carrying out three-dimensional computations of the Voronoi tessellation. It calculates Voronoi cell for each particle individually and is suited for high performance calculations on large scale particle systems. It is also able to clip Voronoi cells to any user defined boundary.
 
-This library would be well suited for decomposing whole objects into Voronoi cells and has very simple interface. Because implementation requires only one Voronoi cell per collision it is exactly what we need.
+This library would be well suited for decomposing whole objects into Voronoi cells and has a very minimalistic interface. Because implementation requires only one Voronoi cell per collision, this library can provide a simple and fast solution for our task.
 
 \section{HACD (Hierarchical Approximate Convex Decomposition}
 \begin{itemize}
