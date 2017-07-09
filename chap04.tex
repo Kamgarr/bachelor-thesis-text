@@ -12,6 +12,14 @@ MObject
 
 \section{Modules}
 In this section, we describe the functionality of each program module. Third party software will not be described here. It can be found in \cref{chapt:technology}. Interactions between modules are described in \cref{fig:modules}. \emph{Irrlicht Engine} is not present in the diagram because we do not logically depend on using this engine. Every module is implemented in a file with the matching name as a class with the same name prefixed with letter M (Object Creator can be found in file ObjectCreator.cpp and is implemented as class {\tt gg::MObjectCreator}). Every component of this application is located in namespace {\tt gg};
+
+\begin{figure}[ht!]
+        \centering
+        \includegraphics[width=\textwidth]{img/objectmodel}
+        \caption{Software architecture shown on diagram of relationships of program modules. Third party software is highlighted in dashed rectangles.}
+        \label{fig:modules}
+\end{figure}
+
 \begin{description}
 \item[Game]
 The {\tt gg::MGame} class is the core of application. 
@@ -23,7 +31,7 @@ This class is an implementation of {\tt irr::IEventReceiver} from Irrlicht engin
 The Loader is a class only used for initializing the application. It parses the data describing the game environment from the given file, constructs the objects with the help of {\tt gg::MObjectCreator} and returns the set of constructed objects.
 
 \item[Object Creator]
-Because {\tt gg::MObject} is a complex data structure containing three complex structures ({\tt btRigidBody, irr::scene::ISceneNode, CGAL::Nef\_polyhedron\_3}), we use this class as a Builder pattern to initialize those three elements.
+We use this class as a Builder pattern in order to initialize the data contained inside {\tt gg::MObject} ({\tt CGAL::Nef\_polyhedron\_3, btRigidBody, irr::scene::ISceneNode}).
 
 There are three member functions allowing us to create {\tt gg::MObject}s  with different behaviour from the same set of input parameters (see \cref{sec:data}). We can achieve destructible object, indestructible objects with box collision shape and rectangular indestructible object without input mesh. Those functions are exclusively used at initialization as they generate a new set of member variables and their parameters come in a text form.
 
@@ -36,12 +44,7 @@ Two more kinds of objects can be created. A projectile that is shot from the giv
 Mesh Manipulators provides set of public static functions. Because different libraries are used for physics simulation, rendering and geometric manipulation, those functions provide means for converting data between different formats.
 \end{description}
 
-\begin{figure}
-        \centering
-        \includegraphics[width=\textwidth]{img/objectmodel}
-        \caption{Software architecture shown on diagram of relationships of program modules. Third party software is highlighted in dashed rectangles.}
-        \label{fig:modules}
-\end{figure}
+
 
 \section{Installation guide}
 
