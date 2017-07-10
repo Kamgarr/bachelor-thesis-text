@@ -3,7 +3,14 @@ In this chapter, we will explain how is our demo game implemented. We will talk 
 
 After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to try to implement a new approach. We will borrow already tried techniques and put them together in a different way.
 
-Our approach is mostly similar to \emph{Geomod} (described in \cref{sec:common}) with a key differences. Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again.
+Our approach is mostly similar to \emph{Geomod} (described in \cref{sec:common}) with a key differences. Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}).
+
+\begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{img/subtractionProcess}
+        \caption{object with point of impact (left), generated Voronoi cell (centre), object divided into six new smaller objects after subtraction of Voronoi cell (right)}
+        \label{fig:subtraction}
+\end{figure}
 
 Randomization of the size and shape of a Voronoi cell makes the game look more realistic because it guarantees different result after every collision. The generation of a Voronoi cell takes place in closed cube with its centre at the point of collision. In the cube, in addition to the centre point, random points are generated. The Voronoi cell is the cell of the centre point cut by sides of the cube if necessary.
 
