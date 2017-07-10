@@ -38,9 +38,9 @@ The Loader is a class only used for initializing the application. It parses the 
 \item[Object Creator]
 We use this class as a Builder pattern in order to initialize the data contained inside {\tt gg::MObject} ({\tt CGAL::Nef\_polyhedron\_3, btRigidBody, irr::scene::ISceneNode}).
 
-There are three member functions allowing us to create {\tt gg::MObject}s  with different behaviour from the same set of input parameters (see \cref{sec:data}). We can achieve destructible object, indestructible objects with box collision shape and rectangular indestructible object without input mesh. Those functions are exclusively used at initialization as they generate a new set of member variables and their parameters come in a text form.
+There are three member functions allowing us to create {\tt gg::MObject}s  with different behaviour from the same set of input parameters (see \cref{sec:data}). We can achieve a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh. Those functions are exclusively used at initialization as they generate a new set of member variables, and their parameters come in a text form.
 
-Two more kinds of objects can be created. A projectile that is shot from the given position with the given impulse. And a destructible object with temporary collision shape (sphere shaped). Because this object is constructed whilst game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, it requires to have the {\tt CGAL::Nef\_polyhedron\_3} given in parameter.
+Two more kinds of objects can be created a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, it requires to have the {\tt CGAL::Nef\_polyhedron\_3} given in parameter. Indestructible objects do not require {\tt CGAL::Nef\_polyhedron\_3}  and therefore the shooting is not limited by their construction time.
 
 \item[Collision Resolver]
 \todo{All the magic happens here!}
