@@ -21,7 +21,7 @@ The most common implementation of destructible objects in 3D games has not chang
 \label{fig:doors}
 \end{figure}
 
-\para{Height map} approach is closely intertwined with terrain generation. The basic principle behind modifying the environment with this method is changing the parameters for terrain generation and repetitive generation of affected parts of the terrain. We can find this method used in the first 3D games featuring destructible terrain, \eg \emph{Magic carpet (1994)}~\footnote{https://ultimatehistoryvideogames.jimdo.com/magic-carpet} or \emph{Starfighter 3000 (1994)}~\footnote{https://en.wikipedia.org/wiki/Star\_Fighter\_(video\_game)}.
+\para{Height map} approach is closely intertwined with terrain generation. The basic principle behind modifying the environment with this method is changing the parameters for terrain generation and repetitive generation of affected parts of the terrain. We can find this method used in the first 3D games featuring destructible terrain, \eg \emph{Magic Carpet (1994)}~\footnote{https://ultimatehistoryvideogames.jimdo.com/magic-carpet} or \emph{Starfighter 3000 (1994)}~\footnote{https://en.wikipedia.org/wiki/Star\_Fighter\_(video\_game)}.
 
 The height map for 3D terrain is represented as a 2D grid. If we use the grid $G$ as a base of 3D space, each cell $C(x,y)$ represents the height $z$ of the respective column. Most common approach is to use 2D grey-scale bitmap and represent the height as a colour distance between white and black. Because the grid only contains information about the discrete points, interpolation is used to create continuous terrain. We can also see this method as creating a function $F(x,y) \rightarrow z$ where $\forall (x,y) \in G : F(x,y) = C(x,y)$. From this point of view, it is obvious that terrain generated and modified with this approach can only change the height and does not allow for creating tunnels and similar shapes.
 
@@ -46,7 +46,7 @@ Here we will give a short overview of several more rigorous methods commonly use
 In simulations, we consider two types of objects: soft bodies and rigid bodies. The rigid body represents an object with a constant shape and is not deformable. On the other hand, soft bodies are deformable under an applied force. There are no rigid objects in the real world. However, soft body simulation is computationally more expensive than the rigid body. Therefore, in the computer games, rigid body simulation is used almost exclusively. This brings us back to our problem, imitation of soft body behaviour on rigid bodies in the real-time simulation. It is worth mentioning that many soft bodies in the games players can not directly interact with, \eg waving flag or flowing water, are implemented as a pre-rendered animations and not actual simulations.
 
 \subsection{Soft body deformation}
-In this section, we will shortly introduce two different approaches for simulation of soft bodies. Despite the fact that soft bodies are currently not used in computer games to an extend of destructible environment, a few soft body objects can show up in a game. We also expect that with an evolution of more powerful hardware, soft body deformation will make its way into gaming world in the near future.
+In this section, we will shortly introduce two different approaches for simulation of soft bodies. Despite the fact that soft bodies are currently not used in computer games to the extent of destructible environment, a few soft body objects can show up in a game. We also expect that with an evolution of more powerful hardware, soft body deformation will make its way into gaming world in the near future.
 \label{sec:softBody}
 
 \para{Finite Element Method} (FEM) is a numerical method used to simulate the behaviour of a system that can be modelled by solving the same problem for the smaller discrete parts, called finite elements. Each element calculates its physics states, \eg stress or temperature, and propagates the results to neighbouring elements. This model allows for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images. FEM requires a lot of computational resources and therefore until recently it was not possible to implement it in real-time environment of a computer game. Now with more processing power and optimised algorithms especially developed for real-time animation, like the one O'Brien~\cite{femingames} describes this method can make its way into modern games.
@@ -106,7 +106,7 @@ There are also other solutions for decomposition, \eg slicing by planes or conve
 \end{description}
 
 \section{Related research}
-With releases of the new games we can see constant progress in the domain of destructible environment. Unfortunately we do not have access the to most efficient algorithms developed by the game studios. In this section we will describe two scientific papers proposing different techniques for environment destruction in computer games. 
+With releases of the new games, we can see continuous progress in the domain of destructible environment. Unfortunately, we do not have access the to most efficient algorithms developed by the game studios. In this section, we will describe two scientific papers proposing different techniques for environment destruction in computer games. First technique will focus on simulating the forces inside the object and the second one will solely focus on destruction.
 
 \subsection{A fast method for simulating destruction and the generated dust
 and debris}
@@ -125,12 +125,12 @@ This method \cite{edem} approaches destruction on three scales. At first, the de
 \begin{enumerate}
 \item Represent the original object as a closed surface model.
 \item Arbitrarily arrange the EDEM elements inside the object.
-The elements are allowed to overlap at this point.
-\item Move the elements by performing the EDEM simulation. However, we only consider the contact force in this simulation.
+Elements are allowed to overlap at this point.
+\item Move elements by performing the EDEM simulation. Only the contact force will be considered in this simulation.
 \item Perform collision detection between the object’s surface
-and the elements, making sure that the elements always
+and elements, making sure that they always
 stay inside the object.
-\item Repeat (3)–(4) until the elements are stabilised.
+\item Repeat (3)–(4) until elements are stabilised.
 \item Construct a Delaunay diagram from the set of elements
 and put the pore springs on the Delaunay edges that connect
 the elements
@@ -142,7 +142,7 @@ The position $\mathbf{x}_I$ and velocity $\mathbf{v}_I$ of the element $\mathit{
 Here, $\mathbf{g}$ is the gravitational vector, $\mathbf{F}^c_{JI}$ is the contact force, $\mathbf{F}^p_{KI}$ is the force due to the pore springs and $\mathit{M}$ is the element’s mass. Contact contains elements \{I, J\} if they are closer than the diameter of a single element, while pore
 contains a pair of elements \{I, K\} when they are connected by a pore spring.
 
-\item[Fine debris generation and simulation] After fracture between EDEM elements we can determine if the energy was big enough to break EDEM element into smaller debris. The Gaudin-Schuhmann distribution is used to determine the size of debris. Debris is taken out of EDEM simulation and put into particle simulation, where each piece is represented as a particle without volume.
+\item[Fine debris generation and simulation] If fracture between EDEM elements has happened, we can determine if there was enough energy to break EDEM element into smaller debris. The Gaudin-Schuhmann distribution is used to determine the size of debris. Debris is taken out of EDEM simulation and put into particle simulation, where each piece is represented as a particle without volume.
 
 \item[Dust generation and simulation] Amount of generated dust is based on fracture energy and results of debris generation. Instead of simulating particles smaller than predetermined margin, they are represented as dust in a grid-based fluid simulation. The density of particular cell represents the amount of dust.
 
