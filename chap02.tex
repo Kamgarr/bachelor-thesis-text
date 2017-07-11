@@ -5,6 +5,10 @@ After consideration of the various approaches implemented in games and also prop
 
 Our approach is mostly similar to \emph{Geomod} (described in \cref{sec:common}) with a key differences. Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}).
 
+ the fracturing cost depends only on the size of
+the single object to be fractured which makes our method suitable
+for both, real time simulations and the use in computer games.
+
 \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/subtractionProcess}

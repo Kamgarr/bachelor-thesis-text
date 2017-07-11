@@ -105,12 +105,9 @@ There are also other solutions for decomposition, \eg slicing by planes or conve
     \item[Clipping the Voronoi diagram] Boundary cells of the Voronoi diagram are infinite (see \cref{fig:DT}) and need to be clipped by the original input triangular mesh. The efficient algorithm proposed by~\citet{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighbourhood propagation to determine all intersections. 
 \end{description}
 
-
-
-
 \section{Related research}
+With releases of the new games we can see constant progress in the domain of destructible environment. Unfortunately we do not have access the to most efficient algorithms developed by the game studios. In this section we will describe two scientific papers proposing different techniques for environment destruction in computer games. 
 
-\todo{uvod}
 \subsection{A fast method for simulating destruction and the generated dust
 and debris}
 \label{sec:edem}
@@ -151,7 +148,7 @@ contains a pair of elements \{I, K\} when they are connected by a pore spring.
 
 \end{description}
 
- \begin{figure}[ht!]
+ \begin{figure}
         \centering
         \includegraphics[width=0.49\textwidth]{img/edem_real}
         \includegraphics[width=0.49\textwidth]{img/edem}
@@ -177,4 +174,38 @@ In conclusion, based on table \ref{table1}, the frames per second (fps) drop pro
 
 \subsection{Real Time Dynamic Fracture
 with Volumetric Approximate Convex Decompositions}
-\cite{nvidia}
+Now we will represent a short overview of this method, for the details please see~\citet{nvidia}.
+This approach does not try to simulate the internal forces of an object and focuses only on rigid body decomposition. The idea behind this method is to represent the mesh as a compound shape of convex parts. The algorithm used for convex decomposition is Volumetric Approximate Convex Decomposition (VACD), it works by introducing the Voronoi decomposition into the bounding box of a mesh and then clipping the mesh against Voronoi cells. The fracture pattern is precomputed and represented as a set of convex cells. The algorithm works as followed (\cref{fig:vacdalg}:
+\begin{enumerate}
+\item The fracture pattern is aligned with the point of impact. The fracture pattern can be arbitrary rotated or scaled, to avoid repetitive patterns.
+\item The intersections of all cells with all convexes are computed.  To compute the intersection of a single cell with a single convex, the convex is clipped against all the planes of the cell one by one. 
+At the end of this step, we have a set of new convexes, and each convex belongs to exactly one cell.
+\item If there are pieces that entirely fill one cell, we can weld them back together as one convex piece. To test whether it can be done, the volume of the cell and the sum of pieces.
+\item Next, all the convexes belonging to one cell are combined to form a new compound. This ensures that the decomposition into compound shape is not visible after fracture (see \cref{fig:vacdfracture}).
+\begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/vacdfracture}
+        \caption{The decomposition of the
+initial compound mesh does not become visible when a fracture
+patterns is applied. Source: \citet{nvidia}}
+        \label{fig:vacdfracture}
+\end{figure}
+\item At last, the separate islands of convex parts need to be detected and individual compound shapes constructed for them.
+\end{enumerate}
+
+\begin{figure}
+\centering
+        \includegraphics[width=\textwidth]{img/vacdAlgorithm}
+        \caption{Overview of the fracture algorithm. Left: The fracture pattern (red) is aligned with the impact location (black dot). Middle: All
+convex pieces are intersected with all cells. The green convex pieces can be welded to form a single piece because they cover the entire
+cell. Pieces within one cell become a new compound (colouring). Island detection finds that the dark red compound needs to be split. Source: \citet{nvidia}}
+        \label{fig:vacdalg}
+\end{figure}
+
+The cost of fracturing in this method is dependent only on the size of the object being fractured. The paper suggests that the model consisting of million vertices and five-hundred thousand faces can be fractured under 50ms. This makes this method suitable for real-time computer games.
+
+
+
+
+
+
