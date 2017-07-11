@@ -179,10 +179,10 @@ Now we will represent a short overview of this method, for the details please se
 This approach does not try to simulate the internal forces of an object and focuses only on rigid body decomposition. The idea behind this method is to represent the mesh as a compound shape of convex parts. The algorithm used for convex decomposition is Volumetric Approximate Convex Decomposition (VACD), it works by introducing the Voronoi decomposition into the bounding box of a mesh and then clipping the mesh against Voronoi cells. The fracture pattern is precomputed and represented as a set of convex cells. The algorithm works as followed (\cref{fig:vacdalg}:
 \begin{enumerate}
 \item The fracture pattern is aligned with the point of impact. The fracture pattern can be arbitrary rotated or scaled, to avoid repetitive patterns.
-\item The intersections of all cells with all convexes are computed.  To compute the intersection of a single cell with a single convex, the convex is clipped against all the planes of the cell one by one. 
-At the end of this step, we have a set of new convexes, and each convex belongs to exactly one cell.
-\item If there are pieces that entirely fill one cell, we can weld them back together as one convex piece. To test whether it can be done, the volume of the cell and the sum of pieces.
-\item Next, all the convexes belonging to one cell are combined to form a new compound. This ensures that the decomposition into compound shape is not visible after fracture (see \cref{fig:vacdfracture}).
+\item The intersections of all cells with all convex parts are computed.  To compute the intersection of a single cell with a single convex, the convex is clipped against all the planes of the cell one by one. 
+At the end of this step, we have a set of new convex parts, and each convex belongs to exactly one cell.
+\item If there are pieces that entirely fill one cell, we can weld them together as one convex piece. To test whether it can be done, the volume of the cell and the sum of pieces are compared.
+\item All the convex parts belonging to one cell are combined to form a new compound. This ensures that the decomposition into compound shape is not visible after fracture (see \cref{fig:vacdfracture}).
 \begin{figure}
         \centering
         \includegraphics[width=0.7\textwidth]{img/vacdfracture}
