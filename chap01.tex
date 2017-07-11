@@ -51,7 +51,7 @@ In this section, we will shortly introduce two different approaches for simulati
 
 \para{Finite Element Method} (FEM) is a numerical method used to simulate the behaviour of a system that can be modelled by solving the same problem for the smaller discrete parts, called finite elements. Each element calculates its physics states, \eg stress or temperature, and propagates the results to neighbouring elements. This model allows for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images. FEM requires a lot of computational resources and therefore until recently it was not possible to implement it in real-time environment of a computer game. Now with more processing power and optimised algorithms especially developed for real-time animation, like the one O'Brien~\cite{femingames} describes this method can make its way into modern games.
 
-\para{Material point method} (MPM) is used to simulate the behaviour of continuum materials. MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is the primary representation possessing position, velocity and deformation gradient. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
+\para{Material point method} (MPM) is used to simulate the behaviour of continuum materials (continuous mass not discrete particles). MPM is a meshfree and Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}. The Lagrangian element, or a material point, is the primary representation possessing position, velocity and deformation gradient. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
 
 \begin{enumerate}
     \item Grid data are reinitialized to default values.
@@ -64,7 +64,9 @@ In this section, we will shortly introduce two different approaches for simulati
 \end{enumerate}
 The steps are illustrated in \cref{fig:mpm}.
 
-MPM is useful for both fluid and soft body dynamics. It can simulate deformation, fractures, heat transfer, melting and other changes of material properties.
+MPM is useful for both fluid and soft body dynamics. It can simulate deformation, fractures, heat transfer, melting and other changes of material properties. 
+
+As a popular example of MPM we can take a look at snow simulation in the \emph{Disney} film \emph{Frozen (2013)}. The simulation software \emph{Matterhorn}~\footnote{https://www.disneyanimation.com/technology/innovations/matterhorn} can simulate the behaviour of different types of snow (\eg wet, fresh, sticky) and other materials, such as sand or mud.
 
 \begin{figure}
 \centering
@@ -75,31 +77,36 @@ MPM is useful for both fluid and soft body dynamics. It can simulate deformation
 \end{figure}
 
 \subsection{Rigid body decomposition}
-
-Decomposition of rigid bodies is used to make the object appear broken, or introduce damage into a 3D polyhedral solid. The most common method used today is Voronoi tessellation.
+Unlike in the soft bodies, in rigid bodies, we can not introduce deformation and the following fracture when the deformation limit is exceeded. To handle this problem, there are numerous approaches of decomposing the rigid body in the way that imitates fractures achieved by exceeding the elasticity of the material. The most common method used today is Voronoi tessellation.
 
 There are also other solutions for decomposition, \eg slicing by planes or convex decomposition, but Voronoi cells are considered to look better and more natural than other methods. 
 
-\para{Voronoi tessellation} is a method of decomposing an object into a smaller parts, as shown on \cref{fig:voro}. It is also applicable for \eg terrain generation~\cite{voronoiterrainrealtime}, but we will focus on object decomposition. The tessellation can be done in following three steps, assuming the input is a closed triangular mesh with non-empty volume:
-\begin{description}
-    \item[Delaunay tetrahedral decomposition] Given points $P$ in general position (the vertices of input mesh and a set of points inside its volume), tetrahedral mesh $DT(P)$ can be generated satisfying the following condition: no point in $P$ is inside the circumscribed sphere of any tetrahedra in $DT(P)$.
-    \item[Creating Voronoi diagram] For a Delaunay tetrahedral decomposition, its dual graph (with vertices in the centre of tetrahedrons circumscribed sphere) is a Voronoi diagram.
-    \item[Clipping the Voronoi diagram] Boundary cells of the Voronoi diagram are infinite (see \cref{fig:DT}) and need to be clipped by the original input triangular mesh. The efficient algorithm~\cite{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighbourhood propagation to determine all intersections. 
-\end{description}
+\para{Voronoi tessellation} is a method of decomposing an object into a smaller parts, as shown on \cref{fig:voro}. It is also applicable for \eg terrain generation~\cite{voronoiterrainrealtime}, but we will focus on object decomposition. Assuming the input is a closed triangular mesh with non-empty volume, the tessellation can be done in following three steps:
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.4\textwidth]{img/delaunay}
-    \includegraphics[width=0.4\textwidth]{img/voronoi}
-    \caption{Transformation of 2D Delaunay triangulation to Voronoi diagram. Source: \url{https://en.wikipedia.org/wiki/Delaunay\_triangulation}}
-    \label{fig:DT}
-\end{figure}
 \begin{figure}
         \centering
         \includegraphics[width=0.4\textwidth]{img/clipped}
         \caption{The result of Voronoi tessellation \cite{yan2010efficient}}
         \label{fig:voro}
 \end{figure}
+
+\begin{description}
+    \item[Delaunay tetrahedral decomposition] Given points $P$ in general position (the vertices of input mesh and a set of points inside its volume), tetrahedral mesh $DT(P)$ can be generated satisfying the following condition: no point in $P$ is inside the circumscribed sphere of any tetrahedra in $DT(P)$.
+    \item[Creating Voronoi diagram] For a Delaunay tetrahedral decomposition, its dual graph (with vertices in the centre of tetrahedrons circumscribed sphere) is a Voronoi diagram (see \cref{fig:voro}.
+    
+ \begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{img/delaunay}
+    \includegraphics[width=0.4\textwidth]{img/voronoi}
+    \caption{Transformation of 2D Delaunay triangulation to Voronoi diagram. Source: \url{https://en.wikipedia.org/wiki/Delaunay\_triangulation}}
+    \label{fig:DT}
+\end{figure}
+
+    \item[Clipping the Voronoi diagram] Boundary cells of the Voronoi diagram are infinite (see \cref{fig:DT}) and need to be clipped by the original input triangular mesh. The efficient algorithm proposed by~\citet{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighbourhood propagation to determine all intersections. 
+\end{description}
+
+
+
 
 \section{Related research}
 
