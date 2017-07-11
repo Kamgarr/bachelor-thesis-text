@@ -45,7 +45,7 @@ To make our application faster, we can execute the most costly tasks asynchronou
 \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/object-progress}
-        \caption{The figure shows a simplified overview of changing states of a single object across multiple threads in simultaneous time slots. The blue lines represent collision shape, black represent visual mesh and the red dot collision point. When the collision shape approximates the visual mesh only the collision shape is shown. We can see the process of splitting the mesh and recalculation of collision shapes from the point of collision until the convex decomposition is calculated for all parts.}
+        \caption{The figure shows a simplified overview of changing states of a single object across multiple threads in simultaneous time slots. We can see the process of splitting the mesh and calculation of collision shapes from the time of the collision until the convex decomposition is calculated for all parts. The blue lines represent a collision shape. Black represents a visual mesh and the red dot collision point. If the collision shape matches the visual mesh, only the shape is shown. }
         \label{fig:objectInThreads}
 \end{figure}
 
@@ -57,7 +57,7 @@ At first, we need to filter out unwanted collisions (collisions that should not 
 
 For every valid collision, we will generate Voronoi cell as described earlier and put meshes of both objects into a task for mesh subtraction thread. After enqueuing all collisions, we can check if there are any prepared subtraction results for further use. The result of one subtraction task is a set of meshes that represent new objects. For every mesh, we create a new object, but we do not have its convex decomposition for the physics engine to perform accurate collision detection. Because decomposition can take long, we will create simple temporary collision shape (\eg sphere) and a task for decomposition. Then we will proceed with simulation, not waiting for the result. Decomposition is done in a separate thread, and the result is returned to the main thread where we check for decomposed shapes. With the shape ready in the main thread we replace the temporary shape for compound shape consisting of convex parts.
 
-This process guarantees that we do not wait for either subtraction or decomposition and therefore we can have stable fps in our game. Temporarily replacing a collision shape by a simpler alternative ensures consistent behaviour of new objects (we can put them into simulation, and they do not fall through each other or otherwise not comply with laws of physics). Therefore we need to calculate the difference of meshes in a period of a few frames so it can not be seen that it is lagging behind collisions.
+This process guarantees that we do not wait for either subtraction or decomposition and therefore we can have stable fps in our game. Temporarily replacing a collision shape by a simpler alternative ensures consistent behaviour of new objects (we can put them into the simulation, and they do not fall through each other or otherwise not comply with laws of physics). Therefore we need to calculate the difference of meshes in a period of a few frames so it can not be seen that it is lagging behind collisions.
 
 \section{Convex Decomposition}
 \label{sec:decomposition}
