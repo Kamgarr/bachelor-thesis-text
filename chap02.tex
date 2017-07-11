@@ -3,7 +3,7 @@ In this chapter, we will introduce the proposed implementation of our demo game.
 
 After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement a slightly different approach. We will borrow already tested techniques and put them together in a different way.
 
-\section{Used approach}
+\section{Proposed approach}
 Our approach is mostly similar to \emph{Geomod} (described in \cref{sec:common}) and \emph{Real Time Dynamic Fracture
 with Volumetric Approximate Convex Decompositions}(RTDF) (described in \cref{sec:RTDF}) with a key differences. Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was our choice because it has easily randomizable shape and provides aesthetically good looking results, but the shape is in no way critical to the rest of algorithm.
 

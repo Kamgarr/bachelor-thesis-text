@@ -1,6 +1,7 @@
-\chapter{Implementation details}
+\chapter*{Implementation details}
+\addcontentsline{toc}{chapter}{Appendix - Implementation details}
 
-\section{Data representation}
+\section*{Data representation}
 \begin{description}
 \item [{\tt btRigidBody}]
 \item [{\tt irr::scene::ISceneNode}]
@@ -10,12 +11,12 @@
 \end{description}
 
 
-\section{Input data}
+\section*{Input data}
 \label{sec:data}
 .obj/.3ds
 describe format in world file
 
-\section{Modules}
+\section*{Modules}
 In this section, we describe the functionality of each program module. Third party software will not be described here. It can be found in \cref{chapt:technology}. Interactions between modules are described in \cref{fig:modules}. \emph{Irrlicht Engine} is not present in the diagram because we do not logically depend on using this engine. Every module is implemented in a file with the matching name as a class with the same name prefixed with letter M (Object Creator can be found in file ObjectCreator.cpp and is implemented as class {\tt gg::MObjectCreator}). Every component of this application is located in namespace {\tt gg};
 
 \begin{figure}[ht!]
@@ -50,10 +51,7 @@ Mesh Manipulators provides set of public static functions. Because different lib
 \end{description}
 
 
-
-\section{Installation guide}
-
-\section{User interface}
+\section*{User interface}
 The user interface allows only for the use of the keyboard as follows:
 \begin{itemize}
 \item W/S: pitch down/up
