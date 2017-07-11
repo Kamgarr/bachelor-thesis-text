@@ -1,11 +1,13 @@
 \chapter{Implementation Design}
-In this chapter, we will introduce the implementation of our demo game. Explain the basic principles and algorithms behind it. We will try to explain the algorithms and procedures to the maximum extent while avoiding detailing used technology.
+In this chapter, we will introduce the implementation of our demo game and explain the basic principles and algorithms behind it. We will try to explain the algorithms and procedures to the maximum extent while avoiding detailing used technology.
 
-After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement a slightly different approach. We will borrow already tested techniques and put them together in a different way.
+After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement a slightly different approach. Our implementation will borrow already tested techniques from multiple approaches.
 
-\section{Proposed approach}
 Our approach is mostly similar to \emph{Geomod} (described in \cref{sec:common}) and \emph{Real Time Dynamic Fracture
-with Volumetric Approximate Convex Decompositions}(RTDF) (described in \cref{sec:RTDF}) with a key differences. Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was our choice because it has easily randomizable shape and provides aesthetically good looking results, but the shape is in no way critical to the rest of algorithm.
+with Volumetric Approximate Convex Decompositions}(RTDF) (described in \cref{sec:RTDF}) with a key differences. 
+
+\section{Main algorithm}
+Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was our choice of shape because it has easily randomizable shape and provides aesthetically good looking results. The shape is in no way critical to the rest of algorithm and can be changed for any closed mesh.
 
 Similarly to the RTDF approach, the cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object. \todo{odkaz na merania} This makes the method suitable for use in computer games and real-time simulations.
 
@@ -16,15 +18,15 @@ Similarly to the RTDF approach, the cost of fracturing in our implementation is 
         \label{fig:subtraction}
 \end{figure}
 
-Randomization of the size and shape of a Voronoi cell makes the game look more realistic because it guarantees different result after every collision. The generation of a Voronoi cell takes place in a closed domain with its centre at the point of collision. In the domain, in addition to the centre point, random points are generated. The Voronoi cell is the cell of the centre point cut by the boundaries of the domain if necessary.
+Randomization of the size and shape of a Voronoi cell makes the game look more realistic because it guarantees different result after every collision. The generation of a Voronoi cell takes place in a closed domain with its centre at the point of collision. In the domain, in addition to the centre point, random points need to be generated. The used Voronoi cell is the cell of the centre point cut by the boundaries of the domain if necessary.
 
-We also considered implementation based on \emph{A fast method for simulating destruction and the generated dust and debris} (see \cref{sec:edem}). Using the same technology as for our demo application, we set up a cube divided into 439 tetrahedrons. After introducing constraints to hold the elements together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour (contractions and retractions, object blowing up). Performance issues and problems with keeping elements in a stable state concludes that this approach is not suitable for our work.
+We also considered implementation based on \emph{A fast method for simulating destruction and the generated dust and debris} (see \cref{sec:edem}). To test this approach, we set up a cube divided into 439 tetrahedrons. After introducing constraints to hold the tetrahedrons together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour (contractions and retractions, object blowing up). Performance issues and problems with keeping elements in a stable state concludes that this approach is not suitable for our work.
 
 
 
 
 \section{Program Structure}
-Disregarding the initialization the program runs in following steps:
+Disregarding the initialization, the program runs in following steps:
 \begin{enumerate}
 \item Perform a step in physics simulation.
 \item Handle collisions and perform destruction, see \cref{sec:collisions}.
@@ -38,22 +40,18 @@ Disregarding the initialization the program runs in following steps:
         \caption{Diagram is showing multiple threads handling collision event. }
         \label{fig:threads}
 \end{figure}
-To make our application faster, we can execute the most costly tasks asynchronously in separate threads. Those tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes (\cref{sec:subtraction}) and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate only with the main thread, and all communication is done in producer-consumer model.
+To make our application faster, we can execute the most costly tasks asynchronously in separate threads. Those tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes (\cref{sec:subtraction}) and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model.
 
 
 \section{Collision handling}
 \label{sec:collisions}
-What we get from physics engine after the collision is a reference to two rigid bodies participating in the collision, point of collision and vector of force. For simplification, we will consider only one object, the point of impact and the force.
+After the collision, we get a reference to two rigid bodies participating in the collision, point of collision and vector of force from the physics engine. For simplification, we will consider only one object, the point of impact and the force.
 
 At first, we need to filter out unwanted collisions (collisions that should not damage the object). Those collisions can be results of an object placed on ground or collisions with not enough force to damage the object. 
 
-For every valid collision, we will generate Voronoi cell as described earlier, and put meshes of both objects into a task for mesh subtraction thread. After enqueuing all collisions, we check if there are any prepared subtraction results for further use. The result of one subtraction task is a set of meshes that represent new objects. For every mesh, we create a new object, but we do not have its convex decomposition for the physics engine to perform accurate collision detection. Because decomposition can take long, we will create simple temporary collision shape (\eg sphere) and a task for decomposition. Then we will proceed with simulation, not waiting for the result. Decomposition is done in a separate thread, and then the result is returned to the main thread where we in each loop check for decomposed shapes. With the shape ready in the main thread we replace the temporary shape for compound shape consisting of convex parts.
+For every valid collision, we will generate Voronoi cell as described earlier and put meshes of both objects into a task for mesh subtraction thread. After enqueuing all collisions, we can check if there are any prepared subtraction results for further use. The result of one subtraction task is a set of meshes that represent new objects. For every mesh, we create a new object, but we do not have its convex decomposition for the physics engine to perform accurate collision detection. Because decomposition can take long, we will create simple temporary collision shape (\eg sphere) and a task for decomposition. Then we will proceed with simulation, not waiting for the result. Decomposition is done in a separate thread, and the result is returned to the main thread where we check for decomposed shapes. With the shape ready in the main thread we replace the temporary shape for compound shape consisting of convex parts.
 
-This process guarantees that we do not wait for either subtraction or decomposition and therefore we can have stable fps in our game. Decomposition is temporarily replaced by a simpler shape which ensures consistent behaviour of new objects (meaning that we can put them into simulation and they do not fall through each other or otherwise not comply with laws of physics). Therefore we need to calculate the difference of meshes in a period of a few frames so it can not be seen that it is lagging behind collisions.
-
-
-\section{Mesh Subtraction}
-\label{sec:subtraction}
+This process guarantees that we do not wait for either subtraction or decomposition and therefore we can have stable fps in our game. Temporarily replacing a collision shape by a simpler alternative ensures consistent behaviour of new objects (we can put them into simulation, and they do not fall through each other or otherwise not comply with laws of physics). Therefore we need to calculate the difference of meshes in a period of a few frames so it can not be seen that it is lagging behind collisions.
 
 \section{Convex Decomposition}
 \label{sec:decomposition}
