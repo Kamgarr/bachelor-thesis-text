@@ -40,8 +40,14 @@ Disregarding the initialization, the program runs in following steps:
         \caption{Diagram is showing multiple threads handling collision event. }
         \label{fig:threads}
 \end{figure}
-To make our application faster, we can execute the most costly tasks asynchronously in separate threads. Those tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes (\cref{sec:subtraction}) and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model.
+To make our application faster, we can execute the most costly tasks asynchronously in separate threads. Those tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model. Figure \ref{fig:objectInThreads} shows the changes of the object and its collision shape across all threads.
 
+\begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{img/object-progress}
+        \caption{The figure shows a simplified overview of changing states of a single object across multiple threads in simultaneous time slots. The blue lines represent collision shape, black represent visual mesh and the red dot collision point. When the collision shape approximates the visual mesh only the collision shape is shown. We can see the process of splitting the mesh and recalculation of collision shapes from the point of collision until the convex decomposition is calculated for all parts.}
+        \label{fig:objectInThreads}
+\end{figure}
 
 \section{Collision handling}
 \label{sec:collisions}
