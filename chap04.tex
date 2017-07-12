@@ -20,15 +20,27 @@ Keys can be pressed simultaneously and also held down instead of multiple presse
 
 \subsection*{Input data}
 \label{sec:data}
+To allow the user to easily change the game world without the need of recompilation, the description of the whole setting is read from the text file. The mentioned file is located in {\tt media/world.cfg}. 
+\subsubsection*{{\tt world.cfg} format}
+As we will show, the format of the data is very simple and therefore we chose not to use XML or any other standardized format. The file is interpreted by lines. Each line represents one in game entity. First three lines have spacial meaning and the rest are regular destructible objects.
+Inside the line, we use semicolons as a separator between data units.
+First line describes the sky-box, it is formed of 6 images in given order: top, bottom, left, right, front, back; relative to the starting viewpoint. All the other lines use the same nine data items. Those are: object model, texture, position (3 coordinates), scale (3 numbers, one for every axes) and mass.
 
-\todo {input file format}
+\begin{figure}
+\centering
+\begin{Verbatim}[frame=single]
+top.jpg;bottom.jpg;left.jpg;right.jpg;front.jpg;back.jpg
+;grid.jpg;0;-15;0;1000;10;1000;0
+fighter.3ds;;0;20;0;0.5;0.5;0.5;1
+building.obj;;-20;-11;-30;2;2;2;500
+pyramid.obj;;50;-11;-100;5;10;5;800
+...
+\end{Verbatim}
+\caption{Example of world.cfg file}
+\end{figure}
+
 \todo {object formats}
-text file: media/world
-fist line: skyboxes: top bottom front back right left
-second line: ground
-third line: ship
-rest: objects\\
-format of line: model;texture;X;Y;Z;x;y;z;mass
+
 
 
 
