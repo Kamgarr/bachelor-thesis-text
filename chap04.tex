@@ -1,14 +1,14 @@
-\chapter*{Documentation}
-\addcontentsline{toc}{chapter}{Appendix - Documentation}
-\todo {text here}
-\section*{User Documentation}
-\todo {text here}
-
-\subsection*{User interface}
+\chapter{Documentation}
+%\addcontentsline{toc}{chapter}{Appendix - Documentation}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+This section will provide a guide to using our application and insights on the written code. Fist we will introduce the application to an end user. Then we will go into details about the structure of the code and used data.
+\section{User Documentation}
+This part of the documentation is focused on the end user, in this case, player. We introduce controls of the application and detail the possibility to adjust the game world.
+\subsection{User interface}
 Here, we provide the list of parameters and key bindings needed to control our application.
-\subsubsection*{Parameters}
-The application provides only one console parameter. It is {\tt -d} and it enables debug information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
-\subsubsection*{Keyboard input}
+\subsubsection{Parameters}
+The application provides only one console parameter. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
+\subsubsection{Keyboard input}
 Keys can be pressed simultaneously and also held down instead of multiple presses. The bindings are:
 \begin{itemize}
 \item W/S: pitch down/up
@@ -21,10 +21,10 @@ Keys can be pressed simultaneously and also held down instead of multiple presse
 \end{itemize}
 
 
-\subsection*{Input data}
+\subsection{Input data}
 \label{sec:data}
 To allow the user to easily change the game world without the need of recompilation the input text file describing the whole setting is provided. The mentioned file is located in {\tt media/world.cfg}. 
-\subsubsection*{{\tt world.cfg} format}
+\subsubsection{{\tt world.cfg} format}
 We will show that the structure of the data is straightforward and therefore we have chosen not to use XML or any other standardised format. The file is interpreted by lines. Each line represents one in-game entity. First three lines have special meaning, and the rest are destructible objects. Inside the line, we use semicolons as a separator between data items.
 
 The \emph{first line} describes the sky-box, it is formed of 6 images in given order: top, bottom, left, right, front, back; relative to the starting viewpoint. 
@@ -33,7 +33,7 @@ All other lines use same nine data items. Those are object model, texture, posit
 The second line describes the ground. Currently, the ground is generated as a solid cube with 1x1x1 size. Therefore model file is not needed. The third line is a description of our controlled vehicle. Beginning with this line, the texture file is an optional parameter and can be left blank. Bellow, we can see an example file.
 
 \begin{centering}
-\begin{Verbatim}[frame=single]
+\begin{Verbatim}[frame=single,numbers=left,xleftmargin=5mm]
 top.jpg;bottom.jpg;left.jpg;right.jpg;front.jpg;back.jpg
 ;grid.jpg;0;-15;0;1000;10;1000;0
 fighter.3ds;;0;20;0;0.5;0.5;0.5;1
@@ -48,12 +48,10 @@ The input formats are limited to the support of \emph{Irrlicht}. The detailed li
 
 
 
+\section{Implementation details}
+This section provides insights on the code from a programmers point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
-
-\section*{Implementation details}
-\todo {text here}
-
-\subsection*{Data representation}
+\subsection{Data representation}
 \todo {text here}
 \begin{description}
 \item [{\tt btRigidBody}]
@@ -64,8 +62,8 @@ The input formats are limited to the support of \emph{Irrlicht}. The detailed li
 \end{description}
 
 
-\subsection*{Modules}
-In this section, we describe the functionality of each program module. Third party software will not be described here. It can be found in \cref{chapt:technology}. Interactions between modules are described in \cref{fig:modules}. \emph{Irrlicht Engine} is not present in the diagram because we do not logically depend on using this engine. Every module is implemented in a file with the matching name as a class with the same name prefixed with letter M (Object Creator can be found in file ObjectCreator.cpp and is implemented as class {\tt gg::MObjectCreator}). Every component of this application is located in namespace {\tt gg};
+\subsection{Modules}
+In this section, we describe the functionality of each program module. Third party software will not be described here. It can be found in \cref{chapt:technology}. Interactions between modules are described in \cref{fig:modules}. \emph{Irrlicht Engine} is not present in the diagram because we do not logically depend on using this engine. Every module is implemented in a file with the matching name as a class with the same name prefixed with letter M (Object Creator can be found in file ObjectCreator.cpp and is implemented as class {\tt gg::MObjectCreator}). Every component of our part of this application is located in namespace {\tt gg};
 
 \begin{figure}[ht!]
         \centering
@@ -76,8 +74,7 @@ In this section, we describe the functionality of each program module. Third par
 
 \begin{description}
 \item[Game]
-The {\tt gg::MGame} class is the core of application. 
-\todo {text here}
+This module holds {\tt gg::MGame} class which is the core of the application. The communication with the physics engine,  the graphical engine and mesh manipulation parts of the software is managed from here.
 
 \item[Event Receiver]
 This class is an implementation of {\tt irr::IEventReceiver} from Irrlicht engine and it is used to read the user input.
@@ -93,7 +90,7 @@ There are three member functions allowing us to create {\tt gg::MObject}s  with 
 Two more kinds of objects can be created a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, it requires to have the {\tt CGAL::Nef\_polyhedron\_3} given in parameter. Indestructible objects do not require {\tt CGAL::Nef\_polyhedron\_3}  and therefore the shooting is not limited by their construction time.
 
 \item[Collision Resolver]
-\todo{All the magic happens here!}
+After every collision, Collision Resolver decides what to do with it, and in the case of destruction, takes care of the whole process. To process the collision, {\tt gg::MCollisionResolver} owns both Mesh subtraction and Convex Decomposition threads. The Voronoi cell generation is also done in this module. Collision resolver heavily relies upon Mesh Manipulators utility functions because many data conversions are happening here.
 
 \item[Mesh Manipulators]
 Mesh Manipulators provides set of public static functions. Because different libraries are used for physics simulation, rendering and geometric manipulation, those functions provide means for converting data between different formats.

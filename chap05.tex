@@ -1,9 +1,10 @@
-\chapter*{Installation guide}
-\addcontentsline{toc}{chapter}{Appendix - Installation guide}
+\chapter{Installation guide}
+%\addcontentsline{toc}{chapter}{Appendix - Installation guide}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 
 This section is a manual to install the dependencies of our application. It is also a guide to compiling our source code. The whole section will focus on the installation process on \emph{Ubuntu 17.04}. The application is in no way limited to this single operating system and its version. Our code is written in \emph{}{C++14} standard and platform independent. All used packages are available for multiple \emph{Linux} distributions \eg \emph{Debian, Fedora, Gentoo }  and they are also open-source and can be manually compiled and installed on most of the operating systems.
 
-\section*{Installing packages}
+\section{Installing packages}
 We provide versions of packages used to create and test our implementation. It is not guaranteed whether newer or older versions of packages are compatible.
 \begin{center}
 \begin{tabular}{ |l|l| }
@@ -20,20 +21,20 @@ HACD & preferably use a copy distributed with our application\\
 \end{tabular}
 \end{center}
 
-\section*{Compiling and running the application}
+\section{Compiling and running the application}
 Now we will provide the instructions to install our application. Fist we cover a simple installation using our prepared {\tt Makefile}s and then detailed instructions for manual compilation.
 
 We assume that all the right versions of the packages from the previous section are correctly installed. The HADC library is included with our code with its {\tt Makefile}.
 
-\subsubsection*{Using make}
+\subsubsection{Using make}
 First,  the HACD library needs to be compiled and then our application. The application consists of seven modules and can take a few minutes to compile. Consider using make -j$[N]$ to run parallel jobs.
 \begin{code}
-\~/bakalarka\$ make -C lib/hacd/
-\~/bakalarka\$ make
-\~/bakalarka\$ build/game
+\~/bachelor_thesis\$ make -C lib/hacd/
+\~/bachelor_thesis\$ make
+\~/bachelor_thesis\$ build/game
 \end{code}
 
-\subsubsection*{Manual compilation}
+\subsubsection{Manual compilation}
 Here we are going to exclusively focus on compiling our own code using a \emph{g++} compiler version 5 or higher, supporting {\tt c++14}. All of our {\tt cpp} and their respective header files can be found in {\tt /src} directory.
 Following flags are needed to compile individual modules into object files:
 \begin{code}
