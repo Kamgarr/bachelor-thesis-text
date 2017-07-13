@@ -22,6 +22,7 @@ Keys can be pressed simultaneously and also held down instead of multiple presse
 \section{Input data}
 \label{sec:data}
 To allow the user to easily change the game world without the need of recompilation the input text file describing the whole setting is provided. The mentioned file is located in {\tt media/world.cfg}. 
+
 \subsection*{{\tt world.cfg} format}
 We will show that the structure of the data is straightforward and therefore we have chosen not to use XML or any other standardised format. The file is interpreted by lines. Each line represents one in-game entity. First three lines have special meaning, and the rest are destructible objects. Inside the line, we use semicolons as a separator between data items.
 
@@ -42,7 +43,8 @@ pyramid.obj;;50;-11;-100;5;10;5;800
 \end{centering}
 The zero mass means that the object is static and does not move.
 
+\subsection*{Object models and textures}
 The input formats are limited to the support of \emph{Irrlicht}. The detailed list of supported object and texture formats can be found on \emph{Irrlicht} web page~\footnote{http://irrlicht.sourceforge.net/?page\_id=45\#supportedformats}
-
+\todo {something about manifolds and compatibility with nef_polyhedron}
 
 
