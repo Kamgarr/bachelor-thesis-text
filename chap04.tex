@@ -1,12 +1,64 @@
 \chapter{User guide}
-\todo{mozna tohle zarad az po skompileni, a mozna to smrskni do jednoho apendixu protoze to je oboji stejne mysleny ze si to clovek precte postupne.}
-%\addcontentsline{toc}{chapter}{Appendix - Documentation}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 This part of the documentation is focused on the end user, in this case, player. We introduce controls of the application and detail the possibility to adjust the game world.
-\section{User interface}
-Here, we provide the list of parameters and key bindings needed to control our application.
-\subsection*{Parameters}
-The application provides only one console parameter. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
+
+\section{Installation guide}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
+This section documents the process of compiling and running the application. We will focus on the installation process on \emph{Ubuntu 17.04}, but the code is written in as platform independent and should work on any platform where the library dependencies work.
+
+The packages with library dependencies are available for multiple \emph{Linux}
+distributions and can be manually compiled and installed on most other
+operating systems.
+
+\paragraph{Dependencies}
+Following packages are required to compile the application. We also provide versions of packages used to create and test our implementation.
+\begin{center}
+\begin{tabular}{ll}
+package & version \\
+\hline
+libbullet-dev & 2.83.7+dfsg-5 \\
+libirrlicht-dev & 1.8.4+dfsg1-1 \\
+libcgal-dev & 4.9-1build2 \\
+voro++-dev & 0.4.6+dfsg1-2 \\
+HACD & bundled with the application\footnote{hacd downloaded from https://sourceforge.net/projects/hacd}
+\end{tabular}
+\end{center}
+
+A C++ compiler capable of compiling the C++14 standard is also needed, we have used GCC version 6.3.0-2ubuntu1 with flags -std=c++14 -g -o2 -Wall -pedantic -frounding-math.
+
+\subsection*{Compiling the application}
+We assume that all the right versions of the packages from the previous section are correctly installed. This installation process is automated with the use of \emph{make}. The HADC library is included with our code with its own {\tt Makefile}.
+
+The bundled HACD library needs to be compiled first, then the main application is compiled. The compiling process may take a few minutes.
+\begin{code}
+~$ tar -xzf DestructionInGame.zip
+~$ cd DestructionInGame
+~/DestructionInGame$ make -C lib/hacd/
+~/DestructionInGame$ make
+\end{code}
+
+\section{Directory structure}
+Our application is distributed among multiple folder and files. Here we describe the directory structure and mention the files in them.
+\begin{description}
+\item[src/] is a folder with our source code, both header files and cpp files can be found here.
+\item[media/] directory contains 3D models, textures and \emph{world.cfg}  file (see ~\cref{sec:data}).
+\item[include/] folder contains third party header files that are needed for compilation. Only headers associated with HACD are currently in the folder.
+\item[lib/] contains the source codes of HACD library in sub-folder hacd/. It is also a target for compiling HACD.
+\item[build/] is a target directory for make. After compilation object files and executable file \emph{game} are located here. 
+\end{description}
+
+\section{Hardware requirements}
+Here is a short overview of the hardware we used.
+\begin{itemize}
+\item Intel Core i3 CPU 550 @ 3.20GHz $\times$ 4 
+\item 8GB DDR3 1600MHz RAM
+\item ATI Radeon HD 5770 GPU, 1200MHz, 1GB GDDR5
+\end{itemize}
+We recommend running the application on equal or better hardware then is the one we used to develop it. We require a CPU with at least 4 threads and 4GB of RAM.
+
+\section{Using the application}
+The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
 \subsection*{Keyboard input}
 Keys can be pressed simultaneously and also held down instead of multiple presses. The bindings are:
 \begin{itemize}
