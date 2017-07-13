@@ -52,20 +52,39 @@ The input formats are limited to the support of \emph{Irrlicht}. The detailed li
 This section provides insights on the code from a programmers point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
 \subsection{Data representation}
-\todo {text here}
+As a result of using multiple libraries for a multitude of tasks, we have to deal with a lot of different data representations of the same objects. 
+
+We will introduce the data structures that are used to represent one in-game object for multiple purposes. We can see how different data types are converted in~\cref{fig:conversions}.
 \begin{description}
-\item [{\tt btRigidBody}]
-\item [{\tt irr::scene::ISceneNode}]
-\item [{\tt irr::scene::IMesh}] -buffers
+\item [{\tt btRigidBody}] is a class \emph{Bullet physics} uses to hold an information about a rigid collision object. For us, most important part of the body is a collision shape.
+
+The collision shape can be of multiple types. Most notably a convex hull or a primitive geometric shape, a triangular mesh or a compound shape. We need the collision shape to be as close to a visual mesh as possible. Because calculating collision between triangular meshes is not implemented in the \emph{Bullet physics} and would be too costly. The compound shape is the only option.
+
+One more parameter of {\tt btRigidBody} to consider is mass. Bodies with mass set to zero (or negative value) are considered static objects and do not move. Bodies with mass react to gravity and other external forces, their centre of gravity is set to their respective origin of local coordinates. This poses a problem when the origin is not inside the object. The solution is to manually translate the mesh, vertex by vertex, to the origin.
+
+\item [{\tt irr::scene::ISceneNode}] is a representation of a graphical object in the \emph{Irrlicht engine}. It is an abstract class instantiated into multiple types of graphical objects, \eg lights, cameras, animations, particle systems. We are using {\tt irr::scene::IMeshSceneNode} for our objects. The mesh information in {\tt irr::scene::IMeshSceneNode} is stored in {\tt irr::scene::IMesh}. 
+
+\item [{\tt irr::scene::IMesh}] stores the mesh information in multiple mesh buffers. Each buffer has an array of vertices and an array of indices. Every index in the array of indices refers to one vertex. However, we found out that not every vertex is referred to, and therefore valid. Indices divided into consecutive non-intersecting triples form a triangular face of a mesh. 
+
+The fact that the mesh is split into multiple mesh buffers and the fact that every face in each mesh buffer must be complete needs to be addressed when converting the data. If we have two neighbouring faces and both are stored in different mesh buffer, their common edge is stored twice. When converting to {\tt CGAL::Nef\_polyhedron\_3}, the duplicity in edges bans us from copying the mesh face by face and requires filtering, because overlapping geometry is not allowed in {\tt CGAL::Nef\_polyhedron\_3}.
+
 \item [{\tt CGAL::Nef\_polyhedron\_3}]
-\item [{\tt gg::MObject}]
+
+\item [{\tt gg::MObject}] is our class designed to unite the data of one in-game object into one object in the code. It includes {\tt irr::scene::ISceneNode}, {\tt CGAL::Nef\_polyhedron\_3} and {\tt btRigidBody}. We also implemented mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, then deallocated and at the end {\tt gg::MObject} itself is destructed.
+
 \end{description}
 
+\begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{img/conversions}
+        \caption{Data conversion diagram. Input formats - yellow, required formats - green. Black lines show used conversions, red lines show required process after a change of the shape of an object. Rectangles signify the library used to make the conversion, if none a member function of {\tt gg::MMeshManipulators} is used.}
+        \label{fig:conversions}
+\end{figure}
 
 \subsection{Modules}
 In this section, we describe the functionality of each program module. Third party software will not be described here. It can be found in \cref{chapt:technology}. Interactions between modules are described in \cref{fig:modules}. \emph{Irrlicht Engine} is not present in the diagram because we do not logically depend on using this engine. Every module is implemented in a file with the matching name as a class with the same name prefixed with letter M (Object Creator can be found in file ObjectCreator.cpp and is implemented as class {\tt gg::MObjectCreator}). Every component of our part of this application is located in namespace {\tt gg};
 
-\begin{figure}[ht!]
+\begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/objectmodel}
         \caption{Software architecture shown on diagram of relationships of program modules. Third party software is highlighted in dashed rectangles.}
@@ -90,12 +109,8 @@ There are three member functions allowing us to create {\tt gg::MObject}s  with 
 Two more kinds of objects can be created a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, it requires to have the {\tt CGAL::Nef\_polyhedron\_3} given in parameter. Indestructible objects do not require {\tt CGAL::Nef\_polyhedron\_3}  and therefore the shooting is not limited by their construction time.
 
 \item[Collision Resolver]
-After every collision, Collision Resolver decides what to do with it, and in the case of destruction, takes care of the whole process. To process the collision, {\tt gg::MCollisionResolver} owns both Mesh subtraction and Convex Decomposition threads. The Voronoi cell generation is also done in this module. Collision resolver heavily relies upon Mesh Manipulators utility functions because many data conversions are happening here.
+After every collision, Collision Resolver decides what to do with it, and in the case of destruction, takes care of the whole process. To process the collision, {\tt gg::MCollisionResolver} owns both Mesh subtraction and Convex Decomposition threads. The Voronoi cell generation is also done in this module. Collision resolver heavily relies upon Mesh Manipulators utility functions because many data conversions are happening in here.
 
 \item[Mesh Manipulators]
 Mesh Manipulators provides set of public static functions. Because different libraries are used for physics simulation, rendering and geometric manipulation, those functions provide means for converting data between different formats.
 \end{description}
-
-
-
-
