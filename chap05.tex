@@ -2,6 +2,22 @@
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 This section provides insights on the code from a programmer's point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
+\section{Design and libraries}
+Logically, the program consist of four components, they are Physics, Graphics, Mesh Manipulation and they are linked together by Controllers, see~\cref{fig:architecture}. In the following list we explain the purpose and summarise used technology in each of them.
+\begin{description}
+\item[Physics] provides us with simulation of our objects and collision detection. We use \emph{Bullet physics} to implement this component. 
+\item[Graphics] is used for rendering the current state of the physics world. This module provides the output of our application to the user by the means of \emph{Irrlicht engine}.
+\item[Controllers] ask the Physics to step the simulation and provided collision data and give the information about the current state of the world to the Graphics. The Controllers also read the user input which is done by parts of \emph{Irrlicht engine}. Mesh Manipulation component is called to create new objects and react to the collision provided by the Physics.
+\item[Mesh Manipulation] provide tools for creating objects, creating Voronoi cell (done by \emph{Voro++}, converting data and handling the collisions. To be able to do the mentioned tasks, Mesh Manipulation works closely with \emph{CGAL} library and also use \emph{HACD} library for convex decomposition.
+\end{description}
+
+\begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/architecture}
+        \caption{}
+        \label{fig:architecture}
+\end{figure}
+
 \section{Data representation}
 As a result of using multiple libraries for a multitude of tasks, we have to deal with a lot of different data representations of the same objects. 
 
@@ -15,9 +31,9 @@ We will introduce the data structures that are used to represent one in-game obj
 \end{figure}
 
 \subsection*{\tt btRigidBody}
-\emph{Bullet physics} uses this class to hold information about a rigid collision object. For us, most important part of the body is a collision shape. \todo{je nekde napsany ze (a jak a proc) pouzivas bullet (a irrlicht)?}
+\emph{Bullet physics} uses this class to hold information about a rigid collision object. For us, most important part of the body is a collision shape.
 
-The collision shape can be of multiple types, most notably a convex hull or a primitive geometric shape, a triangular mesh or a compound shape. We need the collision shape to be as close to a visual mesh as possible. Because calculating collision between triangular meshes is not implemented in the \emph{Bullet physics} and would be too costly\todo{even if implemented}, we choose the representation by compound shape..
+The collision shape can be of multiple types, most notably a convex hull or a primitive geometric shape, a triangular mesh or a compound shape. We need the collision shape to be as close to a visual mesh as possible. Because calculating collision between triangular meshes is not implemented in the \emph{Bullet physics} and would be too costly even if implemented, we choose the representation by compound shape.
 
 One more parameter of {\tt btRigidBody} to consider is the object mass. Bodies with mass set to zero (or negative value) are considered static objects and do not move. Bodies with positive mass react to gravity and other external forces, their centre of gravity is set to their respective origin of local coordinates. This poses a problem when the origin is not inside the object. Our solution is to manually translate the mesh to the origin. \todo{ref link do kodu kde to delas}
 
@@ -27,14 +43,11 @@ Graphical object in the \emph{Irrlicht engine} is represented by this class. It 
 \subsection*{\tt irr::scene::IMesh} 
 This class stores the mesh information in multiple mesh buffers. Each buffer has an array of vertices and an array of indices. Every index in the array of indices refers to one vertex. However, we found out that not every vertex is referred to, and therefore valid. Indices divided into consecutive non-intersecting triples form a triangular face of a mesh. 
 
-The fact that the mesh is split into multiple mesh buffers and that every face in each mesh buffer must be complete needs to be addressed when converting the data \todo{converting from what?}. If two neighbouring faces are both stored in a different mesh buffer, their common edge is \todo{must be?} stored twice. When converting to {\tt CGAL::Nef\_polyhedron\_3}, the duplicity in edges bans us from copying the mesh face by face and requires filtering, because overlapping geometry is not allowed in {\tt CGAL::Nef\_polyhedron\_3}. \todo{tuhle vetu je potreba rozepsat: 1. je to prima kolize s pozadavkama nef polyhedronama z CGAL, 2. overlapping geometry tam totiz pusobi potize, 3. co to znamena (nemuzeme to zkopirovat fejs2fejs 4. jak to resime (co presne se vyfiltruje)}
-
 \subsection*{\tt CGAL::Nef\_polyhedron\_3}
 \todo {text here}
 
 \subsection*{\tt gg::MObject} 
 {\tt gg::MObject} is a class designed to unite all data about one in-game object into one structure. It includes {\tt irr::scene::ISceneNode}, {\tt CGAL::Nef\_polyhedron\_3} and {\tt btRigidBody}. It implements the mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, and then safely deallocated before {\tt gg::MObject} itself is destroyed.
-
 
 
 \section{Modules}
@@ -47,25 +60,22 @@ In this section, we describe the functionality of each program module. Third par
         \label{fig:modules}
 \end{figure}
 
-\subsection*{Game}
-\todo{Chyba --- pouzivat nadpis jako soucast textu (na kterou se navic odkazujes) nejde, stylisticky text musi bejt kompletni i bez nadpisu. Nadpisy ber jen jako labely na ktery lidi delaj lidsky GOTO. Udelej z toho seznam, ty subsectiony jsou stejne moc kratky. Pokud k nejaky chces napsat vic (object creator) tak nejdriv hod seznam a pak dej subsection ktera popisuje fungovani ObjectCreatoru.}
-This module holds {\tt gg::MGame} class which is the core of the application. The communication with the physics engine,  the graphical engine and mesh manipulation parts of the software is managed from here.
+\begin{description}
 
-\subsection*{Event Receiver}
-This class\todo{class nebo module?} is an implementation of {\tt irr::IEventReceiver} from Irrlicht engine and it is used to read the user input.
+\item[Game] module holds {\tt gg::MGame} class which is the core of the application. The communication with the physics engine,  the graphical engine and mesh manipulation parts of the software is managed from here.
 
-\subsection*{Loader}
-The Loader is only used for initializing the application. It parses the data that describe the game environment from the given file\todo{all data in 1 file?}, constructs the objects using {\tt gg::MObjectCreator}, and returns the set of constructed objects.
+\item[Event Receiver] module implements the instance of {\tt irr::IEventReceiver} from Irrlicht engine and it is used to read the user input.
 
-\subsection*{Object Creator}
-We use this class as a Builder pattern in order to initialize the data contained inside {\tt gg::MObject}, namely {\tt btRigidBody, CGAL::Nef\_polyhedron\_3} and {\tt irr::scene::ISceneNode}.
+\item[Loader] is only used for initializing the application. It parses the data that describe the game environment from the \emph{medial/world.cfg} file, constructs the objects using {\tt gg::MObjectCreator}, and returns the set of constructed objects.
 
-There are three member functions that allow us to create {\tt gg::MObject}s  with different behaviours from the same set of input parameters (see \cref{sec:data}). We can create a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh. Those functions are exclusively used at initialization, as they generate a new set \todo{tohle neni duvod proc by mely bejt pouzivany jen pri initu.} of member variables, and their parameters come in a text form.
+\item[Object Creator] uses Builder pattern in order to initialize the data contained inside {\tt gg::MObject}, namely {\tt btRigidBody, CGAL::Nef\_polyhedron\_3} and {\tt irr::scene::ISceneNode}.
 
-Two more kinds of objects can be created a projectile that \todo{asi chybi dvojtecka?} is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, it requires to have the {\tt CGAL::Nef\_polyhedron\_3} given in parameter\todo{hra je hrana \& a vyroba NEF trva dlouho $\implies$ NEF je potreba na vyrobu temporary objectu? nedava moc smysl.}. Indestructible objects do not require {\tt CGAL::Nef\_polyhedron\_3} and therefore the shooting is not limited by their construction time\todo{tohle asi ani nezminuj, 1. strela neni indestructible (jen ji tu destrukcu nesimulujes) 2. jeste aby vyrobeni obycejny nesimulovany strely neco trvalo! :D}.
+There are three member functions that allow us to create {\tt gg::MObject}s  with different behaviours from the same set of input parameters (see \cref{sec:data}). We can create a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh.  Those functions are meant to be used exclusively at initialization, as they generate a new {\tt CGAL::Nef\_polyhedron\_3} and convex decomposition from their mesh.
 
-\subsection*{Collision Resolver}
-After every collision, Collision Resolver decides what to do with it, and in the case of destruction, takes care of the whole process\todo{tohle je hodne utrzkovity...}. To process the collision, {\tt gg::MCollisionResolver} owns both Mesh subtraction and Convex Decomposition threads\todo{Tu kolizi vyresi jen tim ze vlastni obe ty vlakna?}. The Voronoi cell generation is also done in this module\todo{Asi by bylo lepsi celej ten proces rozepsat, nebo se odkazat na nejakej kompletni popis jinde}. Collision resolver heavily relies upon Mesh Manipulators utility functions because many data conversions are happening in here.\todo{Tuhle vetu obratit: Conversions between data formats that are required during the process are externalized to Mesh Manipulators module to maintain the code readable?}
+Two more kinds of objects can be created: a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, we will construct it beforehand and then provide it to the Object Creator.
 
-\subsection*{Mesh Manipulators}
-Mesh Manipulators provides set of public static \todo{je k necemu dobry ze jsou public static? jestli ne tak bych to uplne vynechal a napsal jen ze to je hlavne ke konverzi tech reprezentaci.} functions. Because different libraries are used for physics simulation, rendering and geometric manipulation, those functions provide means for converting data between different formats.
+\item[Collision Resolver] implements the Collision handling process, described in~\cref{sec:collisions}. Conversions between data formats that are required during the process are externalized to Mesh Manipulators module to maintain the code readable.
+
+\item[Mesh Manipulators] provides set of utility functions. Because different libraries are used for physics simulation, rendering and geometric manipulation, those functions provide means for converting data between different formats.
+\end{description}
+
