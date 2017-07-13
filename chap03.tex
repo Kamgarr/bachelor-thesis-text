@@ -1,6 +1,7 @@
 \chapter{Implementation Design}
 \label{chaptImplementation}
 In this chapter, we will introduce the implementation of our demo game and explain the basic principles and algorithms behind it. We will try to explain the algorithms and procedures to the maximum extent while avoiding detailing used technology.
+\todo {mention measurements}
 
 After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement a slightly different approach. Our implementation will borrow already tested techniques from multiple approaches.
 
@@ -68,6 +69,6 @@ In the setting of a computer game, the speed of calculation is much more relevan
 
 We have chosen to use \emph{Hierarchical Approximate Convex Decomposition} algorithm (see \cref{sec:decompositionLib}). The application designed in such way that after every mesh subtraction convex decomposition needs to be applied to the rest of the original mesh and every new part.
 
-
-
+\section{Measurements???}
+\todo{nieco rozumne namerat a napisat o tom}
 
