@@ -1,76 +1,72 @@
-\chapter{Installation guide}
-%\addcontentsline{toc}{chapter}{Appendix - Installation guide}
+\chapter{Implementation details}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+This section provides insights on the code from a programmers point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
-This section is a manual to install the dependencies of our application. It is also a guide to compiling our source code. The whole section will focus on the installation process on \emph{Ubuntu 17.04}. The application is in no way limited to this single operating system and its version. Our code is written in \emph{}{C++14} standard and platform independent. All used packages are available for multiple \emph{Linux} distributions \eg \emph{Debian, Fedora, Gentoo }  and they are also open-source and can be manually compiled and installed on most of the operating systems.
+\section{Data representation}
+As a result of using multiple libraries for a multitude of tasks, we have to deal with a lot of different data representations of the same objects. 
 
-\section{Installing packages}
-We provide versions of packages used to create and test our implementation. It is not guaranteed whether newer or older versions of packages are compatible.
-\begin{center}
-\begin{tabular}{ |l|l| }
-\hline
-package & version \\
-\hline
-libbullet-dev & 2.83.7+dfsg-5 \\
-libirrlicht-dev & 1.8.4+dfsg1-1 \\
-libcgal-dev & 4.9-1build2 \\
-voro++-dev & 0.4.6+dfsg1-2 \\
-HACD & preferably use a copy distributed with our application\\
-&downloaded from: https://sourceforge.net/projects/hacd\\
-\hline
-\end{tabular}
-\end{center}
+We will introduce the data structures that are used to represent one in-game object for multiple purposes. We can see how different data types are converted in~\cref{fig:conversions}.
 
-\section{Compiling and running the application}
-Now we will provide the instructions to install our application. Fist we cover a simple installation using our prepared {\tt Makefile}s and then detailed instructions for manual compilation.
+\begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{img/conversions}
+        \caption{Data conversion diagram. Input formats - yellow, required formats - green. Black lines show used conversions, red lines show required process after a change of the shape of an object. Rectangles signify the library used to make the conversion, if none a member function of {\tt gg::MMeshManipulators} is used.}
+        \label{fig:conversions}
+\end{figure}
 
-We assume that all the right versions of the packages from the previous section are correctly installed. The HADC library is included with our code with its {\tt Makefile}.
+\subsection*{\tt btRigidBody}
+\emph{Bullet physics} uses this class to hold information about a rigid collision object. For us, most important part of the body is a collision shape.
 
-\subsubsection{Using make}
-First,  the HACD library needs to be compiled and then our application. The application consists of seven modules and can take a few minutes to compile. Consider using make -j$[N]$ to run parallel jobs.
-\begin{code}
-\~/bachelor_thesis\$ make -C lib/hacd/
-\~/bachelor_thesis\$ make
-\~/bachelor_thesis\$ build/game
-\end{code}
+The collision shape can be of multiple types. Most notably a convex hull or a primitive geometric shape, a triangular mesh or a compound shape. We need the collision shape to be as close to a visual mesh as possible. Because calculating collision between triangular meshes is not implemented in the \emph{Bullet physics} and would be too costly. The compound shape is the only option.
 
-\subsubsection{Manual compilation}
-Here we are going to exclusively focus on compiling our own code using a \emph{g++} compiler version 5 or higher, supporting {\tt c++14}. All of our {\tt cpp} and their respective header files can be found in {\tt /src} directory.
-Following flags are needed to compile individual modules into object files:
-\begin{code}
--std=c++14
--frounding-math
--isystem /usr/include/bullet 
--isystem /usr/include/irrlicht 
--isystem /usr/include/bullet/LinearMath 
--isystem include (HACD header files)
-\end{code}
+One more parameter of {\tt btRigidBody} to consider is mass. Bodies with mass set to zero (or negative value) are considered static objects and do not move. Bodies with mass react to gravity and other external forces, their centre of gravity is set to their respective origin of local coordinates. This poses a problem when the origin is not inside the object. The solution is to manually translate the mesh, vertex by vertex, to the origin.
 
-Linking object files to make a final application requires adding the following libraries: (HADC library also need to be linked to our application, link it as a static or dynamic library depending on installation.)
-\begin{code}
--lIrrlicht 
--lBulletSoftBody 
--lBulletDynamics 
--lBulletCollision    
--lLinearMath 
--lvoro++ 
--lgmp 
--lCGAL 
--lCGAL_Core 
--lmpfr 
--lpthread
-HACD.a or -lHACD (second option may require -L/path/to/library)
-\end{code}
+\subsection*{\tt irr::scene::ISceneNode} 
+Graphical object in the \emph{Irrlicht engine} is represented by this class. It is an abstract class instantiated into multiple types of graphical objects, \eg lights, cameras, animations, particle systems. We are using {\tt irr::scene::IMeshSceneNode} for our objects. The mesh information in {\tt irr::scene::IMeshSceneNode} is stored in {\tt irr::scene::IMesh}. 
+
+\subsection*{\tt irr::scene::IMesh} 
+This class stores the mesh information in multiple mesh buffers. Each buffer has an array of vertices and an array of indices. Every index in the array of indices refers to one vertex. However, we found out that not every vertex is referred to, and therefore valid. Indices divided into consecutive non-intersecting triples form a triangular face of a mesh. 
+
+The fact that the mesh is split into multiple mesh buffers and the fact that every face in each mesh buffer must be complete needs to be addressed when converting the data. If we have two neighbouring faces and both are stored in different mesh buffer, their common edge is stored twice. When converting to {\tt CGAL::Nef\_polyhedron\_3}, the duplicity in edges bans us from copying the mesh face by face and requires filtering, because overlapping geometry is not allowed in {\tt CGAL::Nef\_polyhedron\_3}.
+
+\subsection*{\tt CGAL::Nef\_polyhedron\_3}
+\todo {text here}
+
+\subsection*{\tt gg::MObject} 
+{\tt gg::MObject} is our class designed to unite all data about one in-game object into one object in the code. It includes {\tt irr::scene::ISceneNode}, {\tt CGAL::Nef\_polyhedron\_3} and {\tt btRigidBody}. We also implemented mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, then deallocated and at the end {\tt gg::MObject} itself is destructed.
 
 
 
 
+\section{Modules}
+In this section, we describe the functionality of each program module. Third party software will not be described here. It can be found in \cref{chapt:technology}. Interactions between modules are described in \cref{fig:modules}. \emph{Irrlicht Engine} is not present in the diagram because we do not logically depend on using this engine. Every module is implemented in a file with the matching name as a class with the same name prefixed with letter M (Object Creator can be found in file ObjectCreator.cpp and is implemented as class {\tt gg::MObjectCreator}). Every component of our part of this application is located in namespace {\tt gg};
+
+\begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{img/objectmodel}
+        \caption{Software architecture shown on diagram of relationships of program modules. Third party software is highlighted in dashed rectangles.}
+        \label{fig:modules}
+\end{figure}
 
 
+\subsection*{Game}
+This module holds {\tt gg::MGame} class which is the core of the application. The communication with the physics engine,  the graphical engine and mesh manipulation parts of the software is managed from here.
 
+\subsection*{Event Receiver}
+This class is an implementation of {\tt irr::IEventReceiver} from Irrlicht engine and it is used to read the user input.
 
+\subsection*{Loader}
+The Loader is a class only used for initializing the application. It parses the data describing the game environment from the given file, constructs the objects with the help of {\tt gg::MObjectCreator} and returns the set of constructed objects.
 
+\subsection*{Object Creator}
+We use this class as a Builder pattern in order to initialize the data contained inside {\tt gg::MObject}, namely {\tt btRigidBody, CGAL::Nef\_polyhedron\_3} and {\tt irr::scene::ISceneNode}.
 
+There are three member functions allowing us to create {\tt gg::MObject}s  with different behaviour from the same set of input parameters (see \cref{sec:data}). We can achieve a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh. Those functions are exclusively used at initialization as they generate a new set of member variables, and their parameters come in a text form.
 
+Two more kinds of objects can be created a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, it requires to have the {\tt CGAL::Nef\_polyhedron\_3} given in parameter. Indestructible objects do not require {\tt CGAL::Nef\_polyhedron\_3}  and therefore the shooting is not limited by their construction time.
 
+\subsection*{Collision Resolver}
+After every collision, Collision Resolver decides what to do with it, and in the case of destruction, takes care of the whole process. To process the collision, {\tt gg::MCollisionResolver} owns both Mesh subtraction and Convex Decomposition threads. The Voronoi cell generation is also done in this module. Collision resolver heavily relies upon Mesh Manipulators utility functions because many data conversions are happening in here.
 
+\subsection*{Mesh Manipulators}
+Mesh Manipulators provides set of public static functions. Because different libraries are used for physics simulation, rendering and geometric manipulation, those functions provide means for converting data between different formats.
