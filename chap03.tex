@@ -3,26 +3,27 @@
 In this chapter, we will introduce the implementation of our demo game and explain the basic principles and algorithms behind it.
 \todo {mention measurements}
 
-After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement and test a combination of reviewed techniques:  Our approach is similar to \emph{Geomod} (described in \cref{sec:common}) and \emph{Real Time Dynamic Fracture with Volumetric Approximate Convex Decompositions}(RTDF) (described in \cref{sec:RTDF}), but with several key differences described below.
+After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement and test a combination of reviewed techniques.  
+
+At first, we considered implementation based on \emph{A fast method for simulating destruction and the generated dust and debris} (see \cref{sec:edem}). However, after degrading performance issues~\cref{sec:testing} we decided to abandon this approach.
+
+Our approach is similar to \emph{Geomod} (described in \cref{sec:common}) and \emph{Real Time Dynamic Fracture with Volumetric Approximate Convex Decompositions}(RTDF) (described in \cref{sec:RTDF}), but with several key differences described below. 
 
 \section{Main algorithm}
-\todo{tohle zacina trochu odprostred --- jaky sou struktury v tom algoritmu? jak reprezentujes objekty? kde se tam objevi ta kolize?}
-Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris, the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was chosen because it has easily randomizable shape and provides aesthetically good results. This choice is in no way critical to the rest of algorithm, any other closed mesh can be used as well.
+As mentioned, our algorithm will use boolean operations similarly to \emph{Geomod}, but applied to rigid body objects. The shape of removed object will be determined by Voronoi cell that will be generated dynamically for every collision. The collision information is received from the physics engine.
 
-Similarly to the RTDF approach, the cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object. \todo{odkaz na merania} This makes the method suitable for use in computer games and real-time simulations. \todo{to je trosku bold claim --- urcite to nebude fungovat pro vsechny hry. Je dobry se presne vymezit --- velikost objektu do cca X polygonu, ...}
+Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris, the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was chosen because it has easily randomizable shape and provides aesthetically good results. This choice is in no way critical to the rest of algorithm, and any other closed mesh can be used as well.
+
+Similarly to the RTDF approach, the cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object. \todo{odkaz na merania} This makes the method suitable for use in computer games with a large number of simple objects with low polygon meshes.
 
 \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/subtractionProcess}
-        \caption{object with point of impact (left), generated Voronoi cell (centre), object divided into six new smaller objects after subtraction of Voronoi cell (right)}
+        \caption{object with point of collision (left), generated Voronoi cells (centre), object divided into five new smaller objects after subtraction of the Voronoi cell belonging to the point of collision (right)}
         \label{fig:subtraction}
 \end{figure}
 
-Randomization of the size and shape of a Voronoi cell guarantees different result after every collision. The generation of a Voronoi cell takes place in a closed domain with its centre at the point of collision. In the domain, in addition to the centre point, random points need to be generated. The used Voronoi cell is the cell of the centre point cut by the boundaries of the domain if necessary.
-\todo{Tadyto vysvetleni neni OK, predpoklada ze clovek uz vi jak ten tvuj algoritmus funguje a tady ho jen tak ujistujes ze to dobre chape. }
-
-We also considered implementation based on \emph{A fast method for simulating destruction and the generated dust and debris} (see \cref{sec:edem}). To test this approach, we set up a cube divided into 439 tetrahedrons.\todo{Tohle je mereni, do designu to definitivne nepatri. Muzes sem napsat ze si svou metodu vybral experimentalne ze dvou protoze ta druha mela degraded performance, a odkazat se na mereni.} After introducing constraints to hold the tetrahedrons together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour, such as contractions, retractions and self-induced explosions of the object. Performance issues and problems with keeping elements in a stable state finally concluded that the approach was not suitable for our implementation.
-
+To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points for generation of their Voronoi cells, and we also add the point of collision. Now we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object in the collision. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every collision.
 
 \section{Program Structure}
 The main program loop runs in following steps:
@@ -46,7 +47,7 @@ To make the simulation faster, we execute the most costly tasks asynchronously i
 \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/object-progress}
-        \caption{Simplified overview of changing states of a single object across multiple threads in simultaneous time slots. We can see the process of splitting the mesh and calculation of collision shapes from the time of the collision until the convex decomposition is calculated for all parts. Blue lines represent the collision shape, black lines represents the visual mesh (not shown if it is the same as the collision shape), red dot represents the collision point.}
+        \caption{Simplified overview of changing states of a single object across multiple threads in simultaneous time slots. We can see the process of splitting the mesh and calculation of collision shapes from the time of the collision until the convex decomposition is calculated for all parts. Blue lines represent the collision shape. Black lines represent the visual mesh (not shown if it is the same as the collision shape), red dot represents the collision point.}
         \label{fig:objectInThreads}
 \end{figure}
 
@@ -63,13 +64,14 @@ This process guarantees that we do not wait for either subtraction or decomposit
 
 \section{Convex Decomposition}
 \label{sec:decomposition}
-Regardless of used physics engine \todo{nekde us je zminenej physics engine?}, our objects are represented as triangular meshes. It means \todo{it means that they are made from triangles. Navic i na triangle meshich jde delat presny kolize, akorat to je neprakticky pro rychly kontrolovani.} that to perform accurate mesh to mesh collisions, every object needs to have its collision shape in the form of compound shape consisting of convex bodies. While it is desirable to have a decomposition into a minimum number of pieces, this problem is known to be NP-hard \cite{convexDecomp}. \todo{jak to NP-H souvisi s kolizema? Obecne moc neni videt co se timhle odstavcem chtelo presne rict.}
+Regardless of used physics engine, our objects are represented as triangular meshes. Implementing mesh to mesh collisions is possible, but highly impractical. Even if checking every vertex of one mesh against all vertices of second mesh is sufficient, the complexity of algorithm would be dependent on the number of vertices. We can imagine a cube made out of eight vertices and the second cube with the same size but subdivided surface into thousands of vertices. Mesh to mesh collision detection algorithm would perform differently on the seamlessly identical objects. This behaviour is not desired in computer games where the surface of the objects is usually subdivided into thousands of triangles to created small details on a mesh.
 
-In the setting of a computer game, the speed of calculation is much more relevant than the precision --- small differences between collision shapes and visual meshes are not considered to be a problem. To be able to perform collisions\todo{collision calculations? fragmentations? or just detections?} at real-time, a number of approximate convex decomposition algorithms that sacrifice some precision to gain performance have been proposed. \todo{citation needed}
+To be able to perform fast mesh to mesh collisions we must find a way to describe the object as a set of geometrically simpler shapes. The convex shapes are the easiest for detecting mutual intersections, but encapsulating whole mesh into a convex hull would produce imprecise collisions. This problem is solved by performing a convex decomposition. Convex decomposition process splits the input object into a set of convex shapes, forming a compound shape. Now the complexity of the collision algorithm depends on the number of convex parts. 
 
-We have chosen to use \emph{Hierarchical Approximate Convex Decomposition} algorithm (see \cref{sec:decompositionLib}). The application is designed in such way that after every mesh subtraction convex decomposition is applied to the rest of the original mesh and each new object.
+While the exact convex decomposition can still produce a significant number of convex parts~\cite{convexDecomp}, in the setting of a computer game, the speed of calculation is much more relevant than the precision --- small differences between collision shapes and visual meshes are not considered to be a problem. To be able to perform collision detection at real-time, many approximate convex decomposition algorithms that sacrifice some precision to gain performance have been proposed. One of those algorithms is \emph{Hierarchical Approximate Convex Decomposition} algorithm (see \cref{sec:decompositionLib}) which we decided to use.
 
-\section{Measurements???}
+\section{Measurements and experiments}
+\label{sec:testing}
 \todo{nieco rozumne namerat a napisat o tom}
 
 (Napady na mereni, muzes si do programu dodelat hooky ktery ti jen vysypou statistiku a timingy u tech operaci:
@@ -79,4 +81,6 @@ We have chosen to use \emph{Hierarchical Approximate Convex Decomposition} algor
 \item Kolik casu sezere vlakno co dela ten subtraction (zase v zavislosti na tom jak velkej objekt se resi)?
 \item Kolik casu sezere vlakno co dela tu dekompozici?
 \end{itemize})
+\subsection{Testing the concept of EDEM}
+To test EDEM (described in \cref{sec:edem}), we set up a cube divided into 439 tetrahedrons. After introducing constraints to hold the tetrahedrons together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour, such as contractions, retractions and self-induced explosions of the object. Performance issues and problems with keeping elements in a stable state finally concluded that the approach was not suitable for our implementation.
 
