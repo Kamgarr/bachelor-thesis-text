@@ -4,7 +4,7 @@ In this chapter we introduce libraries that can be beneficial for creating a des
 
 To build a game we will surely need a physics engine, a graphics engine, and to support our destructible environment a selection of geometric libraries. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
 
-We committed ourselves to writing our application in \emph{C++} language and using only free software. This commitment limits us in the  availability of certain software.
+We committed ourselves to writing our application in \emph{C++} language and using only free software. This commitment limits us in the  availability of certain software. 
 
 \section{Physics engine}
 Bullet Physics
@@ -16,10 +16,9 @@ Irrlicht Engine
 \todo {text here}
 
 \section{Geometric libraries}
-\todo {text here}
+Here we introduce a set of libraries focused on a decomposition or modification of 3D meshed objects. We categorize them by provided function.
 
 \subsection{Boolean operations}
-
 When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{http://www.cgal.org/} or shortly \textbf{CGAL}. CGAL provides a polyhedral surfaces that are closed for Boolean operations and it is possible to to convert data between meshes and polyhedrons. The choice to use CGAL creates restrictions on 3D meshes we can use (for more details on data structure see~\cref{app:implementation}).
 
 We considered using a \textbf{Cork Boolean Library}~\footnote{https://github.com/gilbo/cork\#cork-boolean-library} but we did not found it to be as robust as CGAL.
