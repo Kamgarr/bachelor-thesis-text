@@ -25,7 +25,7 @@ We also considered implementation based on \emph{A fast method for simulating de
 
 
 \section{Program Structure}
-Disregarding the initialization\todo{mozna rekni ze ji popises pozdejs a dej duvod proc to odkladas, neni moc dobry to zbytecne roztrhat.}, the program runs in following steps:
+The main program loop runs in following steps:
 \begin{enumerate}
 \item Perform a step in physics simulation.
 \item Handle collisions and perform destruction, see \cref{sec:collisions}.
@@ -39,7 +39,8 @@ Disregarding the initialization\todo{mozna rekni ze ji popises pozdejs a dej duv
         \caption{Diagram is showing multiple threads handling collision event. }
         \label{fig:threads}
 \end{figure}
-To make the simulation faster, we can \todo{We can execute...but did we? `Can' se idealne vyhni vsude kde neni uplne nutny, bud tam ty vlakna mas (a napis to tam rovnou), nebo nemas (a napis to bokem jako moznej dalsi improvement, ne do popisu svyho algoritmu)} execute the most costly tasks asynchronously in separate threads. These tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model. Figure \ref{fig:objectInThreads} shows the changes of the object and its collision shape across all threads.
+To make the simulation faster, we execute the most costly tasks asynchronously in separate threads. These tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model. Figure \ref{fig:objectInThreads} shows the changes of the object and its collision shape across all threads. Using more than one 
+
 \todo{Oponenta okamzite napadne, jestli by nebylo lepsi na to nahodit nejakej worker pattern a mit tech threadu potencialne nekonecno. Bylo by dobry bud potvrdit ze to mozny je, nebo rict proc si to neimplementoval.}
 
 \begin{figure}

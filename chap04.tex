@@ -30,7 +30,7 @@ A C++ compiler capable of compiling the C++14 standard is also needed, we have u
 \subsection*{Compiling the application}
 We assume that all the right versions of the packages from the previous section are correctly installed. This installation process is automated with the use of \emph{make}. The HADC library is included with our code with its own {\tt Makefile}.
 
-The bundled HACD library needs to be compiled first, then the main application is compiled. The compiling process may take a few minutes.
+The bundled HACD library needs to be compiled first, and then the main application is compiled. The compiling process may take a few minutes.
 \begin{code}
 ~$ tar -xzf DestructionInGame.zip
 ~$ cd DestructionInGame
@@ -55,7 +55,7 @@ Here is a short overview of the hardware we used.
 \item 8GB DDR3 1600MHz RAM
 \item ATI Radeon HD 5770 GPU, 1200MHz, 1GB GDDR5
 \end{itemize}
-We recommend running the application on equal or better hardware then is the one we used to develop it. We require a CPU with at least 4 threads and 4GB of RAM.
+We recommend running the application on equal or better hardware then is the one we used to develop it. We require a CPU with at least four threads and 4GB of RAM.
 
 \section{Using the application}
 The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
@@ -97,7 +97,6 @@ pyramid.obj;;50;-11;-100;5;10;5;800
 The zero mass means that the object is static and does not move.
 
 \subsection*{Object models and textures}
-The input formats are limited to the support of \emph{Irrlicht}. The detailed list of supported object and texture formats can be found on \emph{Irrlicht} web page~\footnote{http://irrlicht.sourceforge.net/?page\_id=45\#supportedformats}
-\todo {something about manifolds and compatibility with nef\_polyhedron}
+The input formats are limited to the support of \emph{Irrlicht}. The detailed list of supported object and texture formats can be found on \emph{Irrlicht} web page~\footnote{http://irrlicht.sourceforge.net/?page\_id=45\#supportedformats}. When using a new model file, the mesh needs to be checked for non-manifold geometry to ensure the compatibility with the {\tt CGAL::Nef\_polyhedron\_3}~(\cref{sec:nef}).
 
 
