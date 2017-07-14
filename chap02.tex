@@ -38,14 +38,19 @@ Because implementation requires only one Voronoi cell per collision, we chose to
 
 \subsection{Convex decomposition}
 \label{sec:decompositionLib}
-Convex decomposition is critical to fast and accurate collision detection on 3D meshes. 
+Convex decomposition is critical to fast and accurate collision detection on 3D meshes. We introduce two libraries with different approaches to the task.
 \begin{description}
 \item[CGAL] provides the means for decomposing the polyhedral shape (triangular mesh can be converted into polyhedron) into a set of convex polyhedrons. CGAL is aiming for an exact convex decomposition, which produces a large number of small pieces~\footnote{http://doc.cgal.org/latest/Convex\_decomposition\_3}.
-\item[Hierarchical Approximate Convex Decomposition] or HADC~\cite{HACD} is a library and algorithm providing a convex decomposition that approximates the original shape. 
 
-The approximation yields less pieces and is faster than exact calculations but the result is not exact. For the reasons that we are implementing a destructible environment in a computer game, we can allow for deviations in the shape of the objects from their respective visual representations. This deviations should be too small to be noticed in game. This makes us choose HACD over CGAL.
+\item[Hierarchical Approximate Convex Decomposition] or HADC~\cite{HACD} is a library and algorithm providing a convex decomposition that approximates the original shape. The approximation yields less pieces and is faster than exact calculations but the result is not exact. For the reasons that we are implementing a destructible environment in a computer game, we can allow for deviations in the shape of the objects from their respective visual representations. Those deviations should be too small to be noticed in game. This makes us choose HACD over CGAL.
 \end{description}
 
-
+We can see the difference in the result of those two approaches on~\cref{fig:bunny}. It is obvious that we do not want to use the exact decomposition in a computer game, but on the other hand for the simulations where the calculation time is not critical the approximations should not be used.
+\begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{img/bunny}
+        \caption{Difference between original mesh, exact convex decomposition and an approximate convex decomposition. Source: https://github.com/kmammou/v-hacd}
+        \label{fig:bunny}
+\end{figure}
 
 
