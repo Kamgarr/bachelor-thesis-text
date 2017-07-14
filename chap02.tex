@@ -1,8 +1,10 @@
 \chapter{Review of related software libraries}
 \label{chapt:technology}
-In this chapter we introduce libraries that can be beneficial for creating a destructible environment. We do not talk about all-in-one software development kits with their own approach to destructible environment already implemented. Instead our focus is on building a game with destructible environment from zero. 
+In this chapter we introduce libraries that can be beneficial for creating a destructible environment. We do not talk about all-in-one software development kits with their own approach to destructible environment already implemented. Instead our focus is on building a game with destructible environment from zero.  
 
 To build a game we will surely need a physics engine, a graphics engine, and to support our destructible environment a selection of geometric libraries. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
+
+We committed ourselves to writing our application in \emph{C++} language and using only free software. This commitment limits us in the  availability of certain software.
 
 \section{Physics engine}
 Bullet Physics
@@ -14,17 +16,24 @@ Irrlicht Engine
 \todo {text here}
 
 \section{Geometric libraries}
-CGAL
+The Computational Geometry Algorithms Library or shortly CGAL
 \todo {text here}
 
 \subsection{Boolean operations}
 
+When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{http://www.cgal.org/} or shortly \textbf{CGAL}. CGAL provides a polyhedral surfaces that are closed for Boolean operations. The choice to use CGAL creates restrictions on 3D meshes we can use (for more details on data see~\cref{app:implementation}).
+
+We considered using a \textbf{Cork Boolean Library}~\footnote{https://github.com/gilbo/cork\#cork-boolean-library} but we did not found it to be as robust as CGAL.
+
 \subsection{Voronoi tessellation}
-
+\todo{intro}
 \begin{description}
-\item[Voro++] is a library for carrying out three-dimensional computations of the Voronoi tessellation. It calculates Voronoi cell for each particle individually and is suited for high performance calculations on large scale particle systems. It is also able to clip Voronoi cells to any user defined boundary.
 
-This library would be well suited for decomposing whole objects into Voronoi cells and has a very minimalistic interface. Because implementation requires only one Voronoi cell per collision, this library can provide a simple and fast solution for our task.
+\item[CGAL] also includes package providing different 3D triangulations, mainly Delaunay triangulation and the possibility of creating Voronoi diagram as its dual graph. However CGAL does not provide means to clip the Voronoi cells against the surface mesh.
+
+\item[Voro++]\footnote{http://math.lbl.gov/voro++/} is a library for carrying out three-dimensional computations of the Voronoi tessellation. It calculates Voronoi cell for each particle individually and is suited for high performance calculations on large scale particle systems. It is also able to clip Voronoi cells to any user defined boundary. This library would be well suited for decomposing whole objects into Voronoi cells. 
+
+Because implementation requires only one Voronoi cell per collision, we chose to use the simpler Voro++ library for this task. 
 \end{description}
 
 
