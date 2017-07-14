@@ -16,19 +16,18 @@ Irrlicht Engine
 \todo {text here}
 
 \section{Geometric libraries}
-The Computational Geometry Algorithms Library or shortly CGAL
 \todo {text here}
 
 \subsection{Boolean operations}
 
-When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{http://www.cgal.org/} or shortly \textbf{CGAL}. CGAL provides a polyhedral surfaces that are closed for Boolean operations. The choice to use CGAL creates restrictions on 3D meshes we can use (for more details on data see~\cref{app:implementation}).
+When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{http://www.cgal.org/} or shortly \textbf{CGAL}. CGAL provides a polyhedral surfaces that are closed for Boolean operations and it is possible to to convert data between meshes and polyhedrons. The choice to use CGAL creates restrictions on 3D meshes we can use (for more details on data structure see~\cref{app:implementation}).
 
 We considered using a \textbf{Cork Boolean Library}~\footnote{https://github.com/gilbo/cork\#cork-boolean-library} but we did not found it to be as robust as CGAL.
 
 \subsection{Voronoi tessellation}
-\todo{intro}
-\begin{description}
+We learned that to Voronoi tessellation can be beneficial to either creating a compound body held together by springs or used as a tool for subtracting parts of the mesh. Here are some libraries useful for both tasks.
 
+\begin{description}
 \item[CGAL] also includes package providing different 3D triangulations, mainly Delaunay triangulation and the possibility of creating Voronoi diagram as its dual graph. However CGAL does not provide means to clip the Voronoi cells against the surface mesh.
 
 \item[Voro++]\footnote{http://math.lbl.gov/voro++/} is a library for carrying out three-dimensional computations of the Voronoi tessellation. It calculates Voronoi cell for each particle individually and is suited for high performance calculations on large scale particle systems. It is also able to clip Voronoi cells to any user defined boundary. This library would be well suited for decomposing whole objects into Voronoi cells. 
@@ -39,10 +38,13 @@ Because implementation requires only one Voronoi cell per collision, we chose to
 
 \subsection{Convex decomposition}
 \label{sec:decompositionLib}
-HACD (Hierarchical Approximate Convex Decomposition
-\cite{HACD}
-\todo {text here}
+Convex decomposition is critical to fast and accurate collision detection on 3D meshes. 
+\begin{description}
+\item[CGAL] provides the means for decomposing the polyhedral shape (triangular mesh can be converted into polyhedron) into a set of convex polyhedrons. CGAL is aiming for an exact convex decomposition, which produces a large number of small pieces~\footnote{http://doc.cgal.org/latest/Convex\_decomposition\_3}.
+\item[Hierarchical Approximate Convex Decomposition] or HADC~\cite{HACD} is a library and algorithm providing a convex decomposition that approximates the original shape. 
 
+The approximation yields less pieces and is faster than exact calculations but the result is not exact. For the reasons that we are implementing a destructible environment in a computer game, we can allow for deviations in the shape of the objects from their respective visual representations. This deviations should be too small to be noticed in game. This makes us choose HACD over CGAL.
+\end{description}
 
 
 
