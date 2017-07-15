@@ -5,7 +5,7 @@
 This section provides insights on the code from a programmer's point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
 \section{Design and libraries}
-Logically, the program consists of four components, they are Physics, Graphics, Mesh Manipulation and they are linked together by Controllers, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
+Logically, the program consists of four components, they are Physics, Graphics, Mesh Manipulation and Controllers. Controllers connect the other three components together, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
 \begin{description}
 \item[Physics] provides us with the simulation of our objects and collision detection. We use \emph{Bullet physics} to implement this component. 
 \item[Graphics] is used for rendering the current state of the physics world. This module provides the output of our application to the user by means of \emph{Irrlicht engine}.
@@ -40,7 +40,7 @@ The collision shape can be of multiple types, most notably a convex hull or a pr
 One more parameter of {\tt btRigidBody} to consider is the object mass. Bodies with mass set to zero (or negative value) are considered static objects and do not move. Bodies with positive mass react to gravity and other external forces, their centre of gravity is set to their respective origin of local coordinates. This poses a problem when the origin is not inside the object. Our solution is to manually translate the mesh to the origin. \todo{ref link do kodu kde to delas}
 
 \subsection*{\tt irr::scene::ISceneNode} 
-Graphical object in the \emph{Irrlicht engine} is represented by this class. It is an abstract class instantiated into multiple types of graphical objects, \eg lights, cameras, animations, particle systems. We are using {\tt irr::scene::IMeshSceneNode} for our objects. The mesh information in {\tt irr::scene::IMeshSceneNode} is stored in {\tt irr::scene::IMesh}. 
+Graphical object in the \emph{Irrlicht engine} is represented by this class. It is an abstract class instantiated into multiple types of graphical objects, \eg lights, cameras, animations, particle systems. To represent our objects, we are using {\tt irr::scene::IMeshSceneNode}. {\tt irr::scene::IMesh} is the data structure inside {\tt irr::scene::IMeshSceneNode} that stores the mesh information. 
 
 \subsection*{\tt irr::scene::IMesh} 
 This class stores the mesh information in multiple mesh buffers. Each buffer has an array of vertices and an array of indices. Every index in the array of indices refers to one vertex. However, we found out that not every vertex is referred to, and therefore valid. Indices divided into consecutive non-intersecting triples form a triangular face of a mesh. 
@@ -51,7 +51,7 @@ This class stores the mesh information in multiple mesh buffers. Each buffer has
 This structure imposes a restriction on the data we can use to represent our objects, the underlying halfedge data structure~\footnote{doc.cgal.org/latest/HalfedgeDS/index.html\#Chapter\_Halfedge\_Data\_Structures} is restricted to orientable 2-manifolds. A common examples of non-manifold geometry are: open geometry, two neighbouring faces with opposite normals, two faces sharing vertex but no edge, self intersecting geometry, inside faces.
 
 \subsection*{\tt gg::MObject} 
-{\tt gg::MObject} is a class designed to unite all data about one in-game object into one structure. It includes {\tt irr::scene::ISceneNode}, {\tt CGAL::Nef\_polyhedron\_3} and {\tt btRigidBody}. It implements the mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, and then safely deallocated before {\tt gg::MObject} itself is destroyed.
+{\tt gg::MObject} is a class designed to unite all data about one in-game object into one structure. It includes {\tt irr::scene::ISceneNode}, {\tt btRigidBody} and {\tt CGAL::Nef\_polyhedron\_3}. It implements the mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, and then safely deallocated before {\tt gg::MObject} itself is destroyed.
 
 
 \section{Modules}
@@ -74,7 +74,7 @@ In this section, we describe the functionality of each program module. Third par
 
 \item[Object Creator] uses Builder pattern in order to initialize the data contained inside {\tt gg::MObject}, namely {\tt btRigidBody, CGAL::Nef\_polyhedron\_3} and {\tt irr::scene::ISceneNode}.
 
-There are three member functions that allow us to create {\tt gg::MObject}s  with different behaviours from the same set of input parameters (see \cref{sec:data}). We can create a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh.  Those functions are meant to be used exclusively for application initialization, as they generate a new {\tt CGAL::Nef\_polyhedron\_3} and convex decomposition from their mesh.
+There are three member functions that allow us to create {\tt gg::MObject}s  with different behaviours from the same set of input parameters (see \cref{sec:data}). We can create a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh.  Those functions are meant to be used exclusively for application initialization, as they generate a new convex decomposition and {\tt CGAL::Nef\_polyhedron\_3} from their mesh.
 
 Two more kinds of objects can be created: a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, we will construct it beforehand and then provide it to the Object Creator.
 

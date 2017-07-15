@@ -1,7 +1,6 @@
 \chapter{Implementation Design}
 \label{chaptImplementation}
-In this chapter, we will introduce the implementation of our demo game and explain the basic principles and algorithms behind it.
-\todo {mention measurements}
+In this chapter, we will introduce the implementation of our demo game and explain the basic principles and algorithms behind it. Then we will show a set of experiments testing the performance of the implementation and used algorithms.
 
 After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement and test a combination of reviewed techniques.  
 
@@ -14,7 +13,7 @@ As mentioned, our algorithm will use boolean operations similarly to \emph{Geomo
 
 Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris, the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was chosen because it has easily randomizable shape and provides aesthetically good results. This choice is in no way critical to the rest of algorithm, and any other closed mesh can be used as well.
 
-Similarly to the RTDF approach, the cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object. \todo{odkaz na merania} This makes the method suitable for use in computer games with a large number of simple objects with low polygon meshes.
+Similarly to the RTDF approach, the cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object~\cref{sec:testing}. This makes the method suitable for use in computer games with a large number of simple objects with low polygon meshes.
 
 \begin{figure}
         \centering
@@ -74,15 +73,51 @@ While the exact convex decomposition can still produce a significant number of c
 
 \section{Measurements and experiments}
 \label{sec:testing}
-\todo{nieco rozumne namerat a napisat o tom}
 
-(Napady na mereni, muzes si do programu dodelat hooky ktery ti jen vysypou statistiku a timingy u tech operaci:
-\begin{itemize}
-\item Kolik prumerne trva prevedeni triangle meshe na HACD --- treba graf co porovnava jakej vliv ma pocet trojuhelniku/konvexnost/konkavnost na dylku vypoctu).
-\item Kolik prumerne trva jedno spocitani detekce kolizi v zavislosti na poctu a velikosti objektu?
-\item Kolik casu sezere vlakno co dela ten subtraction (zase v zavislosti na tom jak velkej objekt se resi)?
-\item Kolik casu sezere vlakno co dela tu dekompozici?
-\end{itemize})
+\subsection{Performance test}
+To estimate the performance of our application, we measure a time it takes to compute certain tasks. We measured the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object.
+
+We recorded 460 collisions in a game world with buildings with following amounts of triangles: 7x60, 1x142, 1x104. We shot the buildings at random locations.
+
+\begin{tabular}{lll}
+& Average & 0,25s \\
+Subtraction time: & Median & 0,24s \\
+& Variance & 0,02s \\
+\hline
+& Average & 0,28s \\
+Decomposition time: & Median & 0,25s \\
+& Variance & 0,01s \\
+\hline
+& Average & 2,7s \\
+Overall time:& Median & 0,96s \\
+& Variance & 15,89s \\
+\end{tabular}
+
+Our expectation is that less than half a second delay between collision and a rendering of new objects would be acceptable for a game and thanks to the separate thread solution would not impact the frame rate. The experiment confirms that on given input we can successfully meet this expectation.
+
+The problem seems to by a high variance in overall time. This can be explained by the tasks waiting in the queue for processing and shows that our solution is not well suited for a fast sequence of collisions. The problem here is that after every collision only one subtraction task is created, but the number of decompositions is nondeterministic and depends on the shape of the destructed object, the generated Voronoi cell and the position of the collision. We propose the use of a thread pool to resolve the convex decomposition problem.
+
+\subsection{Dependency of our method on the number of triangles}
+We designed an experiment to measure a relationship between a number of triangles and out two tasks, mesh subtraction and convex decomposition. In the experiment we created five cubes, all of the same size and positioned in the same place. Then we started our application five times, each time with different cube, and measured the times of mesh subtraction and convex decomposition. All the collisions are generated by letting the cube drop on the ground. The result of the experiment are as followed:
+
+\begin{centering}
+\begin{tabular}{r|r|r}
+number of triangles & subtraction time (s) & decomposition time (s) \\
+\hline
+12 & 0.1138 & 0.2103 \\
+108 & 0.2681 & 0.2401 \\
+588 & 0.4069 & 0.9831 \\ 
+2700 & 1.4255 & 14.9761 \\ 
+10092 & 3.9377 & 39.4459 \\
+\end{tabular}
+\includegraphics[width=\textwidth]{img/experiment-triangles}
+
+The experiment showed us the limits of our approach. For the mesh subtraction, we can tolerate meshes with the size of about 600 triangles and still not cross half a second. On the other hand, convex decomposition times grow significantly faster, and the 600 triangle mesh takes a second to decompose.
+
+\end{centering}
 \subsection{Testing the concept of EDEM}
-To test EDEM (described in \cref{sec:edem}), we set up a cube divided into 439 tetrahedrons. After introducing constraints to hold the tetrahedrons together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour, such as contractions, retractions and self-induced explosions of the object. Performance issues and problems with keeping elements in a stable state finally concluded that the approach was not suitable for our implementation.
+To test EDEM (described in \cref{sec:edem}), we set up a cube divided into 439 tetrahedrons. After introducing constraints to hold the tetrahedrons together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour, such as contractions, retractions and self-induced explosions of the object. Performance issues and problems with keeping elements in a stable state concluded that the approach was not suitable for our implementation.
+
+
+
 
