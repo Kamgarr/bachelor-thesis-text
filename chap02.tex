@@ -11,9 +11,10 @@ Bullet Physics
 \todo {text here}
 
 
-\section{Graphics engine}
-Irrlicht Engine
-\todo {text here}
+\section{Rendering engine}
+Rendering is not a primary focus of this thesis, and we have no special requirements for the engine. We need an effective rendering engine that is platform independent and provides an interface in \emph{C++}. We could use directly low-level graphic libraries, mainly \emph{OpelnGL} or \emph{DirectX} but we decided for a higher level engine with more powerful API that saves much work.
+
+We decided to use \textbf{Irrlicht Engine}~\footnote{http://irrlicht.sourceforge.net/}. Irrlicht is a light-weight cross-platform, high-performance engine. From the features Irrlicht provides, we mostly use the rendering of the scene, reading user input and directly importing 3D models from multiple standardised formats. 
 
 \section{Geometric libraries}
 Here we introduce a set of libraries focused on a decomposition or modification of 3D meshed objects. We categorise them by provided function.

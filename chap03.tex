@@ -49,7 +49,7 @@ A use of a larger thread pool could be useful for convex decomposition. The conf
 \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/object-progress}
-        \caption{Simplified overview of collision handling across multiple threads in simultaneous time slots. a) collision was detected (red), b) Voronoi cell (green) and is being subtracted from the original mesh (black) in subtraction thread, c)the result of subtraction are two objects --- one one without change in collision shape (blue) and one with temporary spherical shape, d and e) new collisions shapes are computed in decomposition thread, f) final result}
+        \caption{Simplified overview of collision handling across multiple threads in simultaneous time slots. a) collision was detected (red), b) Voronoi cell (green) is being subtracted from the original mesh (black) in subtraction thread, c)the result of subtraction are two objects --- one one without change in collision shape (blue) and one with temporary spherical shape, d) and e) new collisions shapes are computed in decomposition thread, f) final result}
         \label{fig:objectInThreads}
 \end{figure}
 
