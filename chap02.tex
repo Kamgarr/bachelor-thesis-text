@@ -6,15 +6,15 @@ To build a game we will surely need a physics engine, a graphics engine, and to 
 
 We committed ourselves to writing our application in \emph{C++} language and using only free software. This commitment limits us in the availability of certain software. 
 
-\section{Physics engine}
-Bullet Physics
-\todo {text here}
-
-
 \section{Rendering engine}
 Rendering engine creates a base for a computer game. It allows a player to see the current state of the game world and control the game. Today, two most common libraries providing API for communication with GPU are \emph{OpelnGL} and \emph{DirectX}. Although it is possible directly use those low-level libraries, we use a library with more abstraction in provided API. Using higher-level libraries means we can save code, but we lose a direct control of rendering process. This thesis is not focused on graphical output and only uses it as a tool for building our application.
 
 We decided to use \textbf{Irrlicht Engine}~\footnote{http://irrlicht.sourceforge.net/}. Irrlicht is a light-weight cross-platform, high-performance engine capable of using either  \emph{OpelnGL} or \emph{DirectX}. Our use of Irrlicht is based on using its graphical window as an output of our application and also using Irrlichts event receiver for reading user input.
+
+\section{Physics engine}
+Physics engines are used in games to provide a simulation of applied forces to in-game objects and collision detection. Many physics engines are directly bundled with rendering, audio engines to create a complete game engine. 
+
+To support our implementation of destructible environment we need a physics engine to detect collisions, move the user controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. We chose to use \textbf{Bullet Physics}~\footnote{http://bulletphysics.org} mostly because it has good documentation.
 
 \section{Geometric libraries}
 Here we introduce a set of libraries focused on a decomposition or modification of 3D meshed objects. We categorise them by provided function.
