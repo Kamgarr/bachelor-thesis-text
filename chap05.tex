@@ -72,7 +72,7 @@ In this section, we describe the functionality of each program module. Third par
 
 \item[Loader] is only used for initializing the application. It parses the data that describe the game environment from the \emph{medial/world.cfg} file, constructs the objects using {\tt gg::MObjectCreator}, and returns the set of constructed objects.
 
-\item[Object Creator] uses Builder pattern in order to initialize the data contained inside {\tt gg::MObject}, namely {\tt btRigidBody, CGAL::Nef\_polyhedron\_3} and {\tt irr::scene::ISceneNode}.
+\item[Object Creator] implements the {\tt gg::MObjectCreator} class designed in a Builder pattern to provide initialization for the data contained inside {\tt gg::MObject}.
 
 There are three member functions that allow us to create {\tt gg::MObject}s  with different behaviours from the same set of input parameters (see \cref{sec:data}). We can create a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh.  Those functions are meant to be used exclusively for application initialization, as they generate a new convex decomposition and {\tt CGAL::Nef\_polyhedron\_3} from their mesh.
 
