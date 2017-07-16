@@ -1,12 +1,13 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-%Taky pozor na to, ze do Introduction je tradicne taky potreba dat nejaky "related work" kde tyhlety clanky jen rychle shrnes, aby si oponent moh rychle predstavit kde presne ta bakalarka mezi nima lezi.
 
 The destructible environment has been a part of computer games since their beginning. From shooting through the humble bricks in Space invaders to blowing up buildings in the Battlefield series. The technology has come far, but it is still not quite perfect and realistic. Most of the modern games hide the imperfections of the destructible environment behind a screen of dust and debris or rely on pre-rendered animations. We would like to see a game with a fully destructible environment with destruction calculated at a run-time and adhering to the laws of physics.
 
 There has been a lot of research done in recent years into the destructible environment. Some of it can be found already implemented in released games and some is still in theoretical research papers. We study different approaches, both used and proposed and decide on our own design. We shortly overview two different particle methods for soft body deformation and then turn our attention to simulation of rigid bodies. 
 
-In the department of dynamic rigid body destructible environment we found three distinct approaches, boolean operations, approach based on discrete particle method, and an approach based on Voronoi tessellation. We took upon ourselves to design and implement an approach combining boolean operations and Voronoi tessellation.
+In the department of dynamic rigid body destructible environment we found three distinct approaches: boolean operations, approach based on discrete particle method, and an approach based on Voronoi tessellation. The boolean method comes from the Red Faction video game, that is the first game to feature fully destructible terrain. The approach based on discrete particle method is focused on inner body stress simulation. This method works by splitting a rigid body into smaller parts and then connecting them by springs. The final approach focuses on efficient modification of the mesh by decomposing a body into Voronoi cells and then cutting the mesh by the fracture pattern.
+
+We took upon ourselves to design and implement an approach combining boolean operations and Voronoi tessellation. Our application computes the difference between original mesh and generated Voronoi cell at the point of collision.
 
 This thesis is organised as follows: a first chapter talks about techniques used in computer games and simulations, and proposed approaches with the goal of improving already used techniques. The second chapter introduces libraries that can be beneficial in creating a destructible environment. The last chapter describes the design of our implementation and takes measurements to test its performance. Our work continues with two appendices, first of them is a user guide to our application and the second provides insights into the applications code. 
 
