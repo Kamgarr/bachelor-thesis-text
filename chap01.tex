@@ -119,7 +119,7 @@ Voronoi tessellation is a method of decomposing a solid object into smaller part
 \todo{co s tim? Jak je ten voronojuv tesselation rychlej, jaky sou vysledky? Nebylo by spatny dat \\ref na nejakou kapitolu kde to pouzijes}
 
 \section{Related research}
-In this section, we review two results of recent research which propose different techniques for environment destruction in computer games. First technique will focus on simulating the forces inside the object with the approach based on particle methods. The second one will solely focus on the destruction of rigid bodies with the use of Voronoi decomposition. 
+In this section we review two results of recent research that propose different techniques for environment destruction in computer games. First technique focuses on simulating the forces inside the object with the approach based on particle methods. The second one focuses solely on the destruction of rigid bodies with the use of Voronoi decomposition.
 
 \subsection{A fast method for simulating destruction and the generated dust
 and debris}
@@ -127,12 +127,12 @@ and debris}
 The method of \citet{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
 
 \begin{description}
-\item[Destruction on a coarse scale] on this level the authors use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. Instead of using particles, EDEM uses a set of rigid bodies that need to be produced by some tessellation method. The extension over traditional DEM is the use of pore springs connecting the adjacent elements. The authors compare the elements to individual bricks (the distinct elements) held together by layers of mortar (the pore springs). If the applied force is sufficient and elements move apart far enough, the fracture takes place. Pore springs also help the object retain its original shape after applied force.
-\begin{figure}[ht!]
+\item[Destruction on a coarse scale] on this level the authors use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. Instead of using particles, EDEM uses a set of rigid bodies that need to be produced by some tessellation method. The extension over traditional DEM is the use of pore springs to connect the adjacent elements (see \cref{fig:spring}). The authors compare the elements to individual bricks (the distinct elements) held together by layers of mortar (the pore springs). If the applied force is sufficient to move the elements far enough from each other, the fracturing process is initiated. Pore springs also help the object retain its original shape after the force is applied. 
+\begin{figure}[t]
         \centering
         \includegraphics[width=0.7\textwidth]{img/spring}
         \caption{The force between two EDEM elements \cite{edem}}
-        \label{spring}
+        \label{fig:spring}
 \end{figure}
 \\Algorithm for creating EDEM elements
 \begin{enumerate}
@@ -148,6 +148,8 @@ stay inside the object.
 and put the pore springs on the Delaunay edges that connect
 the elements
 \end{enumerate}
+We can see the distribution of the EDEM elements inside objects after collision on \cref{fig:edem}.
+
 The position $\mathbf{x}_I$ and velocity $\mathbf{v}_I$ of the element $\mathit{I}$ can be found using Newton’s equation of motion as follows:
  
 \[M\frac{d\mathbf{v}_I}{dt} = \sum_{J \in contact}^{} \mathbf{F}_{JI}^c + \sum_{K \in pore}^{} \mathbf{F}_{KI}^p + M\mathbf{g} \]
@@ -164,30 +166,32 @@ Here, $\mathbf{g}$ is the gravitational vector, $\mathbf{F}^c_{JI}$ is the conta
         \centering
         \includegraphics[width=0.49\textwidth]{img/edem_real}
         \includegraphics[width=0.49\textwidth]{img/edem}
-        \caption{Result of this method with generated dust and debris (left) and EDEM elements (right) \cite{edem}}
+        \caption{View of final rendering with generated dust and debris (left) and equivalent view showing underlying EDEM elements (right) \cite{edem}}
         \label{fig:edem}
     \end{figure}
    
 \begin{table}[ht!]
     \begin{center}
-  \begin{tabular}{ |l|c|c|c|c|c| } 
+  \begin{tabular}{cc} 
+  \parbox[b]{4em}{\centering EDEM\\elements} & FPS \\
   \hline
-  EDEM elements & 128 & 256 & 512 & 1024 & 2048 \\ 
-  \hline
-  FPS & 320 & 160 & 75 & 30 & 9.1 \\ 
-  \hline
+  128 & 320 \\
+  256 & 160 \\
+  512 & 75 \\
+  1024 & 30 \\
+  2048 & 9.1 
   
   \end{tabular}
   \end{center}
   \caption{Performance of EDEM element method without rendering \cite{edem}}
   \label{table1}
 \end{table}
-In conclusion, based on table \ref{table1}, the frames per second (fps) drop proportionally with growing number of EDEM elements. The method achieved interactive fps on moderate number of EDEM elements. In addition the proposed debris and dust generation can be combined with other methods.
+In conclusion, based on \cref{table1}, the frames per second (fps) drop proportionally with growing number of EDEM elements. The method achieved interactive fps on moderate number of EDEM elements. In addition, the proposed debris and dust generation can be combined with other methods.
 
 \subsection{Real Time Dynamic Fracture
 with Volumetric Approximate Convex Decompositions}
 \label{sec:RTDF}
-The approach of \citet{nvidia} does not try to simulate the internal forces of an object and focuses only on rigid body decomposition. The idea behind this method is to represent the mesh as a compound shape of convex parts. The algorithm used for convex decomposition is Volumetric Approximate Convex Decomposition (VACD), which works by introducing the Voronoi decomposition into the bounding box of a mesh and then clipping the Voronoi cells by the mesh. The fracture pattern is precomputed and represented as a set of convex cells. The algorithm works as follows (\cref{fig:vacdalg}:
+The approach of \citet{nvidia} does not try to simulate the internal forces of an object and focuses only on rigid body decomposition. The idea behind this method is to represent the mesh as a compound shape of convex parts. The algorithm used for convex decomposition is Volumetric Approximate Convex Decomposition (VACD), which works by introducing the Voronoi decomposition into a bounding box of the mesh and then clipping the Voronoi cells by the mesh. To determine the decomposed shapes, we use a prepared fracture pattern. The fracture pattern is precomputed and represented as a set of convex cells. The algorithm works as follows (the process is visualised in \cref{fig:vacdalg}:
 \begin{enumerate}
 \item The fracture pattern is aligned with the point of impact, and rotated and scaled randomly to avoid an occurrence of same-looking patterns.
 \item The intersections of all cells with all convex parts are computed. To compute the intersection of a single cell with a single convex part, the convex part is clipped against all the planes of the cell one by one. 
@@ -210,7 +214,7 @@ pattern is applied. Source: \citet{nvidia}}
         \includegraphics[width=\textwidth]{img/vacdAlgorithm}
         \caption{Overview of the fracture algorithm. Left: The fracture pattern (red) is aligned with the impact location (black dot). Middle: All
 convex pieces are intersected with all cells. The green convex pieces can be welded to form a single piece because they cover the entire
-cell. Pieces within one cell become a new compound (colouring). Island detection finds that the dark red compound needs to be split. Source: \citet{nvidia}}
+cell. Pieces within one cell become a new compound part (same colours). Island detection finds that the dark red compound needs to be split. Source: \citet{nvidia}}
         \label{fig:vacdalg}
 \end{figure}
 
