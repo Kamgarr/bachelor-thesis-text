@@ -1,14 +1,21 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
-This thesis managed to satisfy all the goals it set out to accomplish. We analysed techniques for creating destructible environment used in computer games and methods applicable to accurate simulations. Our study of techniques also covered recent scientific papers. The acquired knowledge from those sources helped us to design our approach. To support the implementation, we took a look at a selection of libraries providing useful features for implementing a game with destructible environment.
+This thesis has set out to research available technology for environment destruction in games and implement an efficient solution to this problem. We managed to satisfy all the goals it set out to accomplish. We analysed techniques for creating destructible environment used in computer games and methods applicable to accurate simulations. Our study of techniques also covered recent scientific papers. The acquired knowledge from those sources helped us to design our approach. To support the implementation, we took a look at a selection of libraries providing useful features for implementing a game with destructible environment.
 
 Our designed algorithm works on the principle of using boolean operations on closed triangular meshes. We limited the simulation to rigid bodies. The results of boolean operations are new and more damaged objects. The most complex problem we encountered in the process of implementing our design is a convex decomposition needed for accurate collision detection. To solve this problem, we decided to deploy Horizontal Approximate Convex Decomposition algorithm.
 
 The used approximation algorithm for the convex decomposition has shown a few imperfections. In hollow objects, the generated decomposition can reach far enough to an empty space, that it blocks our vehicle from flying into them. We have also shown that algorithms complexity is directly dependent on the number of triangles in the mesh and grows quickly. Both liabilities make this algorithm only suitable for the games with low polygon objects with simple, almost convex shapes.
+
 
 \todo{
 experiments on subtraction\\
 performance test\\
 conclude conclusion
 }
+
+Koment: Conclusion je prakticky tosamy jako thesis goal statement v introductionu, akorat je napsany v past perfect a narozdil od referenci ktery ukazujou kde co budes resit tam davas reference ktery odkazujou na zajimavy veci (vysledky reserse a mereni) ktery si pritom zjistil. Ve vysledku muzes naprosto naplno rict co si o tom myslis. Vsechny nevyhody a prusvihy co si zpusobil muzes shrnout do...
+
+\subsection*{Future work}
+
+tady zhruba popises co jsi vynechal a proc (treba ze to bylo moc slozity a out of scope of the thesis) ale asi by si to zaslouzilo na tom zamakat. Zjistili sme ze rozklad typu X je dementni protoze Y, takze priste pouzijem Z. Zjistili sme ze nef polyhedra je slozity vytvaret, takze by bylo dobry mit nejakou knihovnu nebo format dat kterej to umi zvladnout chytrejc. Atd.

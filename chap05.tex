@@ -8,17 +8,15 @@ This section provides insights on the code from a programmer's point of view. We
 Logically, the program consists of four components, and they are Physics, Graphics, Mesh Manipulation and Controllers. Controllers connect the other three components together, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
 \begin{description}
 \item[Physics] provides us with the simulation of our objects and collision detection. We use \emph{Bullet physics} to implement this component. 
-\item[Graphics] is used for rendering the current state of the physics world. This module provides the output of our application to the user utilizing \emph{Irrlicht engine}.
+\item[Graphics] is used for rendering the current state of the physics world. Although it is possible directly use those low-level libraries, we use a library with more abstraction in provided API. Using higher-level libraries means we can save code, but we lose a direct control of rendering process. This thesis is not focused on graphical output and only uses it as a tool for building our application.
+
+We decided to use \textbf{Irrlicht Engine}~\footnote{http://irrlicht.sourceforge.net/}. Irrlicht is a light-weight cross-platform, high-performance engine capable of using either  \emph{OpelnGL} or \emph{DirectX}. Our use of Irrlicht is based on using its graphical window as an output of our application and also using Irrlichts event receiver for reading user input.
+
 \item[Controllers] ask the Physics to step the simulation and provided collision data and give the information about the current state of the world to the Graphics. The Controllers also read the user input which is done by parts of \emph{Irrlicht engine}. Mesh Manipulation component is called to create new objects and react to the collision provided by the Physics.
 \item[Mesh Manipulation] provides tools for creating objects, creating a Voronoi cell (done by \emph{Voro++}, converting data and handling the collisions. To be able to do the mentioned tasks, Mesh Manipulation works closely with \emph{CGAL} library and also use \emph{HACD} library for convex decomposition.
 \end{description}
 
-\begin{figure}
-        \centering
-        \includegraphics[width=0.7\textwidth]{img/architecture}
-        \caption{Diagram showing architecture of the application}
-        \label{fig:architecture}
-\end{figure}
+
 
 \section{Data representation}
 As a result of using multiple libraries for a multitude of tasks, we have to deal with a lot of different data representations of the same objects. 

@@ -60,12 +60,14 @@ In this section, we will shortly introduce two different approaches for simulati
 FEM requires a lot of computational resources and is mostly used in simulations that are not in real-time constraints. The algorithms like \citet{femingames} propose, that optimised version of FEM can be used in computer games.
 
 
-\para{Material point method} (MPM) is a numerical method for modelling an object as a continuum mass. Continuum model assumes that the object completely fills the space it occupies and is not a set of discrete particles. MPM is able to simulate such materials by using two different views of the data, material points (Lagrangian elements) and Eulerian grid.
+\para{Material point method} (MPM) is a numerical method for modelling an object as a continuum mass. Continuum model assumes that the object completely fills the space it occupies and is not a set of discrete particles. MPM is able to simulate such materials by using two different views of the data, material points (Lagrangian elements) and Eulerian grid. MPM is a particle method but thanks to the Eulerian grid it can by applied to continuum materials. 
 
+MPM is more computationally expensive than FEM, as the grid must be reset at the end of each MPM calculation step and reinitialised at the beginning of the following step. On the other hand MPM is a meshfree method and does not require remeshing steps. 
 
-is used to simulate the behaviour of continuum materials \todo{tohle je potreba prepsat aby z toho byla jasna definice continuum materialu}, continuum material is represented as continuous mass, not a set of discrete particles. MPM is a particle method \todo and uses material points (Lagrangian elements) to describe a body. Each material point stores and calculates its position, velocity and deformation gradient. The difference between MPM and FEM is that the MPM is a meshfree method. Meshfree method stores all its information in the particles and avoids numerical errors from remeshing algorithms. In the context of numerical method MPM is an Arbitrary Lagrangian–Eulerian numerical method \cite{ALE}, this means that calculations do not only use material points, but also a Eulerian grid. A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
-\todo{obecne tenhle celej odstavec je tak nejasnej ze aby clovek pochopil o co vlastne de tak musi preskocit na ten seznam, pak na obrazek, a kdyz selze i ten tak na ten clanek. Doporucuju prepsat, hlavne zduraznit cim presne se to odlisuje od FEM. Napr. tvrdis ze to nesimuluje set of discrete particles, a hned potom ze to je particle method?}
+MPM works by projecting the data from the particles to the mesh, determining and applying the velocities on the nodes of the mesh and then updating the particles based on the deformation of the mesh. After each loop mesh needs to be reset while the data stay in particles.
 
+ A simplified overview of algorithm steps follows, for more details see the thesis of \citet{jiang2015material}.
+ 
 \begin{enumerate}
     \item Grid data are reinitialized to default values.
     \item Weights and weight gradients are computed on every particle.
@@ -98,7 +100,7 @@ Voronoi tessellation is a method of decomposing a solid object into smaller part
 
 \begin{figure}
         \centering
-        \includegraphics[width=0.4\textwidth]{img/clipped}
+        \includegraphics[width=0.5\textwidth]{img/clippedresult}
         \caption{The result of Voronoi tessellation \cite{yan2010efficient}}
         \label{fig:voro}
 \end{figure}
@@ -118,8 +120,14 @@ Voronoi tessellation is a method of decomposing a solid object into smaller part
     \item[Clipping the Voronoi diagram] Boundary cells of the Voronoi diagram are infinite (see \cref{fig:DT}) and need to be clipped by the original input triangular mesh. The efficient algorithm proposed by~\citet{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighbourhood propagation to determine all intersections. 
 \end{description}
 
+ \begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{img/clipped}
+    \caption{Timing curve of clipped Voronoi diagram computation against the number of Voronoi seed points on a model with 1000boundary triangles.  To achieve clipped Voronoi diagram all three tasks must be completed. Source: \citet{yan2010efficient}}
+    \label{fig:vorocliptime}
+\end{figure}
 
-\todo{co s tim? Jak je ten voronojuv tesselation rychlej, jaky sou vysledky? Nebylo by spatny dat \\ref na nejakou kapitolu kde to pouzijes}
+As we can see in the performance diagram~\cref{fig:vorocliptime} the Voronoi tessellation with hundreds of thousands of Voronoi sites can take number of seconds to calculate. However, for a destructible environment hundreds of pieces will suffice, therefore this method can be used in a real-time application.  
 
 \section{Related research}
 In this section we review two results of recent research that propose different techniques for environment destruction in computer games. First technique focuses on simulating the forces inside the object with the approach based on particle methods. The second one focuses solely on the destruction of rigid bodies with the use of Voronoi decomposition.

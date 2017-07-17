@@ -25,10 +25,18 @@ The cost of fracturing in our implementation is solely dependent on the size and
 To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points so the Voronoi cell of the point of collision does not cover entire domain. This step also ensures variability of generated cells. After that, we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object being damaged. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every damage application.
 
 \section{Program Structure}
+The program is structured into four main components, Physics, Graphics, Controllers and Mesh Manipulation (see~\cref{fig:architecture}). Physics performs rigid body simulation and detects collisions. Graphics is used as a output device. Controllers contain the core of the application and process user input. Mesh Manipulation is the part of the application that handles the destruction of the environment.
+\begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/architecture}
+        \caption{Diagram showing architecture of the application}
+        \label{fig:architecture}
+\end{figure}
+
 \label{sec:structure}
 The main program loop runs in following steps:
 \begin{enumerate}
-\item Perform a step in physics simulation.\todo{Tohle je spatny. Kde je definovanej `step in physics simulation'? K popisu vsech algoritmu je potreba mit aspon ramcove popsany data co jdou dovnitr, co to s nima (proc) udela, a kam jdou ven.}
+\item Perform a step in physics simulation.
 \item Handle collisions and perform destruction, as described in  \cref{sec:collisions}.
 \item Read user input and then apply correct forces to the controlled vehicle.
 \item Render the current state of objects. In this step, a graphical representation of every object is updated to comply with its rigid body version.
@@ -67,23 +75,25 @@ This process guarantees that we do not wait for either subtraction or decomposit
 
 \section{Convex Decomposition}
 \label{sec:decomposition}
-Regardless of used physics engine, our objects are represented as triangular meshes. Implementing mesh to mesh collisions is possible, but highly impractical. Even if checking every vertex of one mesh against all vertices of second mesh is sufficient, the complexity of algorithm would be dependent on the number of vertices. We can imagine a cube made out of eight vertices and the second cube with the same size but subdivided surface into thousands of vertices. Mesh to mesh collision detection algorithm would perform differently on the seamlessly identical objects. This behaviour is not desired in computer games where the surface of the objects is usually subdivided into thousands of triangles to created small details on a mesh.\todo{Tohle je extremne slozite recenej jednoduchej fakt ze nam nepritel muze podstrcit spatne subdividovany meshe. Ale nepritele nemame, takze proc bysme si to delali sami naschval?}
+Regardless of used physics engine, our objects are represented as triangular meshes. Implementing mesh to mesh collisions is possible, but highly impractical. Even if checking every vertex of one mesh against all vertices of second mesh is sufficient, the complexity of algorithm would be dependent on the number of vertices.
 
-To be able to perform fast \todo{how fast? independent of triangle count? Nepodepise se triangle count i na velikosti toho rozkladu?} mesh to mesh collisions we must find a way to describe the object as a set of geometrically simpler shapes. The convex shapes are the easiest for detecting mutual intersections, but encapsulating whole mesh into a convex hull would produce imprecise collisions. This problem is solved by performing a convex decomposition. Convex decomposition process splits the input object into a set of convex shapes, forming a compound shape. Now the complexity of the collision algorithm depends on the number of convex parts.
+To be able to perform mesh to mesh collisions with complexity independent on triangle count, we must find a way to describe the object as a set of geometrically simpler shapes. The convex shapes are the easiest for detecting mutual intersections, but encapsulating whole mesh into a convex hull would produce imprecise collisions. This problem is solved by performing a convex decomposition. Convex decomposition process splits the input object into a set of convex shapes, forming a compound shape. Now the complexity of the collision algorithm depends on the number of convex parts. The size of convex decomposition is dependent on the number of concave features on decomposed mesh.
 
 While the exact convex decomposition can still produce a significant number of convex parts~\cite{convexDecomp}, in the setting of a computer game, the speed of calculation is much more relevant than the precision --- small differences between collision shapes and visual meshes are not considered to be a problem. To be able to perform collision detection at real-time, many approximate convex decomposition algorithms that sacrifice some precision to gain performance have been proposed. One of those algorithms is \emph{Hierarchical Approximate Convex Decomposition} algorithm (see \cref{sec:decompositionLib}) which we decided to use.
 
 \section{Measurements and experiments}
 \label{sec:testing}
-\todo{how we test and record data Je potreba sem napsat presnou metodologii. Napr.: To gather the data, we added special code that dumps the timing from the program. Then we went totally mad on the objects, fired at everything like there was no tommorow, and collected and the statistics right after. We have separated the measurements by the polygon count of objects involved to get a clearer view of the dependency of algorithm performance on input size. .....}
-In this section we will \todo{WILL?} show the conducted experiments with the goal of deciding on how efficient our approach is.
-To record the time data, we have added a simple timer into the code that can return the real time passed since its creation. \todo{to ze vraci cas od svyho stvoreni je docela samozrejmy, ale kam ho vraci a jak se to dumpuje a jak si to oponent muze taky vyzkouset?}
+In this section we show the conducted experiments with the goal of evaluating efficiency our approach. 
+
+To gather the data, we added special code that dumps the timing from the program and we also prepared input files for testing. We are interested in the times of two most complicated tasks in our application, mesh subtraction and convex decomposition. 
+
+Data are dumped into \emph{data/} folder. Three files are present in the folder, one contains the dump of the times it took to resolve subtraction tasks, one does the same for decomposition tasks and the third one contains total times it took for the single object to get from being put into subtraction queue until new decomposition is applied.
+
+We designed two different experiments, the performance test to measure the behaviour of our our approach in the world with multiple objects and fast sequences of collisions and the mesh complexity test to identify relation between number of number of triangles and subtraction/decomposition.
 
 \subsection{Performance test}
-To estimate the performance of our application, we measure the time it takes to compute certain \todo{how certain? the most complicated?} tasks. We measured \todo{v ty vete a okoli je 4x `measured'} the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object. \todo{mozna by pomoh normalni seznam (itemize)}
-
-We recorded 580 \todo{tohle cislo je potreba zvysit (libovolnou metodou ;D )} collisions in a game world filled with objects with models, counts and
-geometric complexity specified in \cref{tab:objects}. We repeatedly shot the buildings at random locations. Recorded data can be seen in \cref{fig:boxtimes}.
+For a performance test we prepared a world configuration (copy in \emph{performance\_test.cfg}) consisting of objects with models, counts and geometric complexity specified in \cref{tab:objects}.
+We recorded about 2000 collisions by repeatedly shooting the buildings at random locations. Recorded data can be seen in \cref{fig:boxtimes}.
 
 \begin{table}
  	\centering

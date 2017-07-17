@@ -2,25 +2,31 @@
 \label{chapt:technology}
 In this chapter, we review some software libraries that can be used for implementing the algorithms required for constructing a destructible environment. We do not talk about all-in-one software development kits with their approach to a destructible environment already implemented. Instead, our focus is on building a game with our own approach to the destructible environment. 
 
-To build a game we will surely need a physics engine, a graphics engine, and a selection of geom. libraries to support the computation of the destructible environment. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
-
-\section{Rendering engine}
-Rendering engine creates a base for a computer game. It allows a player to see the current state of the game world and control the game. \todo{extremne vagni.} Today, two most common libraries providing API for communication with GPU are \emph{OpelnGL} and \emph{DirectX} \todo{ani jedno uz dneska mainstreamovy tituly nepouzivaj, vsichni kodej pro enginy ktery opengl/directX obchazeji a kodej primo shadery do grafik.}. Although it is possible directly use those low-level libraries, we use a library with more abstraction in provided API. Using higher-level libraries means we can save code, but we lose a direct control of rendering process. This thesis is not focused on graphical output and only uses it as a tool for building our application.
-
-We decided to use \textbf{Irrlicht Engine}~\footnote{http://irrlicht.sourceforge.net/}. Irrlicht is a light-weight cross-platform, high-performance engine capable of using either  \emph{OpelnGL} or \emph{DirectX}. Our use of Irrlicht is based on using its graphical window as an output of our application and also using Irrlichts event receiver for reading user input.
+To build a game we will surely need a physics engine, a graphics engine, and a selection of geometric libraries to support the computation of the destructible environment. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
 
 \section{Physics engine}
 Physics engines are used in games to provide a simulation of applied forces to in-game objects and collision detection. Many physics engines are directly bundled with rendering, audio engines to create a complete game engine. 
 
-To support our implementation of destructible environment we need a physics engine to detect collisions, move the user controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. We chose to use \textbf{Bullet Physics}~\footnote{http://bulletphysics.org} mostly because it has good documentation.
+To support our implementation of destructible environment we need a physics engine to detect collisions, move the user-controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. Here we provide a list with short overviews of some popular engines.
+\begin{description}
+\item[Open Dynamics Engine] Its two main components are a rigid body dynamics simulation engine and a collision detection engine.
+\item[Newton Game Dynamics]
+\item[Bullet]
+\item[Simulation Open Framework Architecture]  is an open source framework primarily targeted at real-time physical simulation, with an emphasis on medical simulation.
+\item[Tokamak]
+\end{description}
 
 \section{Geometric libraries}
-Here we introduce a set of libraries focused on a decomposition or modification of 3D meshed objects. We categorise them by provided function.
+Here we preview some of the libraries focused on a decomposition or modification of 3D meshed objects. We categorise them by provided function \todo{into which categories?}
 
 \subsection{Boolean operations}
-When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{http://www.cgal.org/} or shortly \textbf{CGAL}. CGAL provides polyhedral surfaces that are closed for Boolean operations, and it is possible to convert data between meshes and polyhedrons. The choice to use CGAL creates restrictions on 3D meshes we can use (for more details on data structure see~\cref{app:implementation}).
+When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software \todo{list?} is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{http://www.cgal.org/} or shortly \textbf{CGAL}. CGAL provides polyhedral surfaces that are closed for Boolean operations, and it is possible to convert data between meshes and polyhedrons. 
 
-We considered using a \textbf{Cork Boolean Library}~\footnote{https://github.com/gilbo/cork\#cork-boolean-library} but we did not find it to be as robust as CGAL.
+
+The choice to use CGAL creates restrictions on 3D meshes we can use (for more details on data structure see~\cref{app:implementation}). 
+
+
+We considered using a \textbf{Cork Boolean Library}~\footnote{https://github.com/gilbo/cork\#cork-boolean-library} but we did not find it to be as robust as CGAL. \todo{definic `robust' je hodne, kterou mas tady presne na mysli? numericky robustni? Nebo to segfaultuje? SEGFAULTUJE a pada}
 
 \subsection{Voronoi tessellation}
 We learned that to Voronoi tessellation can be beneficial to either creating a compound body held together by springs or used as a tool for subtracting parts of the mesh. Here are some libraries useful for both tasks.
@@ -30,8 +36,9 @@ We learned that to Voronoi tessellation can be beneficial to either creating a c
 
 \item[Voro++]\footnote{http://math.lbl.gov/voro++/} is a library for carrying out three-dimensional computations of the Voronoi tessellation. It calculates Voronoi cell for each particle individually and is suited for high-performance calculations on large scale particle systems. It is also able to clip Voronoi cells to any user defined boundary. This library would be well suited for decomposing entire objects into Voronoi cells. 
 
-Because implementation requires only one Voronoi cell per collision, we chose to use the simpler Voro++ library for this task. 
 \end{description}
+\todo{zadny dalsi knihovny?}
+Because implementation requires only one Voronoi cell per collision, we chose to use the simpler Voro++ library for this task. 
 
 
 \subsection{Convex decomposition}
@@ -42,6 +49,8 @@ Convex decomposition is critical to fast and accurate collision detection on 3D 
 
 \item[Hierarchical Approximate Convex Decomposition] or HADC~\cite{HACD} is a library and algorithm providing a convex decomposition that approximates the original shape. The approximation yields fewer pieces and is faster than exact calculations, but the result is not exact. For the reasons that we are implementing a destructible environment in a computer game, we can allow for deviations in the shape of the objects from their respective visual representations. Those deviations should be too small to be noticed in the game. This makes us choose HACD over CGAL.
 \end{description}
+
+\todo{na celym svete sou jen 2 knihovny?}
 
 We can see the difference in the result of those two approaches on~\cref{fig:bunny}. It is evident that we do not want to use the exact decomposition in a computer game, but on the other hand for the simulations where the calculation time is not critical, the approximations should not be used.
 \begin{figure}
