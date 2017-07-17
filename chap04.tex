@@ -32,10 +32,11 @@ We assume that all the right versions of the packages from the previous section 
 
 The bundled HACD library needs to be compiled first, and then the main application is compiled. The compiling process may take a few minutes.
 \begin{code}
-~$ tar -xzf DestructionInGame.zip
-~$ cd DestructionInGame
-~/DestructionInGame$ make
+~ $ tar -xzf DestructionInGame.zip
+~ $ cd DestructionInGame
+~/DestructionInGame $ make
 \end{code}
+\todo{tohle prumernej uzivatel ubuntu zvladne pochopit z `After extracting the archive, the code is combiled by changing into the directory DescInGame and running \texttt{make}.' Btw rozbalovat zip tarem je dobrej punk. :D }
 
 \section{Directory structure}
 Our application is distributed among multiple folder and files. Here we describe the directory structure and mention the files in them.
@@ -48,6 +49,7 @@ Our application is distributed among multiple folder and files. Here we describe
 \end{description}
 
 \section{Hardware requirements}
+\todo{The software was tested on (tu ramku a parametry radeonu muzes zkratit). Minimal requirements should be lower, but for observing the behaviour of the algorithm, a CPU capable of running at least the 3 computation threads simultaneously should be used. To ze potrebuje 4GB RAMu by chtelo oduvodnit. Mozna by bylo lepsi z toho udelat jen dalsi paragraph do Installation guide, vedle Dependencies.}
 Here is a short overview of the hardware we used.
 \begin{itemize}
 \item Intel Core i3 CPU 550 @ 3.20GHz $\times$ 4 
@@ -58,7 +60,7 @@ We recommend running the application on equal or better hardware then is the one
 
 \section{Using the application}
 The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
-\subsection*{Keyboard input}
+\subsection*{Keyboard input}\todo{tohle nepotrebuje vlastni sekci, ty keybindingy hod do tabulky protoze to je tabulkovy.}
 Keys can be pressed simultaneously and also held down instead of multiple presses. The bindings are:
 \begin{itemize}
 \item W/S: pitch down/up
@@ -83,6 +85,7 @@ The \emph{first line} describes the sky-box, it is formed of 6 images in given o
 All other lines use same nine data items. Those are object model, texture, position (3 coordinates), scale (3 numbers, one for every axis) and mass. Every number is used as a floating point number.
 The second line describes the ground. Currently, the ground is generated as a solid cube with 1x1x1 size. Therefore model file is not needed. The third line is a description of our controlled vehicle. Beginning with this line, the texture file is an optional parameter and can be left blank. Bellow, we can see an example file.
 
+\todo{Tohle je potreba predelat na normalni figure. Font si muzes trochu zmensit.}
 \begin{centering}
 \begin{Verbatim}[frame=single,numbers=left,xleftmargin=5mm]
 top.jpg;bottom.jpg;left.jpg;right.jpg;front.jpg;back.jpg
