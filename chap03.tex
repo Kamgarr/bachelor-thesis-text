@@ -80,7 +80,7 @@ To record the time data, we implemented a simple Timer that can be inserted into
 \subsection{Performance test}
 To estimate the performance of our application, we measure a time it takes to compute certain tasks. We measured the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object.
 
-We recorded 580 collisions in a game world with following objects and their number of triangles: 7x\emph{media/building.obj}, 60 triangles; 1x\emph{media/missile.obj}, 142 triangles; 1x\emph{media/ship.obj}, 104 triangles. We repeatedly shot the buildings at random locations. Recorded data can be seen in \cref{tab:performace} and \cref{fig:boxtimes}.
+We recorded 580 collisions in a game world with following objects and their number of triangles: 7x\emph{building.obj}, 60 triangles; 1x\emph{missile.obj}, 142 triangles; 1x\emph{ship.obj}, 104 triangles. We repeatedly shot the objects at random locations. Recorded data can be seen in \cref{tab:performace} and \cref{fig:boxtimes}.
 
 \begin{table}
 	\centering
@@ -97,7 +97,7 @@ We recorded 580 collisions in a game world with following objects and their numb
   Overall time:& Median & 0,3s \\
   & Variance & 0,06s \\
   \end{tabular}
-  \caption{Statistics of the times recorded real time for given tasks. The overall time is measured from the time of creating subtraction task, to the time of having a new convex decomposition for the object in collision.}
+  \caption{Statistics of the duration recorded for given tasks in real time. The overall time is measured from the time of the creation of the subtraction task, to the time of applying a new convex decomposition for the same object.}
   \label{tab:performace}
 \end{table}
 
@@ -141,7 +141,7 @@ We recorded 580 collisions in a game world with following objects and their numb
   \end{axis}
 \end{tikzpicture}
 }
-\caption{Box plot showing the distribution of the times (horizontal axis) it takes to perform given tasks (vertical axis)}
+\caption{Box plot showing the distribution of the duration in seconds (horizontal axis) of given task (vertical axis)}
 \label{fig:boxtimes}
 \end{figure}
 
