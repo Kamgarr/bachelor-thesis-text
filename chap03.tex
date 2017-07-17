@@ -25,6 +25,7 @@ The cost of fracturing in our implementation is solely dependent on the size and
 To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points so the Voronoi cell of the point of collision does not cover entire domain. This step also ensures variability of generated cells. After that, we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object being damaged. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every damage application.
 
 \section{Program Structure}
+\label{sec:structure}
 The main program loop runs in following steps:
 \begin{enumerate}
 \item Perform a step in physics simulation.\todo{Tohle je spatny. Kde je definovanej `step in physics simulation'? K popisu vsech algoritmu je potreba mit aspon ramcove popsany data co jdou dovnitr, co to s nima (proc) udela, a kam jdou ven.}
@@ -59,59 +60,55 @@ After the detection of collision, physics engine gives us a reference to two rig
 
 Some collisions can be results of an object placed on ground or collisions with not enough force to damage the object. We need to filter out those unwanted collisions.
 
-For every collision that is selected as acceptable for damaging the object, we generate Voronoi cell as described before, and move meshes of both objects into a task for mesh subtraction thread. After enqueuing all collisions, we check if there are any prepared subtraction results for further use. The result of one subtraction task is a set of meshes that represent new objects. For every mesh, we create a new incomplete object without its convex decomposition that is needed for the physics engine to perform accurate collision detection. Because the decomposition can take relatively long, we create a simple temporary collision shape, we decided to use a sphere, for the new objects and keep using the current \todo{current nebo original collision shape? Jak poznas kterej objekt je novej a kterej je original?} collision shape for the original object. Then we create tasks for decomposition of current meshes into new collision shapes and proceed with simulation, not waiting for the result. Decomposition is done in a separate thread, and the result is returned to the main thread where we check for decomposed shapes \todo{chybi definice `check for decomposed shapes'}. With the shape ready in the main thread we replace the temporary shape for compound shape consisting of convex parts.\todo{Asi by to chtelo popsat jednou vetou -- hned jak sou v tom vypocetnim vlakne hotovy, tak je presuneme do hlavniho vlakna a nahradime objekt kterej to zatim reprezentuje.}
-
+For every collision that is selected as acceptable for damaging the object, we generate Voronoi cell as described before, and move meshes of both objects into a task for mesh subtraction thread. After enqueuing all collisions, we check if there are any prepared subtraction results for further use. The result of one subtraction task is a set of meshes that represent new objects. For every mesh, we create a new incomplete object without its convex decomposition that is needed for the physics engine to perform accurate collision detection. Because the decomposition can take relatively long, we create a simple temporary collision shape, we decided to use a sphere for the new objects and keep using original \todo{Jak poznas kterej objekt je novej a kterej je original? je prvy v poli :D} collision shape for the original object. Then we create tasks for decomposition of current meshes into new collision shapes and proceed with simulation, not waiting for the result. Decomposition is done in a separate thread and the result is returned to the main thread where decomposition results are applied to objects --- temporary shape is replaced by compound shape consisting of convex parts.
 
 This process guarantees that we do not wait for either subtraction or decomposition and therefore we can have stable fps in our game.  It is better for the gameplay to have stable fps and lag behind with the simulation because poor performance in the main loop of the games makes the game stuttering. Meanwhile, a destruction happening a few frames later can be covered in animations of dust. To ensure consistent behaviour of new objects (we can put them into the simulation, and they do not fall through each other or otherwise not comply with laws of physics) when using a temporary collision shape, we need to make the temporary shape resemble the mesh as much as possible.  For the already existing objects keeping the older collision shape for a while longer should not disturb the simulation as the closest objects to this space are a newly generated object, those should be thrown away from the point of collision either way. For the new object, we use the sphere with the diameter equal to the shortest edge of the objects bounding box, meaning that the newly created objects have smaller collision shapes than meshes. The experiments showed that this factor does not visually impact simulation and the presence of the collision shape ensures that the object will not fall through other objects. 
 
 
 \section{Convex Decomposition}
 \label{sec:decomposition}
-Regardless of used physics engine, our objects are represented as triangular meshes. Implementing mesh to mesh collisions is possible, but highly impractical. Even if checking every vertex of one mesh against all vertices of second mesh is sufficient, the complexity of algorithm would be dependent on the number of vertices. We can imagine a cube made out of eight vertices and the second cube with the same size but subdivided surface into thousands of vertices. Mesh to mesh collision detection algorithm would perform differently on the seamlessly identical objects. This behaviour is not desired in computer games where the surface of the objects is usually subdivided into thousands of triangles to created small details on a mesh.
+Regardless of used physics engine, our objects are represented as triangular meshes. Implementing mesh to mesh collisions is possible, but highly impractical. Even if checking every vertex of one mesh against all vertices of second mesh is sufficient, the complexity of algorithm would be dependent on the number of vertices. We can imagine a cube made out of eight vertices and the second cube with the same size but subdivided surface into thousands of vertices. Mesh to mesh collision detection algorithm would perform differently on the seamlessly identical objects. This behaviour is not desired in computer games where the surface of the objects is usually subdivided into thousands of triangles to created small details on a mesh.\todo{Tohle je extremne slozite recenej jednoduchej fakt ze nam nepritel muze podstrcit spatne subdividovany meshe. Ale nepritele nemame, takze proc bysme si to delali sami naschval?}
 
-To be able to perform fast mesh to mesh collisions we must find a way to describe the object as a set of geometrically simpler shapes. The convex shapes are the easiest for detecting mutual intersections, but encapsulating whole mesh into a convex hull would produce imprecise collisions. This problem is solved by performing a convex decomposition. Convex decomposition process splits the input object into a set of convex shapes, forming a compound shape. Now the complexity of the collision algorithm depends on the number of convex parts. 
+To be able to perform fast \todo{how fast? independent of triangle count? Nepodepise se triangle count i na velikosti toho rozkladu?} mesh to mesh collisions we must find a way to describe the object as a set of geometrically simpler shapes. The convex shapes are the easiest for detecting mutual intersections, but encapsulating whole mesh into a convex hull would produce imprecise collisions. This problem is solved by performing a convex decomposition. Convex decomposition process splits the input object into a set of convex shapes, forming a compound shape. Now the complexity of the collision algorithm depends on the number of convex parts.
 
 While the exact convex decomposition can still produce a significant number of convex parts~\cite{convexDecomp}, in the setting of a computer game, the speed of calculation is much more relevant than the precision --- small differences between collision shapes and visual meshes are not considered to be a problem. To be able to perform collision detection at real-time, many approximate convex decomposition algorithms that sacrifice some precision to gain performance have been proposed. One of those algorithms is \emph{Hierarchical Approximate Convex Decomposition} algorithm (see \cref{sec:decompositionLib}) which we decided to use.
 
 \section{Measurements and experiments}
 \label{sec:testing}
-\todo{how we test and record data}
-In this section we will show the conducted experiments with the goal of deciding on how efficient our approach is.
-To record the time data, we implemented a simple Timer that can be inserted into the code and can return the real time passed since its creation. 
+\todo{how we test and record data Je potreba sem napsat presnou metodologii. Napr.: To gather the data, we added special code that dumps the timing from the program. Then we went totally mad on the objects, fired at everything like there was no tommorow, and collected and the statistics right after. We have separated the measurements by the polygon count of objects involved to get a clearer view of the dependency of algorithm performance on input size. .....}
+In this section we will \todo{WILL?} show the conducted experiments with the goal of deciding on how efficient our approach is.
+To record the time data, we have added a simple timer into the code that can return the real time passed since its creation. \todo{to ze vraci cas od svyho stvoreni je docela samozrejmy, ale kam ho vraci a jak se to dumpuje a jak si to oponent muze taky vyzkouset?}
 
 \subsection{Performance test}
-To estimate the performance of our application, we measure a time it takes to compute certain tasks. We measured the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object.
+To estimate the performance of our application, we measure the time it takes to compute certain \todo{how certain? the most complicated?} tasks. We measured \todo{v ty vete a okoli je 4x `measured'} the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object. \todo{mozna by pomoh normalni seznam (itemize)}
 
-We recorded 580 collisions in a game world with following objects and their number of triangles: 7x\emph{building.obj}, 60 triangles; 1x\emph{missile.obj}, 142 triangles; 1x\emph{ship.obj}, 104 triangles. We repeatedly shot the objects at random locations. Recorded data can be seen in \cref{tab:performace} and \cref{fig:boxtimes}.
+We recorded 580 \todo{tohle cislo je potreba zvysit (libovolnou metodou ;D )} collisions in a game world filled with objects with models, counts and
+geometric complexity specified in \cref{tab:objects}. We repeatedly shot the buildings at random locations. Recorded data can be seen in \cref{fig:boxtimes}.
 
 \begin{table}
-	\centering
-  \begin{tabular}{lll}
-  & Average & 0.18s \\
-  Subtraction time: & Median & 0.14s \\
-  & Variance & 0.02s \\
+ 	\centering
+\begin{tabular}{lrr}
+  Model & Count & Triangles \\
   \hline
-  & Average & 0,13s \\
-  Decomposition time: & Median & 0.11s \\
-  & Variance & 0s \\
-  \hline
-  & Average & 0,39s \\
-  Overall time:& Median & 0,3s \\
-  & Variance & 0,06s \\
-  \end{tabular}
-  \caption{Statistics of the duration recorded for given tasks in real time. The overall time is measured from the time of the creation of the subtraction task, to the time of applying a new convex decomposition for the same object.}
-  \label{tab:performace}
+  \texttt{media/building.obj} & 7 & 60 \\
+  \texttt{media/missile.obj} & 1 & 142 \\
+  \texttt{media/ship.obj} & 1 & 104
+\end{tabular}
+\caption{Objects and their complexities used in the measurement.}
+	\label{tab:objects}
 \end{table}
 
 \begin{figure}
 \centering
-\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}
   \begin{axis}
     [
     boxplot/draw direction=x,
     ytick={1,2,3},
-    yticklabels={Subtraction, Decomposition, Overall Time}
+    yticklabels={Subtraction, Decomposition, Overall Time},
+    height=4cm,
+    width=10cm,
+    xlabel=Time (s),
     ]
     \addplot+[
     boxplot prepared={
@@ -142,44 +139,46 @@ We recorded 580 collisions in a game world with following objects and their numb
     ] coordinates {};
   \end{axis}
 \end{tikzpicture}
-}
 \caption{Box plot showing the distribution of the duration in seconds (horizontal axis) of given task (vertical axis)}
 \label{fig:boxtimes}
 \end{figure}
 
 
 
-Our expectation is that less than third of a second delay between collision and a rendering of new objects would be acceptable for a game and thanks to the separate thread solution would not impact the frame rate. The experiment confirms that on given input we can successfully meet this expectation.
+Our expectation is that a delay shorter than around 300ms between the collision and rendering of its resulting objects would be acceptable for a game, and that the separate threads would ensure that this delay would not impact the frame rate. The experiment confirms that on given input we can successfully meet this expectation.
 
-The problem seems to by a high variance in overall time. This can be explained by the tasks waiting in the queue for processing and shows that our solution is not well suited for a fast sequence of collisions. The problem here is that after every collision only one subtraction task is created, but the number of decompositions is nondeterministic and depends on the shape of the destructed object, the generated Voronoi cell and the position of the collision. We propose the use of a thread pool to resolve the convex decomposition problem.
+The problem seems to by a high variance in overall time \todo{of what}. This can be explained by the tasks waiting in the queue for processing and shows that our solution is not well suited for a fast sequence of collisions. The problem here is that after every collision only one subtraction task is created, but the number of decompositions is nondeterministic and depends on the shape of the destructed object, the generated Voronoi cell and the position of the collision. Use of a thread pool with more advanced bookkeeping of the decomposition dependencies would aid in solving that problem (proposed in ~\cref{sec:structure}).
 
-\subsection{Dependency of our method on the number of triangles}
-We designed an experiment to measure a relationship between a number of triangles and our two tasks, mesh subtraction and convex decomposition. In the experiment we created five cubes, all of the same size and positioned in the same place. Then we started our application five times, each time with different cube, and measured the times of mesh subtraction and convex decomposition. We repeated the experiment six times to get more precise results. All the collisions are generated by letting the cube drop on the ground. The result of the experiment are shown in \cref{tab:subtraction-decomposition}. 
+\subsection{Performance impact of mesh complexity}
+We designed an experiment to measure a relationship between a number of triangles and time required to complete the two already measured tasks. The collected data are subtraction time and convex decomposition time. For the experiment we prepared five cubes with same size but with different number of triangles in their mesh. We created an isolated environment with only one cube placed in it and then executed the application to collect the data. The data were generated as a result of a collision after the cube dropped on to the ground. The experiment was repeated with each of the prepared cubes and run multiple times to collect a larger sample for statistical analyses. The results of the experiment are shown in \cref{tab:subtraction-decomposition}. 
 \begin{table}
 \centering
-\begin{tabular}{r|r|r}
-number of triangles & subtraction time (s) & decomposition time (s) \\
+\begin{tabular}{r r r}
+\# triangles & subtraction & decomposition \\
 \hline
 12 & 0.037 & 0.118 \\
-108 & 0.0678 & 0.135 \\
+108 & 0.069 & 0.135 \\
 588 & 0.134 & 0.261 \\ 
 2700 & 0.386 & 2.362 \\ 
 10092 & 1.211 & 12.007 \\
 \end{tabular}
-\caption{Average time of processing the given task with the given number of triangles in the mesh. All data are collected on the same cube with only difference in number of triangles.}
+\caption{Average time (in seconds) of processing the given task with the given number of triangles in the mesh. All data are collected on the same cube with only difference in number of triangles.}
 \label{tab:subtraction-decomposition}
 \end{table}
 
 \todo{mne to nepride zrovna prehladne... tie data su prilis daleko od seba na takyto graf}
 \begin{figure}
 \centering
-\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}
   \begin{axis}
     [
-	boxplot/draw direction=y,
-    xtick={1,2,3,4},
-    xticklabels={12, 108, 588, 2700},
+	boxplot/draw direction=x,
+    ytick={1,2,3,4},
+    yticklabels={12, 108, 588, 2700},
+    ylabel=\# triangles,
+    xlabel=Time (s),
+    width=12cm,height=5cm,
+    tick label style={/pgf/number format/fixed},
     ]
     \addplot+[
     boxplot prepared={
@@ -221,8 +220,7 @@ number of triangles & subtraction time (s) & decomposition time (s) \\
     ] coordinates {};
   \end{axis}
 \end{tikzpicture}
-}
-\caption{Relation between number of triangles (horizontal axes) and time required for subtraction task (vertical axes).}
+\caption{Relation between number of triangles and time required for subtraction task.}
 \label{fig:triangletimes}
 \end{figure}
 
