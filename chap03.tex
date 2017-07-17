@@ -7,7 +7,7 @@ At first, we considered implementation based on \emph{A fast method for simulati
 After consideration of various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement and test an approach based on \emph{Geomod} (described in \cref{sec:common}) technique. The \emph{Geomod} inspired us to create object representing empty space and use boolean subtraction operation on the mesh to generate damaged body. Abandoned FMSDGDD approach influenced us to generate debris equivalent to the removed volume and use boolean intersection. We implemented this idea by using an intersection of \emph{Geomod} inspired empty space and original mesh as a debris.
 
 \section{Main algorithm}
-As mentioned, our algorithm will use boolean operations similarly to \emph{Geomod}s removal of an empty space from the terrain. The difference is that we apply this method to rigid body objects and permanently alter their mesh. The shape of removed object will be determined by Voronoi cell that will be generated dynamically for every collision. The collision information is received from the physics engine.
+As mentioned, our algorithm uses boolean operations similarly to \emph{Geomod}s removal of an empty space from the terrain. The difference is that we apply this method to rigid body objects and permanently alter their mesh. The shape of removed object is determined by Voronoi cell that is generated dynamically for every collision. The collision information is received from the physics engine.
 
 Our approach generates Voronoi cell at the point of collision. The decision to use one cell instead of a fracture pattern, like the one described in Real Time Dynamic Fracture with Volumetric Approximate Convex Decompositions algorithm (see \cref{sec:RTDF}), is based on the fact that we want to observe how dependent is our design on the complexity of destructed objects and not on the complexity of fracture pattern. Our implementation is easily expandable to the use of multiple cells or cells of any shape. 
 
@@ -22,15 +22,15 @@ The cost of fracturing in our implementation is solely dependent on the size and
         \label{fig:subtraction}
 \end{figure}
 
-To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points so the Voronoi cell of the point of collision does not cover entire domain. This step also ensures variability of generated cells. After that, we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object in the collision. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every collision.
+To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points so the Voronoi cell of the point of collision does not cover entire domain. This step also ensures variability of generated cells. After that, we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object being damaged. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every damage application.
 
 \section{Program Structure}
 The main program loop runs in following steps:
 \begin{enumerate}
-\item Perform a step in physics simulation.
-\item Handle collisions and perform destruction, see \cref{sec:collisions}.
-\item Read user input and then apply correct forces to controlled vehicle.
-\item Render current state of objects. In this step, a graphical representation of every object is updated to comply with its rigid body version.
+\item Perform a step in physics simulation.\todo{Tohle je spatny. Kde je definovanej `step in physics simulation'? K popisu vsech algoritmu je potreba mit aspon ramcove popsany data co jdou dovnitr, co to s nima (proc) udela, a kam jdou ven.}
+\item Handle collisions and perform destruction, as described in  \cref{sec:collisions}.
+\item Read user input and then apply correct forces to the controlled vehicle.
+\item Render the current state of objects. In this step, a graphical representation of every object is updated to comply with its rigid body version.
 \end{enumerate}
 
 \begin{figure}
@@ -39,24 +39,25 @@ The main program loop runs in following steps:
         \caption{Diagram is showing multiple threads handling collision event. }
         \label{fig:threads}
 \end{figure}
-To make the simulation faster, we execute the most costly tasks asynchronously in separate threads. These tasks are convex decomposition and mesh subtraction. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model. Figure \ref{fig:objectInThreads} shows the changes of the object and its collision shape across all threads.
 
-We use only one thread for all mesh subtraction tasks because we anticipate that the most of the consecutive collisions are going to be triggered by the same object --- shooting at one building multiple times in a row. In this situation, one subtraction does not have valid input data until the previous one has finished, which leads to sequential processing.
+We want to keep a constant frame-rate in our application, but we do not  expect the mesh subtraction and convex decomposition tasks to perform in required time and therefore we execute them asynchronously in separate threads. As a result, the program is running in three threads (\cref{fig:threads}): the main thread, a thread for subtracting meshes and a thread for decomposing triangular mesh into a set of convex shapes (\cref{sec:decomposition}). Both subtraction and decomposition threads communicate solely with the main thread, and all communication is done in producer-consumer model. Figure \ref{fig:objectInThreads} shows the changes of the object and its collision shape across all threads.
 
-A use of a larger thread pool could be useful for convex decomposition. The conflicting state in a decomposition means that the object has changed since our calculation started and a new decomposition task was created. We do not know whether the newer task has already finished or not, but we know for certain, that if we discard our decomposition, the object has either temporary shape or a new valid decomposition. We did not implement a thread pool solution because we did not see it necessary and our hardware was not well suited for running more than four simultaneous threads.
+We use only one thread for all mesh subtraction tasks because we anticipate that the most of the consecutive collisions are going to be triggered by the same object --- shooting at one building multiple times in a row. In this situation, one subtraction does not have valid input data until the previous one has finished, which leads to sequential processing. If we were to expect the collision occurring randomly on independent objects we could implement a thread pool for resolving subtraction tasks. When processing multiple collisions on the same object with multiple threads, the order of applying subtraction is not important as long as all tasks are processed and applied. Multiple thread solution would require implementation of a locking mechanism to avoid race conditions.
+
+A use of a larger thread pool could be useful for convex decomposition. With multiple threads, the object could have been changed since the current calculation started. This conflicting state means we can not apply the current result but we know for sure that another decomposition task was created when the change occurred. We do not know whether the newer task has already finished or not, but we know for certain, that if we discard our decomposition, the object has either temporary shape or a new valid decomposition. We did not implement a thread pool solution because we did not see it necessary and our hardware \todo{current common gaming hardware, citation needed} is not well suited for running more than four simultaneous threads.
 
 \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{img/object-progress}
-        \caption{Simplified overview of collision handling across multiple threads in simultaneous time slots. a) collision was detected (red), b) Voronoi cell (green) is being subtracted from the original mesh (black) in subtraction thread, c)the result of subtraction are two objects --- one one without change in collision shape (blue) and one with temporary spherical shape, d) and e) new collisions shapes are computed in decomposition thread, f) final result}
+       \caption{Simplified overview of collision handling across multiple threads in simultaneous time slots. (a): collision was detected (red), (b): Voronoi cell (green) is being subtracted from the original mesh (black) in subtraction thread, (c): the result of the subtraction are two objects --- one one without change in collision shape (blue) and one with temporary spherical shape, (d) and (e): new collision shapes are computed in decomposition thread, (f): the final result.}
         \label{fig:objectInThreads}
 \end{figure}
 
 \section{Collision handling}
 \label{sec:collisions}
-After the collision, physics engine gives us a reference to two rigid bodies participating in the collision, point of collision and vector of force. For simplification, we will consider only one object, the point of impact and the force.
+After the detection of collision, physics engine gives us a reference to two rigid bodies participating in that collision, point of collision and vector of applied impulse. For simplification, we consider only one object, the point of impact and the force. The second object is processed symmetrically.
 
-At first, we need to filter out unwanted collisions (collisions that should not damage the object). Those collisions can be results of an object placed on ground or collisions with not enough force to damage the object. 
+At first, we need to filter out unwanted collisions (collisions that should not damage the object). Those collisions can be results of an object placed on ground or collisions with not enough force to damage the object. \todo{Obratit: Some collisions are too weak to XXX, therefore we simply filter them out.}
 
 For every collision we decide to perform destruction on, we generate Voronoi cell as described before, and move meshes of both objects into a task for mesh subtraction thread. After enqueuing all collisions, we can check if there are any prepared subtraction results for further use. The result of one subtraction task is a set of meshes that represent new objects. For every mesh, we create a new object, but we do not have its convex decomposition for the physics engine to perform accurate collision detection. Because the decomposition can take relatively long, we create a simple temporary collision shape (\eg sphere) for the new objects and keep using the current collision shape for the original object. Then we create tasks for decomposition of current meshes into new collision shapes and proceed with simulation, not waiting for the result. Decomposition is done in a separate thread, and the result is returned to the main thread where we check for decomposed shapes. With the shape ready in the main thread we replace the temporary shape for compound shape consisting of convex parts.
 
