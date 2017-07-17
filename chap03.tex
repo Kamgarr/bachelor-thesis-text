@@ -147,10 +147,10 @@ geometric complexity specified in \cref{tab:objects}. We repeatedly shot the bui
 
 Our expectation is that a delay shorter than around 300ms between the collision and rendering of its resulting objects would be acceptable for a game, and that the separate threads would ensure that this delay would not impact the frame rate. The experiment confirms that on given input we can successfully meet this expectation.
 
-The problem seems to by a high variance in overall time \todo{of what}. This can be explained by the tasks waiting in the queue for processing and shows that our solution is not well suited for a fast sequence of collisions. The problem here is that after every collision only one subtraction task is created, but the number of decompositions is nondeterministic and depends on the shape of the destructed object, the generated Voronoi cell and the position of the collision. Use of a thread pool with more advanced bookkeeping of the decomposition dependencies would aid in solving that problem (proposed in ~\cref{sec:structure}).
+The problem seems to by a high variance in overall time of the whole process starting with mesh subtraction and ending at applying convex decomposition. This can be explained by the tasks waiting in the queue for processing and shows that our solution is not well suited for a fast sequence of collisions. The problem here is that after every collision only one subtraction task is created, but the number of decompositions is nondeterministic and depends on the shape of the destructed object, the generated Voronoi cell and the position of the collision. Use of a thread pool with more advanced bookkeeping of the decomposition dependencies would aid in solving that problem (proposed in ~\cref{sec:structure}).
 
 \subsection{Performance impact of mesh complexity}
-We designed an experiment to measure a relationship between a number of triangles and time required to complete the two already measured tasks. The collected data are subtraction time and convex decomposition time. For the experiment we prepared five cubes with same size but with different number of triangles in their mesh. We created an isolated environment with only one cube placed in it and then executed the application to collect the data. The data were generated as a result of a collision after the cube dropped on to the ground. The experiment was repeated with each of the prepared cubes and run multiple times to collect a larger sample for statistical analyses. The results of the experiment are shown in \cref{tab:subtraction-decomposition}. 
+We designed an experiment to measure a relationship between a number of triangles and time required to complete the two already measured tasks. The collected data are subtraction time and convex decomposition time. For the experiment we prepared five cubes with same size but with different number of triangles in their mesh. We created an isolated environment with only one cube placed in it and then executed the application to collect the data. The data were generated as a result of a collision after the cube dropped on to the ground. The experiment was repeated with each of the prepared cubes and run multiple times to collect a larger sample for statistical analyses. The results of the experiment are shown in \cref{tab:subtraction-decomposition} . 
 \begin{table}
 \centering
 \begin{tabular}{r r r}
@@ -166,7 +166,6 @@ We designed an experiment to measure a relationship between a number of triangle
 \label{tab:subtraction-decomposition}
 \end{table}
 
-\todo{mne to nepride zrovna prehladne... tie data su prilis daleko od seba na takyto graf}
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -224,11 +223,64 @@ We designed an experiment to measure a relationship between a number of triangle
 \label{fig:triangletimes}
 \end{figure}
 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+  \begin{axis}
+    [
+	boxplot/draw direction=x,
+    ytick={1,2,3,4},
+    yticklabels={12, 108, 588, 2700},
+    ylabel=\# triangles,
+    xlabel=Time (s),
+    width=12cm,height=5cm,
+    tick label style={/pgf/number format/fixed},
+    ]
+    \addplot+[
+    boxplot prepared={
+      median=0.112423,
+      upper quartile=0.12278675,
+      lower quartile=0.1105495,
+      upper whisker=0.12278675,
+      lower whisker=0.11
+    },
+    ] coordinates {};
+    
+    \addplot+[
+    boxplot prepared={
+      median=0.133383,
+      upper quartile=0.14062125,
+      lower quartile=0.128652,
+      upper whisker=0.1512,
+      lower whisker=0.127272
+    },
+    ] coordinates {};
+    \addplot+[
+    boxplot prepared={
+      median=0.2534035,
+      upper quartile=0.27878175,
+      lower quartile=0.24843475,
+      upper whisker=0.288963,
+      lower whisker=0.246148
+    },
+    ] coordinates {};
+    
+    \addplot+[
+    boxplot prepared={
+      median=2.333265,
+      upper quartile=2.428165,
+      lower quartile=2.282675,
+      upper whisker=2.56834,
+      lower whisker=2.27192
+    },
+    ] coordinates {};
+  \end{axis}
+\end{tikzpicture}
+\caption{Relation between number of triangles and time required for convex decomposition task.}
+\label{fig:decomtimes}
+\end{figure}
 
-\todo{second plot}
-
-
-The experiment showed us the limits of our approach. For the mesh subtraction, we can tolerate meshes with the size of about 2000 triangles.  On the other hand, convex decomposition times grow significantly faster and reaches a third of the second somewhere around 1000 triangles.
+The experiment showed us the limits of our approach. For the mesh subtraction, we can tolerate meshes with the size of about 2000 triangles (see \cref{fig:triangletimes}).  On the other hand, as shown on~\cref{fig:decomtimes}, convex decomposition times grow significantly faster and reaches 300ms the second somewhere around 1000 triangles.
 
 
 \subsection{Testing the concept of EDEM}

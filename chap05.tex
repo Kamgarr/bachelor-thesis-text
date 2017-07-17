@@ -4,11 +4,11 @@
 
 This section provides insights on the code from a programmer's point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
-\section{Design and libraries}
-Logically, the program consists of four components, they are Physics, Graphics, Mesh Manipulation and Controllers. Controllers connect the other three components together, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
+\section{Design and Libraries}
+Logically, the program consists of four components, and they are Physics, Graphics, Mesh Manipulation and Controllers. Controllers connect the other three components together, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
 \begin{description}
 \item[Physics] provides us with the simulation of our objects and collision detection. We use \emph{Bullet physics} to implement this component. 
-\item[Graphics] is used for rendering the current state of the physics world. This module provides the output of our application to the user by means of \emph{Irrlicht engine}.
+\item[Graphics] is used for rendering the current state of the physics world. This module provides the output of our application to the user utilizing \emph{Irrlicht engine}.
 \item[Controllers] ask the Physics to step the simulation and provided collision data and give the information about the current state of the world to the Graphics. The Controllers also read the user input which is done by parts of \emph{Irrlicht engine}. Mesh Manipulation component is called to create new objects and react to the collision provided by the Physics.
 \item[Mesh Manipulation] provides tools for creating objects, creating a Voronoi cell (done by \emph{Voro++}, converting data and handling the collisions. To be able to do the mentioned tasks, Mesh Manipulation works closely with \emph{CGAL} library and also use \emph{HACD} library for convex decomposition.
 \end{description}
@@ -37,7 +37,9 @@ We will introduce the data structures that are used to represent one in-game obj
 
 The collision shape can be of multiple types, most notably a convex hull or a primitive geometric shape, a triangular mesh or a compound shape. We need the collision shape to be as close to a visual mesh as possible. Because calculating collision between triangular meshes is not implemented in the \emph{Bullet physics} and would be too costly even if implemented, we choose the representation by compound shape.
 
-One more parameter of {\tt btRigidBody} to consider is the object mass. Bodies with mass set to zero (or negative value) are considered static objects and do not move. Bodies with positive mass react to gravity and other external forces, their centre of gravity is set to their respective origin of local coordinates. This poses a problem when the origin is not inside the object. Our solution is to manually translate the mesh to the origin. \todo{ref link do kodu kde to delas}
+One more parameter of {\tt btRigidBody} to consider is the object mass. Bodies with mass set to zero (or negative value) are considered static objects and do not move. Bodies with positive mass react to gravity and other external forces, their centre of gravity is set to their respective origin of local coordinates. This poses a problem when the origin is not inside the object. 
+
+We try to solve the problem of displaced origin by calculating a centre of the bounding box of the object and then translating all vertices in a way that the centre becomes an origin. After the origin is changed, we must appropriately adjust the position of the object. We deployed this approach to newly created objects. The difference between where the real centre of gravity should be, and where the centre of gravity used by Bullet physics is, is not visible. However, we failed to solve this problem with objects with their mesh changed. This results in the visibly displaced centre of gravity and occasional wrong position of newly created objects. Because this problem has no impact on the simulation of the destructible environment, we decided against trying to solve it.
 
 \subsection*{\tt irr::scene::ISceneNode} 
 Graphical object in the \emph{Irrlicht engine} is represented by this class. It is an abstract class instantiated into multiple types of graphical objects, \eg lights, cameras, animations, particle systems. To represent our objects, we are using {\tt irr::scene::IMeshSceneNode}. {\tt irr::scene::IMesh} is the data structure inside {\tt irr::scene::IMeshSceneNode} that stores the mesh information. 
@@ -48,7 +50,7 @@ This class stores the mesh information in multiple mesh buffers. Each buffer has
 \subsection*{\tt CGAL::Nef\_polyhedron\_3}
 \label{sec:nef}
 "A Nef-poly-he-dron in dimension $d$ is a point set $P \subseteq \mathbb{R}^d$ generated from a finite number of open halfspaces by set complement and set intersection operations."~\footnote{http://doc.cgal.org/latest/Nef\_3/index.html\#Nef\_3Definition} In other words, {\tt CGAL::Nef\_polyhedron\_3} is a boundary represented data structure closed under Boolean operations. This make it ideal to perform our boolean operation on.
-This structure imposes a restriction on the data we can use to represent our objects, the underlying halfedge data structure~\footnote{doc.cgal.org/latest/HalfedgeDS/index.html\#Chapter\_Halfedge\_Data\_Structures} is restricted to orientable 2-manifolds. A common examples of non-manifold geometry are: open geometry, two neighbouring faces with opposite normals, two faces sharing vertex but no edge, self intersecting geometry, inside faces.
+This structure imposes a restriction on the data we can use to represent our objects, the underlying halfedge data structure~\footnote{doc.cgal.org/latest/HalfedgeDS/index.html\#Chapter\_Halfedge\_Data\_Structures} is restricted to orientable 2-manifolds. Common examples of non-manifold geometry are: open geometry, two neighbouring faces with opposite normals, two faces sharing vertex but no edge, self-intersecting geometry, inside faces.
 
 \subsection*{\tt gg::MObject} 
 {\tt gg::MObject} is a class designed to unite all data about one in-game object into one structure. It includes {\tt irr::scene::ISceneNode}, {\tt btRigidBody} and {\tt CGAL::Nef\_polyhedron\_3}. It implements the mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, and then safely deallocated before {\tt gg::MObject} itself is destroyed.
