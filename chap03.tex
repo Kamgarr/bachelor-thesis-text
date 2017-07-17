@@ -73,11 +73,14 @@ While the exact convex decomposition can still produce a significant number of c
 
 \section{Measurements and experiments}
 \label{sec:testing}
+\todo{how we test and record data}
+In this section we will show the conducted experiments with the goal of deciding on how efficient our approach is.
+To record the time data, we implemented a simple Timer that can be inserted into the code and can return the real time passed since its creation. 
 
 \subsection{Performance test}
 To estimate the performance of our application, we measure a time it takes to compute certain tasks. We measured the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object.
 
-To record the time data, we implemented a simple Timer that can be inserted into the code and can return the real time passed since its creation. We recorded 580 collisions in a game world with following objects and their number of triangles: 7x\emph{media/building.obj}, 60 triangles; 1x\emph{media/missile.obj}, 142 triangles; 1x\emph{media/ship.obj}, 104 triangles. We repeatedly shot the buildings at random locations. Recorded data can be seen in \cref{tab:performace} and \cref{fig:boxtimes}.
+We recorded 580 collisions in a game world with following objects and their number of triangles: 7x\emph{media/building.obj}, 60 triangles; 1x\emph{media/missile.obj}, 142 triangles; 1x\emph{media/ship.obj}, 104 triangles. We repeatedly shot the buildings at random locations. Recorded data can be seen in \cref{tab:performace} and \cref{fig:boxtimes}.
 
 \begin{table}
 	\centering
