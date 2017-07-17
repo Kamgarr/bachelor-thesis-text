@@ -103,9 +103,9 @@ We recorded 580 collisions in a game world with buildings with following amounts
 \begin{tikzpicture}
   \begin{axis}
     [
-    boxplot/draw direction=y,
-    xtick={1,2,3},
-    xticklabels={Subtraction, Decomposition, Overall Time}
+    boxplot/draw direction=x,
+    ytick={1,2,3},
+    yticklabels={Subtraction, Decomposition, Overall Time}
     ]
     \addplot+[
     boxplot prepared={
@@ -165,6 +165,7 @@ number of triangles & subtraction time (s) & decomposition time (s) \\
 
 
 \begin{figure}
+\todo{mne to nepride zrovna prehladne... tie data su prilis daleko od seba na takyto graf}
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}
@@ -218,6 +219,10 @@ number of triangles & subtraction time (s) & decomposition time (s) \\
 \caption{Relation between number of triangles (horizontal axes) and time required for subtraction task (vertical axes).}
 \label{fig:triangletimes}
 \end{figure}
+
+
+\todo{second plot}
+
 
 The experiment showed us the limits of our approach. For the mesh subtraction, we can tolerate meshes with the size of about 600 triangles and still not cross half a second. On the other hand, convex decomposition times grow significantly faster, and the 600 triangle mesh takes a second to decompose.
 
