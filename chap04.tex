@@ -25,17 +25,34 @@ HACD & bundled with the application\footnote{hacd downloaded from https://source
 \end{tabular}
 \end{center}
 
-A C++ compiler capable of compiling the C++14 standard is also needed, we have used GCC version 6.3.0-2ubuntu1 with flags -std=c++14 -g -o2 -Wall -pedantic -frounding-math.
+A C++ compiler capable of compiling the C++14 standard is also needed, we have used GCC version 6.3.0-2ubuntu1 with flags -std=c++14 -g -O2 -Wall -pedantic -frounding-math.
 
 \subsection*{Compiling the application}
 We assume that all the right versions of the packages from the previous section are correctly installed. This installation process is automated with the use of \emph{make}. The HADC library is included with our code with its own {\tt Makefile}.
 
-The bundled HACD library needs to be compiled first, and then the main application is compiled. The compiling process may take a few minutes.
-\begin{code}
-~$ tar -xzf DestructionInGame.zip
-~$ cd DestructionInGame
-~/DestructionInGame$ make
-\end{code}
+The bundled HACD library needs to be compiled first, and then the main application is compiled. The compiling process may take a few minutes. After extracting the archive, the code is compiled by changing into the directory \emph{DestructionInGame} and running \texttt{make}.
+
+\subsection*{Hardware requirements}
+The software was tested on a system with Intel Core i3 550 CPU (3.20GHz $\times$ 4), 8GB of DDR3 RAM and 1GB ATI Radeon HD 5770 GPU. Minimal requirements should be lower, but for observing the behaviour of the algorithm, a CPU capable of running at least the 3 computation threads simultaneously should be used. We also recommend at least 4GB of RAM because this application does not implement any memory saving measures and loads entire game world at once. The graphics card has to support OpenGL.
+
+\subsection*{Using the application}
+The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
+\subsubsection*{Keyboard input}
+Keys can be pressed simultaneously and also held down instead of multiple presses. The bindings are:
+
+\begin{centering}
+  \begin{tabular}{ll}
+  Key & Function \\
+  \hline
+  W/S & pitch down/up \\
+  A/D & roll counter-clockwise/clockwise \\
+  Q/E & yaw left/right \\
+  Z/X & speed up/slow down \\
+  Space Bar & shoot or unpause \\ 
+  P & pause the game \\
+  ESC & quit the game \\
+  \end{tabular}
+\end{centering}
 
 \section{Directory structure}
 Our application is distributed among multiple folder and files. Here we describe the directory structure and mention the files in them.
@@ -47,30 +64,6 @@ Our application is distributed among multiple folder and files. Here we describe
 \item[build/] is a target directory for make. After compilation object files and executable file \emph{game} are located here. 
 \end{description}
 
-\section{Hardware requirements}
-Here is a short overview of the hardware we used.
-\begin{itemize}
-\item Intel Core i3 CPU 550 @ 3.20GHz $\times$ 4 
-\item 8GB DDR3 1600MHz RAM
-\item ATI Radeon HD 5770 GPU, 1200MHz, 1GB GDDR5
-\end{itemize}
-We recommend running the application on equal or better hardware then is the one we used to develop it. We require a CPU with at least four threads and 4GB of RAM.
-
-\section{Using the application}
-The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
-\subsection*{Keyboard input}
-Keys can be pressed simultaneously and also held down instead of multiple presses. The bindings are:
-\begin{itemize}
-\item W/S: pitch down/up
-\item A/D: roll counter-clockwise/clockwise 
-\item Q/E: yaw left/right
-\item Z/X: speed up/slow down
-\item Space Bar: shoot or unpause
-\item P: pause the game
-\item ESC: quit the game
-\end{itemize}
-
-
 \section{Input data}
 \label{sec:data}
 To allow the user to easily change the game world without the need of recompilation the input text file describing the whole setting is provided. The mentioned file is located in {\tt media/world.cfg}. 
@@ -81,10 +74,11 @@ We will show that the structure of the data is straightforward and therefore we 
 The \emph{first line} describes the sky-box, it is formed of 6 images in given order: top, bottom, left, right, front, back; relative to the starting viewpoint. 
 
 All other lines use same nine data items. Those are object model, texture, position (3 coordinates), scale (3 numbers, one for every axis) and mass. Every number is used as a floating point number.
-The second line describes the ground. Currently, the ground is generated as a solid cube with 1x1x1 size. Therefore model file is not needed. The third line is a description of our controlled vehicle. Beginning with this line, the texture file is an optional parameter and can be left blank. Bellow, we can see an example file.
+The second line describes the ground. Currently, the ground is generated as a solid cube with 1x1x1 size. Therefore model file is not needed. The third line is a description of our controlled vehicle. Beginning with this line, the texture file is an optional parameter and can be left blank. The described format can be seen in \cref{fig:world}.
 
-\begin{centering}
-\begin{Verbatim}[frame=single,numbers=left,xleftmargin=5mm]
+\begin{figure}
+\centering
+\begin{Verbatim}[frame=single,numbers=left]
 top.jpg;bottom.jpg;left.jpg;right.jpg;front.jpg;back.jpg
 ;grid.jpg;0;-15;0;1000;10;1000;0
 fighter.3ds;;0;20;0;0.5;0.5;0.5;1
@@ -92,8 +86,10 @@ building.obj;;-20;-11;-30;2;2;2;500
 pyramid.obj;;50;-11;-100;5;10;5;800
 ...
 \end{Verbatim}
-\end{centering}
-The zero mass means that the object is static and does not move.
+\caption{Example of the \emph{world.cgf}. The first line describes skybox textures, the rest consists of: object; texture; position (x;y;z); scale (x;y;z); mass. The zero mass means that the object is static and does not move.}
+\label{fig:world}
+\end{figure}
+
 
 \subsection*{Object models and textures}
 The input formats are limited to the support of \emph{Irrlicht}. The detailed list of supported object and texture formats can be found on \emph{Irrlicht} web page~\footnote{http://irrlicht.sourceforge.net/?page\_id=45\#supportedformats}. When using a new model file, the mesh needs to be checked for non-manifold geometry to ensure the compatibility with the {\tt CGAL::Nef\_polyhedron\_3}~(\cref{sec:nef}).

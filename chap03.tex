@@ -1,19 +1,19 @@
-\chapter{Implementation Design}
+\chapter{Implementation}
 \label{chaptImplementation}
-In this chapter, we will introduce the implementation of our demo game and explain the basic principles and algorithms behind it. Then we will show a set of experiments testing the performance of the implementation and used algorithms.
+In this chapter, we describe the implementation of our demonstration game and explain the basic principles and algorithms behind it. Then we present measurements of performance of main algorithms used in the implementation.
 
-After consideration of the various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement and test a combination of reviewed techniques.  
+At first, we considered implementation based on \emph{A fast method for simulating destruction and the generated dust and debris} (FMSDGDD) (see \cref{sec:edem}). However, after degrading performance issues~\cref{sec:testing} we decided to abandon this approach.
 
-At first, we considered implementation based on \emph{A fast method for simulating destruction and the generated dust and debris} (see \cref{sec:edem}). However, after degrading performance issues~\cref{sec:testing} we decided to abandon this approach.
-
-Our approach is similar to \emph{Geomod} (described in \cref{sec:common}) and \emph{Real Time Dynamic Fracture with Volumetric Approximate Convex Decompositions}(RTDF) (described in \cref{sec:RTDF}), but with several key differences described below. 
+After consideration of various approaches implemented in games and also proposed efficient solutions to the problem of real-time destructible environment, we decided to implement and test an approach based on \emph{Geomod} (described in \cref{sec:common}) technique. The \emph{Geomod} inspired us to create object representing empty space and use boolean subtraction operation on the mesh to generate damaged body. Abandoned FMSDGDD approach influenced us to generate debris equivalent to the removed volume and use boolean intersection. We implemented this idea by using an intersection of \emph{Geomod} inspired empty space and original mesh as a debris.
 
 \section{Main algorithm}
-As mentioned, our algorithm will use boolean operations similarly to \emph{Geomod}, but applied to rigid body objects. The shape of removed object will be determined by Voronoi cell that will be generated dynamically for every collision. The collision information is received from the physics engine.
+As mentioned, our algorithm will use boolean operations similarly to \emph{Geomod}s removal of an empty space from the terrain. The difference is that we apply this method to rigid body objects and permanently alter their mesh. The shape of removed object will be determined by Voronoi cell that will be generated dynamically for every collision. The collision information is received from the physics engine.
 
-Our approach generates Voronoi cell at the point of collision. Then the difference of original mesh and the Voronoi cell is calculated and represents the damaged object. To generate the debris, the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was chosen because it has easily randomizable shape and provides aesthetically good results. This choice is in no way critical to the rest of algorithm, and any other closed mesh can be used as well.
+Our approach generates Voronoi cell at the point of collision. The decision to use one cell instead of a fracture pattern, like the one described in Real Time Dynamic Fracture with Volumetric Approximate Convex Decompositions algorithm (see \cref{sec:RTDF}), is based on the fact that we want to observe how dependent is our design on the complexity of destructed objects and not on the complexity of fracture pattern. Our implementation is easily expandable to the use of multiple cells or cells of any shape. 
 
-Similarly to the RTDF approach, the cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object~\cref{sec:testing}. This makes the method suitable for use in computer games with a large number of simple objects with low polygon meshes.
+After the cell generation, the difference of original mesh and the Voronoi cell is calculated to represent the damaged objects. To generate the debris, the intersection of original mesh and the Voronoi cell is calculated. This action effectively cuts the object into two or more pieces, all of which are put back into simulation and can be damaged again (see \cref{fig:subtraction}). The Voronoi cell was chosen because it has easily randomizable shape and provides aesthetically good results.
+
+The cost of fracturing in our implementation is solely dependent on the size and complexity of the fractured object~\cref{sec:testing}. This makes the method suitable for use in computer games with a large number of simple objects with low polygon meshes.
 
 \begin{figure}
         \centering
@@ -22,7 +22,7 @@ Similarly to the RTDF approach, the cost of fracturing in our implementation is 
         \label{fig:subtraction}
 \end{figure}
 
-To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points for generation of their Voronoi cells, and we also add the point of collision. Now we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object in the collision. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every collision.
+To generate the Voronoi cell, we create a closed domain with the centre at the point of collision. In the domain, we need to create random points so the Voronoi cell of the point of collision does not cover entire domain. This step also ensures variability of generated cells. After that, we can use a Voronoi cell belonging to the point of collision as the object we subtract from the object in the collision. The boundaries of the domain clip the generated Voronoi cell, therefore the Voronoi cell can never be larger than the domain. Randomization of the size and shape of a Voronoi cell guarantees different result after every collision.
 
 \section{Program Structure}
 The main program loop runs in following steps:

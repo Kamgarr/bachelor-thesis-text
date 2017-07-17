@@ -1,13 +1,11 @@
 \chapter{Review of related software libraries}
 \label{chapt:technology}
-In this chapter, we introduce libraries that can be beneficial for creating a destructible environment. We do not talk about all-in-one software development kits with their approach to a destructible environment already implemented. Instead, our focus is on building a game with the destructible environment from zero.  
+In this chapter, we review some software libraries that can be used for implementing the algorithms required for constructing a destructible environment. We do not talk about all-in-one software development kits with their approach to a destructible environment already implemented. Instead, our focus is on building a game with our own approach to the destructible environment. 
 
-To build a game we will surely need a physics engine, a graphics engine, and to support our destructible environment a selection of geometric libraries. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
-
-We committed ourselves to writing our application in \emph{C++} language and using only free software. This commitment limits us in the availability of certain software. 
+To build a game we will surely need a physics engine, a graphics engine, and a selection of geom. libraries to support the computation of the destructible environment. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
 
 \section{Rendering engine}
-Rendering engine creates a base for a computer game. It allows a player to see the current state of the game world and control the game. Today, two most common libraries providing API for communication with GPU are \emph{OpelnGL} and \emph{DirectX}. Although it is possible directly use those low-level libraries, we use a library with more abstraction in provided API. Using higher-level libraries means we can save code, but we lose a direct control of rendering process. This thesis is not focused on graphical output and only uses it as a tool for building our application.
+Rendering engine creates a base for a computer game. It allows a player to see the current state of the game world and control the game. \todo{extremne vagni.} Today, two most common libraries providing API for communication with GPU are \emph{OpelnGL} and \emph{DirectX} \todo{ani jedno uz dneska mainstreamovy tituly nepouzivaj, vsichni kodej pro enginy ktery opengl/directX obchazeji a kodej primo shadery do grafik.}. Although it is possible directly use those low-level libraries, we use a library with more abstraction in provided API. Using higher-level libraries means we can save code, but we lose a direct control of rendering process. This thesis is not focused on graphical output and only uses it as a tool for building our application.
 
 We decided to use \textbf{Irrlicht Engine}~\footnote{http://irrlicht.sourceforge.net/}. Irrlicht is a light-weight cross-platform, high-performance engine capable of using either  \emph{OpelnGL} or \emph{DirectX}. Our use of Irrlicht is based on using its graphical window as an output of our application and also using Irrlichts event receiver for reading user input.
 
