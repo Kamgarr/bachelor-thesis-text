@@ -126,7 +126,7 @@ and debris}
 The method of \citet{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
 
 \begin{description}
-\item[Destruction on a coarse scale] on this level the authors use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. Instead of using particles, EDEM uses a set of rigid bodies that need to be produced by some tessellation method. The extension over traditional DEM is the use of pore springs to connect the adjacent elements (see \autoref{fig:spring}). The authors compare the elements to individual bricks (the distinct elements) held together by layers of mortar (the pore springs). If the applied force is sufficient to move the elements far enough from each other, the fracturing process is initiated. Pore springs also help the object retain its original shape after the force is applied. %after TIME. `applied force' neni time.
+\item[Destruction on a coarse scale] on this level the authors use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. Instead of using particles, EDEM uses a set of rigid bodies that need to be produced by some tessellation method. The extension over traditional DEM is the use of pore springs to connect the adjacent elements (see \cref{fig:spring}). The authors compare the elements to individual bricks (the distinct elements) held together by layers of mortar (the pore springs). If the applied force is sufficient to move the elements far enough from each other, the fracturing process is initiated. Pore springs also help the object retain its original shape after the force is applied. %after TIME. `applied force' neni time.
 \begin{figure}[t] %h! a t dohromady si protirecej. Navic vsechny figuresy musej bejt refly z textu (jinak ctenar nevi kdy se na ne podivat a uplne je vynecha)
         \centering
         \includegraphics[width=0.7\textwidth]{img/spring}
@@ -181,7 +181,7 @@ Here, $\mathbf{g}$ is the gravitational vector, $\mathbf{F}^c_{JI}$ is the conta
   \caption{Performance of EDEM element method without rendering \cite{edem}}
   \label{table1}
 \end{table}
-In conclusion, based on \autoref{table1}, the frames per second (fps) drop proportionally with growing number of EDEM elements. The method achieved interactive fps on moderate number of EDEM elements. In addition, the proposed debris and dust generation can be combined with other methods.
+In conclusion, based on \cref{table1}, the frames per second (fps) drop proportionally with growing number of EDEM elements. The method achieved interactive fps on moderate number of EDEM elements. In addition, the proposed debris and dust generation can be combined with other methods.
 
 \todo{Co se chce ukazat tim obrazkem 1.7? Bylo by dobry popsat ten rozdil na kterej ma clovek koukat, ktera metoda je vlevo a ktera vpravo (nebo to je ta sama metoda jen jinak zobrazena?). Btw s kterou casti textu souvisi? neni linknutej odnikud. Tabulky jsem predelal do svetove doporucenyho formatu tabulek.}
 
