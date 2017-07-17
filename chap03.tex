@@ -77,21 +77,70 @@ While the exact convex decomposition can still produce a significant number of c
 \subsection{Performance test}
 To estimate the performance of our application, we measure a time it takes to compute certain tasks. We measured the time required to process subtraction task and a time of convex decomposition, each measured in its separate thread. Then we measured the time from the creation of subtraction task for one object, to the time the new collision shapes is applied after convex decomposition is done on the same object.
 
-We recorded 460 collisions in a game world with buildings with following amounts of triangles: 7x60, 1x142, 1x104. We shot the buildings at random locations.
+We recorded 580 collisions in a game world with buildings with following amounts of triangles: 7x60, 1x142, 1x104. We shot the buildings at random locations.
 
-\begin{tabular}{lll}
-& Average & 0,25s \\
-Subtraction time: & Median & 0,24s \\
-& Variance & 0,02s \\
-\hline
-& Average & 0,28s \\
-Decomposition time: & Median & 0,25s \\
-& Variance & 0,01s \\
-\hline
-& Average & 2,7s \\
-Overall time:& Median & 0,96s \\
-& Variance & 15,89s \\
-\end{tabular}
+\begin{table}
+	\centering
+  \begin{tabular}{lll}
+  & Average & 0.18s \\
+  Subtraction time: & Median & 0.14s \\
+  & Variance & 0.02s \\
+  \hline
+  & Average & 0,13s \\
+  Decomposition time: & Median & 0.11s \\
+  & Variance & 0s \\
+  \hline
+  & Average & 0,39s \\
+  Overall time:& Median & 0,3s \\
+  & Variance & 0,06s \\
+  \end{tabular}
+  \caption{Statistics of the times recorded real time for given tasks. The overall time is measured from the time of creating subtraction task, to the time of having a new convex decomposition for the object in collision.}
+  \label{tab:performace}
+\end{table}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+  \begin{axis}
+    [
+    boxplot/draw direction=y,
+    xtick={1,2,3},
+    xticklabels={Subtraction, Decomposition, Overall Time}
+    ]
+    \addplot+[
+    boxplot prepared={
+      median=0.14,
+      upper quartile=0.24259,
+      lower quartile=0.091783825,
+      upper whisker=0.46,
+      lower whisker=0.03
+    },
+    ] coordinates {};
+    \addplot+[
+    boxplot prepared={
+      median=0.114929,
+      upper quartile=0.1292675,
+      lower quartile=0.1094205,
+      upper whisker=0.16,
+      lower whisker=0.10
+    },
+    ] coordinates {};
+    \addplot+[
+    boxplot prepared={
+      median=0.303041,
+      upper quartile=0.41976,
+      lower quartile=0.2415265,
+      upper whisker=0.7,
+      lower whisker=0.05
+    },
+    ] coordinates {};
+  \end{axis}
+\end{tikzpicture}
+\caption{Box plot showing the distribution of the times (horizontal axis) it takes to perform given tasks (vertical axis)}
+\label{fig:boxtimes}
+\end{figure}
+
+
 
 Our expectation is that less than half a second delay between collision and a rendering of new objects would be acceptable for a game and thanks to the separate thread solution would not impact the frame rate. The experiment confirms that on given input we can successfully meet this expectation.
 
@@ -104,21 +153,70 @@ We designed an experiment to measure a relationship between a number of triangle
 \begin{tabular}{r|r|r}
 number of triangles & subtraction time (s) & decomposition time (s) \\
 \hline
-12 & 0.1138 & 0.2103 \\
-108 & 0.2681 & 0.2401 \\
-588 & 0.4069 & 0.9831 \\ 
-2700 & 1.4255 & 14.9761 \\ 
-10092 & 3.9377 & 39.4459 \\
+12 & 0.037 & 0.118 \\
+108 & 0.0678 & 0.135 \\
+588 & 0.134 & 0.261 \\ 
+2700 & 0.386 & 2.362 \\ 
+10092 & 1.211 & 12.007 \\
 \end{tabular}
 \caption{}
 \label{tab:subtraction-decomposition}
 \end{table}
 
+
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{img/experiment-triangles}
-\caption{}
-\label{fig:subraction-decomposition}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+  \begin{axis}
+    [
+	boxplot/draw direction=y,
+    xtick={1,2,3,4},
+    xticklabels={12, 108, 588, 2700},
+    ]
+    \addplot+[
+    boxplot prepared={
+      median=0.03609005,
+      upper quartile=0.039086475,
+      lower quartile=0.0343537,
+      upper whisker=0.05,
+      lower whisker=0.03
+    },
+    ] coordinates {};
+    
+    \addplot+[
+    boxplot prepared={
+      median=0.06526395,
+      upper quartile=0.070043275,
+      lower quartile=0.064723875,
+      upper whisker=0.070043275,
+      lower whisker=0.06
+    },
+    ] coordinates {};
+    \addplot+[
+    boxplot prepared={
+      median=0.1335775,
+      upper quartile=0.1341765,
+      lower quartile=0.13317175,
+      upper whisker=0.14,
+      lower whisker=0.13
+    },
+    ] coordinates {};
+    
+    \addplot+[
+    boxplot prepared={
+      median=0.384889,
+      upper quartile=0.391104,
+      lower quartile=0.38266425,
+      upper whisker=0.4,
+      lower whisker=0.38
+    },
+    ] coordinates {};
+  \end{axis}
+\end{tikzpicture}
+}
+\caption{Relation between number of triangles (horizontal axes) and time required for subtraction task (vertical axes).}
+\label{fig:triangletimes}
 \end{figure}
 
 The experiment showed us the limits of our approach. For the mesh subtraction, we can tolerate meshes with the size of about 600 triangles and still not cross half a second. On the other hand, convex decomposition times grow significantly faster, and the 600 triangle mesh takes a second to decompose.
