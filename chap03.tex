@@ -296,6 +296,7 @@ The experiment showed the limits of our approach. For the mesh subtraction, we c
 
 
 \subsection{Testing the concept of EDEM}
+\label{sec:edemtest}
 To test EDEM (described in \cref{sec:edem}), we set up a cube divided into 439 tetrahedrons. After introducing constraints to hold the tetrahedrons together, we experienced a drop from 60fps (set as an upper limit) to 13fps. Having a large number of elements connected with springs in the simulation can also trigger an undesirable behaviour, such as contractions, retractions and self-induced rapid unscheduled disassembly of the object. Performance issues and problems with keeping elements in a stable state concluded that the approach was not suitable for our implementation.
 
 
