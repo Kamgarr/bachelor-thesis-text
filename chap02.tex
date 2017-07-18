@@ -2,23 +2,23 @@
 \label{chapt:technology}
 In this chapter, we review some software libraries that can be used for implementing the algorithms required for constructing a destructible environment. We do not talk about all-in-one software development kits with their approach to a destructible environment already implemented. Instead, our focus is on building a game with our own approach to the destructible environment. 
 
-To build a game we will surely need a physics engine, a graphics engine, and a selection of geometric libraries to support the computation of the destructible environment. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
+To build a game, we will surely need a physics engine, a graphics engine, and a selection of geometric libraries to support the computation of the destructible environment. We mention which libraries we used in the implementation and details of their use can be found in~\cref{app:implementation}.
 
 \section{Physics engine}
 Physics engines are used in games to provide a simulation of applied forces to in-game objects and collision detection. Many physics engines are directly bundled with rendering, audio engines to create a complete game engine. 
 
-To support our implementation of destructible environment we need a physics engine to detect collisions, move the user-controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. Some of the commonly used engines are Open Dynamics Engine, Newton Game Dynamics, Bullet, Simulation Open Framework Architecture, Tokamak. All of them provide simulation of rigid bodies and collision detection, other features are not relevant for us, therefore we decided to used Bullet physics on the bases of previous experience.
+To support our implementation of destructible environment we need a physics engine to detect collisions, move the user-controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. Some of the commonly used engines are Open Dynamics Engine, Newton Game Dynamics, Bullet, Simulation Open Framework Architecture, Tokamak. All of them provide the simulation of rigid bodies and collision detection. Other features are not relevant to us. Therefore we decided to used Bullet physics on the bases of previous experience.
 
 \section{Geometric libraries}
 Here we preview some of the libraries focused on a decomposition or modification of 3D meshed objects. The preview is focused on three techniques used in destructible environment, boolean operations, Voronoi tessellation and convex decomposition,
 
 \subsection{Boolean operations}
 When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software
-\todo{list?} is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{\url{http://www.cgal.org/}} or shortly \textbf{CGAL}.CGAL provides polyhedral surfaces that are closed for Boolean operations, and it is possible to convert data between meshes and polyhedrons. 
+is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{\url{http://www.cgal.org/}} or shortly \textbf{CGAL}. CGAL provides polyhedral surfaces that are closed for Boolean operations, and it is possible to convert data between meshes and polyhedrons. 
 
-The mentions polyhedral surfaces or Nef polyhedrons, require the input mesh to be an orientable 2-manifold (for more details on data structure see~\cref{app:implementation}). Nef polyhedron works with two data structures, one that represents the local neighbourhoods of vertices, which is in itself already a complete description, and a data structure that connects these neighbourhoods up to a global data structure with edges, facets, and volumes. This redundancy in data makes nef polyhedron a large data structure that is not optimized for fast construction and not the most suitable for real-time deployment.
+The mentions polyhedral surfaces or Nef polyhedrons, require the input mesh to be an orientable 2-manifold (for more details on data structure see~\cref{app:implementation}). Nef polyhedron works with two data structures, one that represents the local neighbourhoods of vertices, which is in itself already a complete description, and a data structure that connects these neighbourhoods up to a global data structure with edges, facets, and volumes. This redundancy in data makes Nef polyhedron a large data structure that is not optimised for fast construction and not the most suitable for real-time deployment.
 
-We considered using a \textbf{Cork Boolean Library}~\footnote{\url{https://github.com/gilbo/cork\#cork-boolean-library}} but we did not find it to be as robust as CGAL and encountered a problems and instability on valid data.
+We considered using a \textbf{Cork Boolean Library}~\footnote{\url{https://github.com/gilbo/cork\#cork-boolean-library}} but we did not find it to be as robust as CGAL and encountered problems and instability on valid data.
 
 \subsection{Voronoi tessellation}
 We learned that to Voronoi tessellation can be beneficial to either creating a compound body held together by springs or used as a tool for subtracting parts of the mesh. Here are some libraries useful for both tasks.
