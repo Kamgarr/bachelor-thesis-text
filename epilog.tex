@@ -6,8 +6,7 @@ This thesis has reviewed currently used techniques used to simulate destructible
 \begin{itemize}
 \item We have successfully presented an approach that combines boolean operations on 3D objects and Voronoi tessellation. The performance experiment~\cref{sec:overallperformance} has shown that the visual experience have not been impacted by presenting destruction multiple frames later as a result of multiple thread solution with a delayed application.
 
-\item The experiments have estimated the limits of used approaches and libraries. 
-For the boolean operations, we could tolerate meshes with the size of about 2000 triangles.The convex decomposition has reached the critical time at around 1000 triangles. The limits have been measured by the experiment designed in the~\cref{sec:triangleperformance}. 
+\item The experiments have concluded that used techniques are viable for low polygon meshes. For the boolean operations, we could tolerate meshes with the size of about 2000 triangles.The convex decomposition has reached the critical time at around 1000 triangles. The limits have been measured by the experiment designed in the~\cref{sec:triangleperformance}.
 
 \item We have learned that mesh to mesh collisions
 \end{itemize}
@@ -19,8 +18,7 @@ The implementation showed several points that might be viable as starting points
 \item We have used CGAL library to perform boolean operations on 3D meshes, the approach it implements has performed consistently, however CGAL is a geometric library and it is designed to provide a rich interface with multiple views on data. For the purpose of destructible environment we propose an library for boolean operations on 3D triangular meshes optimized for use in real-time environments.
 \item The implementation has shown the problem of determining a centre of gravity for arbitrary closed 3D triangular objects with homogeneous distribution of mass, after dynamically creating new meshes.
 \item We have not incorporated texture generation into implementation, instead we relied on lightning to show the objects features. The generation of the textures for the fragments of original textured object would benefit this work.
-\item Stability check
+\item Most of the modern game engines do not perform stability analyses on the damaged objects. We have envisioned a independent stability analyses running in a separate thread, testing recently damaged objects.
+\todo{ja by som kolizie lietadla vobec neriesil, keby to bola normalna hra tak to napise game over a done.}
 \end{itemize}
 
-bullet kolizie lietadla
-tady zhruba popises co jsi vynechal a proc (treba ze to bylo moc slozity a out of scope of the thesis) ale asi by si to zaslouzilo na tom zamakat. Zjistili sme ze rozklad typu X je dementni protoze Y, takze priste pouzijem Z. Zjistili sme ze nef polyhedra je slozity vytvaret, takze by bylo dobry mit nejakou knihovnu nebo format dat kterej to umi zvladnout chytrejc. Atd.
