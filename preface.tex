@@ -1,14 +1,33 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-The destructible environment has been a part of computer games since their beginning. From shooting through the humble bricks in Space invaders to blowing up buildings in the Battlefield series. The technology has come far, but it is still not quite perfect and realistic. Most of the modern games hide the imperfections of the destructible environment behind a screen of dust and debris or rely on pre-rendered animations. We would like to see a game with a fully destructible environment with destruction calculated at a run-time and adhering to the laws of physics.
+Destructible environment has been an amusing part of computer games since their beginning, from shooting through the simple bricks in Space invaders to blowing up buildings in the Battlefield series. Current development is trying to achieve highly realistic destruction effects by inventing and improving various simulation approaches of 2D and 3D destructible game worlds.
 
-\subsection*{Related works}
-There has been a lot of research done in recent years in the destructible environment. Some of it can be found already implemented in released games, and some are still in theoretical research papers. We study different approaches, both used and proposed and decide on our own design. We shortly overview two different particle methods for soft body deformation and then turn our attention to the simulation of rigid bodies. 
-In the department of dynamic rigid body destructible environment, we found three distinct approaches: boolean operations~\cite{geomod}, approach based on discrete particle method~\cite{edem}, and an approach based on Voronoi tessellation~\cite{nvidia}. The boolean method comes from the Red Faction video game, that is the first game to feature fully destructible terrain. The approach based on discrete particle method is focused on inner body stress simulation. This method works by splitting a rigid body into smaller parts and then connecting them by springs. The final approach focuses on efficient modification of the mesh by decomposing a body into Voronoi cells and then cutting the mesh by the fracture pattern.
+Despite of the advances in the field, the excessive complexity of accurate physical simulation introduces a trade-off: To achieve sufficient performance required to satisfy real-time constraints of the game environment (most notably acceptable and consistent frame rate), the game developers are forced to relax their demands on realism, usually by simplifying the game environment and neglecting less-important aspects of physical simulation.
 
-\subsection*{Goal of the thesis}
-The goal of this thesis is to research techniques used in the games with a destructible environment and to design and implement a simple application with an efficient approach to this problem. We decided to design an approach combining boolean operations and Voronoi tessellation. Our application computes the difference between original mesh and generated Voronoi cell at the point of collision. We implemented our design in a simple demo application purely focused on featuring the destruction of the environment.
+The goal of this thesis is to review currently used techniques used to simulate such environments, implement a simple game environment to test some of the approaches and design and measure an approach based on a combination of the reviewed techniques.
 
-\subsection*{Thesis structure}
-This thesis is organised as follows: a first chapter talks about techniques used in computer games and simulations and proposed approaches with the goal of improving already used techniques. The second chapter introduces libraries that can be beneficial in creating a destructible environment. The last chapter describes the design of our implementation and takes measurements to test its performance. Our work continues with two appendices, first of them is a user guide to our application and the second provides insights into the code of the application. 
+
+\paragraph{Related work}
+velke procento vyskumu je komercni primo do her. praca skuma niekolko takych pristupov. je t podporene rigiroznym akademickym vyskumom ktory skuma teselace, dekompizec, fyzikalne simulace a geometricke reprezentace. praca skuma dve take pristupy citet obe. 
+
+
+
+
+We specially focus on dynamically destructible rigid-bodies\cite{todo} base on boolean operations~\cite{geomod} on meshes, approach based on discrete particle method~\cite{edem} focused on inner body stress simulation, and an approach based on Voronoi tessellation~\cite{nvidia}. 
+
+
+\paragraph{Approach}
+We present an approach that combines boolean operations on 3D objects and Voronoi tessellation. Our application computes the difference between original mesh and generated Voronoi cell at the point of collision. We implemented our design in a simple demo application purely focused on featuring the destruction of the environment.
+
+%aby to fungovalo v hrach:
+%boli vybrane pristupy z revieved literature
+%naimplementovali sme do game world a obalili physics engine, 
+%moja implementacia je zjednoduseny kombinovany pristup
+%ani jedna implement, neni vhodna do real time lebo ma nezanedbatelny cas takze thread a visualne neskor
+%zmerame zhodnotime nas approach
+
+
+
+\paragraph{Thesis structure}
+This thesis is organized as follows: \Cref{chapt:over} talks about techniques used in computer games and simulations and proposed approaches with the goal of improving already used techniques. \Cref{chapt:technology} introduces libraries that can be beneficial in creating a destructible environment. The last chapter\todo{ref} describes the design of our implementation and presents measurements of its performance. After conclusion we continue with two appendices, first/todo{ref} of them is an user guide to our application and the second /todo{ref} provides some insight into the inner structure of the application. 
 

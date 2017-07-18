@@ -7,7 +7,7 @@ To build a game, we will surely need a physics engine, a graphics engine, and a 
 \section{Physics engine}
 Physics engines are used in games to provide a simulation of applied forces to in-game objects and collision detection. Many physics engines are directly bundled with rendering, audio engines to create a complete game engine. 
 
-To support our implementation of destructible environment we need a physics engine to detect collisions, move the user-controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. Some of the commonly used engines are Open Dynamics Engine, Newton Game Dynamics, Bullet, Simulation Open Framework Architecture, Tokamak. All of them provide the simulation of rigid bodies and collision detection. Other features are not relevant to us. Therefore we decided to used Bullet physics on the bases of previous experience.
+To support our implementation of destructible environment we need a physics engine to detect collisions, move the user-controlled vehicle and simulate gravity and mechanical forces. There are no special needs for the physics engine in our applications that would not be supported in most engines. Some of the commonly used engines are Open Dynamics Engine, Newton Game Dynamics, Bullet, Simulation Open Framework Architecture, Tokamak. All of them provide the simulation of rigid bodies and collision detection. Other features are not relevant to us. Therefore we decided to used Bullet physics on the base of author's previous experience.
 
 \section{Geometric libraries}
 Here we preview some of the libraries focused on a decomposition or modification of 3D meshed objects. The preview is focused on three techniques used in destructible environment, boolean operations, Voronoi tessellation and convex decomposition,
@@ -18,7 +18,7 @@ is dependent on using \textbf{The Computational Geometry Algorithms Library}~\fo
 
 The mentions polyhedral surfaces or Nef polyhedrons, require the input mesh to be an orientable 2-manifold (for more details on data structure see~\cref{app:implementation}). Nef polyhedron works with two data structures, one that represents the local neighbourhoods of vertices, which is in itself already a complete description, and a data structure that connects these neighbourhoods up to a global data structure with edges, facets, and volumes. This redundancy in data makes Nef polyhedron a large data structure that is not optimised for fast construction and not the most suitable for real-time deployment.
 
-We considered using a \textbf{Cork Boolean Library}~\footnote{\url{https://github.com/gilbo/cork\#cork-boolean-library}} but we did not find it to be as robust as CGAL and encountered problems and instability on valid data.
+We also considered using a \textbf{Cork Boolean Library}~\footnote{\url{https://github.com/gilbo/cork\#cork-boolean-library}} but we did not find it to be as robust as CGAL and encountered problems and instability on valid data.
 
 \subsection{Voronoi tessellation}
 We learned that to Voronoi tessellation can be beneficial to either creating a compound body held together by springs or used as a tool for subtracting parts of the mesh. Here are some libraries useful for both tasks.
@@ -42,7 +42,7 @@ Convex decomposition is critical to fast and accurate collision detection on 3D 
 
 \item[Hierarchical Approximate Convex Decomposition] or HACD~\cite{HACD} is a library and algorithm providing a convex decomposition that approximates the original shape. The approximation yields fewer pieces and is faster than exact calculations, but the result is not exact. For the reasons that we are implementing a destructible environment in a computer game, we can allow for deviations in the shape of the objects from their respective visual representations. Those deviations should be too small to be noticed in the game. This makes us choose HACD over CGAL.
 
-\item[Convex Decomposition Library]~\footnote{\url{http://codesuppository.blogspot.cz/2009/11/convex-decomposition-library-now.html}} produces approximate convex decomposition. It is an older library that is currently marked deprecated in favour of HACD. 
+\item[Convex Decomposition Library]~\footnote{\scriptsize\url{http://codesuppository.blogspot.cz/2009/11/convex-decomposition-library-now.html}} produces approximate convex decomposition. It is an older library that is currently marked deprecated in favour of HACD. 
 \end{description}
 
 We can see the difference in the result of exact and approximate approaches on~\cref{fig:bunny}. It is evident that we do not want to use the exact decomposition in a computer game, but on the other hand for the simulations where the calculation time is not critical, the approximations should not be used.

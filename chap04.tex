@@ -25,7 +25,7 @@ HACD & bundled with the application\footnote{hacd downloaded from https://source
 \end{tabular}
 \end{center}
 
-A C++ compiler capable of compiling the C++14 standard is also needed, we have used GCC version 6.3.0-2ubuntu1 with flags -std=c++14 -g -O2 -Wall -pedantic -frounding-math.
+A C++ compiler capable of compiling the C++14 standard is also needed, we have used GCC version 6.3.0-2ubuntu1 with flags \texttt{-std=c++14 -O2 -frounding-math}.
 
 \subsection*{Compiling the application}
 We assume that all the correct versions of the packages from the previous section are installed. This installation process is automated with the use of \emph{make}. The HADC library is bundled with our code with its own {\tt Makefile}.
@@ -33,14 +33,16 @@ We assume that all the correct versions of the packages from the previous sectio
 The bundled HACD library needs to be compiled first, and then the main application is compiled. The compiling process may take a few minutes. After extracting the archive, the code is compiled by changing into the directory \emph{DestructionInGame} and running \texttt{make}.
 
 \subsection*{Hardware requirements}
-The software was tested on a system with Intel Core i3 550 CPU (3.20GHz $\times$ 4), 8GB of DDR3 RAM and 1GB ATI Radeon HD 5770 GPU. Minimal requirements should be lower, but for observing the behaviour of the algorithm, a CPU capable of running at least 3 computation threads simultaneously should be used. We also recommend at least 4GB of RAM because this application does not implement any memory saving measures and loads entire game world at once. The graphics card has to support OpenGL.
+The software was tested on a system with Intel Core i3 550 CPU (3.20GHz $\times$ 4), 8GB of DDR3 RAM and 1GB ATI Radeon HD 5770 GPU. Minimal requirements should be lower, but for observing the behaviour of the algorithm, a CPU capable of running at least 3 computation threads simultaneously should be used. We also recommend at least 4GB of RAM~\footnote{The memory requirement is not needed for running the application --- compilation of CGAL headers with any optimalizations enabled require more than 2GB of RAM}. The graphics card has to support OpenGL.
 
 \subsection*{Using the application}
 The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
-\subsubsection*{Keyboard input}
-Keys can be pressed simultaneously and also held down instead of multiple presses. The bindings are:
 
-\begin{centering}
+The user is able to control a flying vehicle and shoot at the destructible objects. The application accepts the keyboard input. The bindings are listed in \cref{tab:keys}.
+
+\begin{table}
+
+\centering
   \begin{tabular}{ll}
   Key & Function \\
   \hline
@@ -52,7 +54,10 @@ Keys can be pressed simultaneously and also held down instead of multiple presse
   P & pause the game \\
   ESC & quit the game \\
   \end{tabular}
-\end{centering}
+\caption{Key bindings available for the user.}
+\label{tab:keys}
+
+\end{table}
 
 \section{Directory structure}
 Our application is distributed among multiple folder and files. Here we describe the directory structure and mention the files in them.

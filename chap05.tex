@@ -7,7 +7,8 @@ This section provides insights on the code from a programmer's point of view. We
 \section{Design and Libraries}
 Logically, the program consists of four components, and they are Physics, Graphics, Mesh Manipulation and Controllers. Controllers connect the other three components together, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
 \begin{description}
-\item[Physics] provides us with the simulation of our objects and collision detection. We use \emph{Bullet physics} to implement this component. 
+\item[Physics] provides us with the simulation of our objects and collision detection. We use \emph{Bullet physics} to implement this component.
+\todo{ref na bullet do 2.}
 \item[Graphics] is used for rendering the current state of the physics world. Although it is possible directly use those low-level libraries, we use a library with more abstraction in provided API. Using higher-level libraries means we can save code, but we lose a direct control of rendering process. This thesis is not focused on graphical output and only uses it as a tool for building our application.
 
 We decided to use \textbf{Irrlicht Engine}~\footnote{\url{http://irrlicht.sourceforge.net/}}. Irrlicht is a light-weight cross-platform, high-performance engine capable of using either  \emph{OpelnGL} or \emph{DirectX}. Our use of Irrlicht is based on using its graphical window as an output of our application and also using Irrlichts event receiver for reading user input.
