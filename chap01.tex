@@ -1,7 +1,7 @@
 \chapter{Overview of techniques}
 This chapter introduces the techniques used to simulate destructible environments. First, we talk about the development of the destructible environment in several games and game engines, then about general approaches to this problem.
 
-We will repeatedly categorise the content of the game world in following way: We will use the word \emph{object} to refer to any building, crate, door, tree or other items that occur in the game environment, but excluding terrain, distant environment like skyboxes and any in-game characters. Most of the modern 3D games use the term destructible environment as a reference to destructible objects because they do not support the destruction of terrain. We will comply with this terminology and, unless specified otherwise, use the term destructible environment as a reference to a destruction of game objects and not the terrain.
+We repeatedly categorise the content of the game world in following way: We use the word \emph{object} to refer to any building, crate, door, tree or other items that occur in the game environment, but excluding terrain, distant environment like skyboxes and any in-game characters. Most of the modern 3D games use the term destructible environment as a reference to destructible objects because they do not support the destruction of terrain. We decided to comply with this terminology and, unless specified otherwise, use the term destructible environment as a reference to a destruction of game objects and not the terrain.
 
 \section{Implementations in mainstream gaming}
 \label{sec:common}
@@ -9,7 +9,7 @@ In this brief overview, we introduce the most common approaches to environment d
 
 \para{Object replacement or removal} was the first~\cite{history} method used to simulate a destructible environment in a computer game, mostly because it is straightforward and undemanding. This approach is based on swapping models or any other kind of visual representations, for more damaged ones or completely removing them. Because it relies on pre-made models, exact collision points on the models are not considered, and the result is always the same. If we were to consider $N$ points of taking damage, the number of different models could grow up to $2^N$. A large number of models is not practical for game development, other approaches are therefore used for breaking the object at the precise point. Despite its simplicity and limitations, this approach can still produce a very desirable result. In fact, it is still most widely used approach to a destructible environment in computer games.
 
-In our simplified view on 2D games, we will not differentiate between objects and terrain and refer to both as the environment.
+In our simplified view on 2D games, we do not differentiate between objects and terrain and refer to both as the environment.
 First 2D games featuring the destructible environment were arcade games like the \emph{Space Invaders (1978)}\footnote{\url{https://en.wikipedia.org/wiki/Space\_Invaders}}, where the environment is represented by cells in a grid. After taking damage, the visual representation of the cell is replaced by one looking more damaged and then finally completely removed. About a decade later, new environment destruction technique was used in games like \emph{Scorched Earth (1991)}\footnote{\url{https://en.wikipedia.org/wiki/Scorched\_Earth\_(video\_game)}} and \emph{Worms (1995)}\footnote{\url{https://www.team17.com/games/worms-original}}. Collision and removal of terrain in those games is based on individual pixels rather than whole objects, which creates a more realistic visual effect. In \emph{Scorched earth} players typically need to blow away a hill dividing them, in \emph{Worms} it is common to dig a tunnel to hide from your enemies gunfire.
 
 In 3D games, the principal technique of implementation of destructible objects has not changed much over the years. For every object that the player can modify there is a prepared set of alternative models with various amount of damage applied. Based on how much damage is applied, the models are swapped and eventually completely removed, as seen in \cref{fig:doors}. Swapping the models is usually accompanied by animations, debris and dust generation, designed to hide the unrealistic and instant change of the object from the player. The disadvantage of this method is the necessity to replace the in-game objects as a whole --- there has to be a significant number of objects pre-made for different scenarios to make the game look realistic. A small number of pre-made damaged models means this approach can not flexibly react to specific player actions. As an example, in the \emph{Source} engine, the hole in the door (\cref{fig:doors}) is always created at the same place, regardless of the point of the impact. Another example can be found in the game \emph{Duke Nukem 3D}\footnote{https://en.wikipedia.org/wiki/Duke\_Nukem\_3D}, where specific parts of the walls are constructed as separate objects that disappear when hit.
@@ -17,7 +17,7 @@ In 3D games, the principal technique of implementation of destructible objects h
 \begin{figure} 
 \centering
 \includegraphics[width=\textwidth]{img/doors}
-\caption{\emph{Source} engine swaps door models. Image taken from \emph{Counter Strike: Global Offensive}. Successively damaging any doors in the game will always produce this sequence of models, regardless of the exact point where the damage was applied.}
+\caption{\emph{Source} engine swaps door models. Image taken from \emph{Counter Strike: Global Offensive}. Successively damaging any doors in the game always produces this sequence of models, regardless of the exact point where the damage was applied.}
 \label{fig:doors}
 \end{figure}
 
@@ -45,14 +45,14 @@ The large-scale destruction is focused on destroying entire buildings. The build
 
 \section{Methods and algorithms}
 
-Here we will give a short overview of several more rigorous algorithms commonly used for simulations of destructible environment. 
+Here we give a short overview of several more rigorous algorithms commonly used for simulations of destructible environment. 
 
 In simulations, we consider two types of objects: soft bodies and rigid bodies. A rigid body represents an object with a constant shape where every two points on the body are always in the same relative position. On the other hand, soft bodies are deformable under an applied force, and any point on the body can change its position independently on every other point. Although there are no actual rigid objects in the real world, soft body simulation is computationally more expensive than the rigid body one. Therefore, in the computer games, rigid body simulation is used almost exclusively. Although we do not perform soft body simulations, we try to emulate them in real-time on rigid bodies.
 
 When trying to save a processing power, there is another way to do it on soft bodies. Many soft bodies are non-essential to the gameplay, and their simulation would not bring more value to the game \eg waving flag or flowing water. Those bodies can be implemented as a pre-rendered animations and not actual simulations.
 
 \subsection{Soft body deformation}
-In this section, we will shortly introduce two different approaches for simulation of soft bodies. Despite the fact that soft bodies are currently rarely used in computer games to the extent of destructible environment, several soft body objects can show up in a game. We also expect that with an evolution of more powerful hardware, soft body deformation will make its way into the gaming world \eg \emph{Next Car Game: Wreckfest (2018)}~\footnote{\url{http://store.steampowered.com/app/228380/Next\_Car\_Game\_Wreckfest/}} will use soft bodies to simulate car crashes.
+In this section, we shortly introduce two different approaches for simulation of soft bodies. Despite the fact that soft bodies are currently rarely used in computer games to the extent of destructible environment, several soft body objects can show up in a game. We also expect that with an evolution of more powerful hardware, soft body deformation will make its way into the gaming world \eg \emph{Next Car Game: Wreckfest (2018)}~\footnote{\url{http://store.steampowered.com/app/228380/Next\_Car\_Game\_Wreckfest/}} will use soft bodies to simulate car crashes.
 \label{sec:softBody}
 
 \para{Finite Element Method} (FEM) is a numerical method used to simulate the behaviour of a system that can be modelled by solving the behaviour of the smaller discrete parts, called finite elements. Each element calculates its physical state, \eg stress or temperature, and propagates the results to neighbouring elements. This model can be used for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images ~\cite{Bargteil:2007:AFE}. 
@@ -150,7 +150,7 @@ The method of \citet{edem} approaches destruction on three scales. At first, the
 \item Represent the original object as a closed surface model.
 \item Arbitrarily arrange the EDEM elements inside the object.
 Elements are allowed to overlap at this point.
-\item Move elements by performing the EDEM simulation. Only the contact force will be considered in this simulation.
+\item Move elements by performing the EDEM simulation. Only the contact force is considered in this simulation.
 \item Perform collision detection between the object’s surface
 and elements, making sure that they always
 stay inside the object.
