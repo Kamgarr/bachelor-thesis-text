@@ -14,7 +14,7 @@ To support our implementation of destructible environment we need a physics engi
 Here we preview some of the libraries focused on a decomposition or modification of 3D meshed objects. The preview is focused on three techniques used in destructible environment, boolean operations, Voronoi tessellation and convex decomposition,
 
 \subsection{Boolean operations}
-When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of available software
+When searching for efficient library able to compute the difference of two 3D triangular meshes, we found out that the majority of software utilizing geometric library
 is dependent on using \textbf{The Computational Geometry Algorithms Library}~\footnote{\url{http://www.cgal.org/}} or shortly \textbf{CGAL}. CGAL provides polyhedral surfaces that are closed for Boolean operations, and it is possible to convert data between meshes and polyhedrons. 
 
 The mentioned polyhedral surfaces or Nef polyhedrons~\cite{nefpoly}, require the input mesh to be an orientable 2-manifold (for more details on this data structure see~\cref{app:implementation}). Nef polyhedron works with two data structures, one that represents the local neighborhoods of vertices, which is in itself already a complete description, and a data structure that connects these neighborhoods up to a global data structure with edges, facets, and volumes. This redundancy in data makes Nef polyhedron a large data structure that is not optimized for fast construction and not the most suitable for real-time deployment.

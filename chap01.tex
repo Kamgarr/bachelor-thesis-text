@@ -102,7 +102,7 @@ Voronoi tessellation is a method of decomposing a solid object into smaller part
 \begin{figure}
         \centering
         \includegraphics[width=0.5\textwidth]{img/clippedresult}
-        \caption{The result of Voronoi tessellation \cite{yan2010efficient}}
+        \caption{The result of Voronoi tessellation by \citet{yan2010efficient}}
         \label{fig:voro}
 \end{figure}
 
@@ -139,11 +139,11 @@ and debris}
 The method of \citet{edem} approaches destruction on three scales. At first, the destruction is performed on a coarse scale, and then the applied energy is used to calculate the amount and size of smaller debris and finally dust particles.
 
 \begin{description}
-\item[Destruction on a coarse scale] on this level the authors use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. Instead of using particles, EDEM uses a set of rigid bodies that need to be produced by some tessellation method. The extension over traditional DEM is the use of pore springs to connect the adjacent elements (see \cref{fig:spring}). The authors compare the elements to individual bricks (the distinct elements) held together by layers of mortar (the pore springs). If the applied force is sufficient to move the elements far enough from each other, the fracturing process is initiated. Pore springs also help the object retain its original shape after the force is applied. 
+\item[Destruction on a coarse scale], on this level the authors use Extended Distinct Element Method (EDEM) which is based on Element Method described in section \ref{sec:softBody}. Instead of using particles, EDEM uses a set of rigid bodies that need to be produced by some tessellation method. The extension over traditional DEM is the use of pore springs to connect the adjacent elements (see \cref{fig:spring}). The authors compare the elements to individual bricks (the distinct elements) held together by layers of mortar (the pore springs). If the applied force is sufficient to move the elements far enough from each other, the fracturing process is initiated. Pore springs also help the object retain its original shape after the force is applied. 
 \begin{figure}[t]
         \centering
         \includegraphics[width=0.7\textwidth]{img/spring}
-        \caption{The force between two EDEM elements \cite{edem}}
+        \caption{The force between two EDEM elements. Source: \citet{edem}}
         \label{fig:spring}
 \end{figure}
 \\Algorithm for creating EDEM elements
@@ -178,7 +178,7 @@ Here, $\mathbf{g}$ is the gravitational vector, $\mathbf{F}^c_{JI}$ is the conta
         \centering
         \includegraphics[width=0.49\textwidth]{img/edem_real}
         \includegraphics[width=0.49\textwidth]{img/edem}
-        \caption{View of final rendering with generated dust and debris (left) and equivalent view showing underlying EDEM elements (right) \cite{edem}}
+        \caption{View of final rendering with generated dust and debris (left) and equivalent view showing underlying EDEM elements (right). Source: \citet{edem}}
         \label{fig:edem}
     \end{figure}
    
