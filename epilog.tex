@@ -28,8 +28,6 @@ The implementation showed several points that might be viable as starting points
 
 \item It would be interesting to perform independent stability analyses of the in-game objects that would be able to \eg correctly cause the demolition of an object in which a large, massive part is held in place only by a tiny support. Scanning the environment for unstable objects by exploratively running such tests can be easily performed in separate threads, \ie possibly not impacting the performance of the main simulation.
 
-
-\todo{ja by som kolizie lietadla vobec neriesil, keby to bola normalna hra tak to napise game over a done.   .... V budoucnosti budou i tvrdy letadla.}
-
+\item The collisions of controlled vehicle with the environment are currently processed as basic simulation of two colliding rigid bodies. This can produce an out of control spinning and flipping that creates an undesirable visual effects. The application would benefit from adjustment of this part of the simulation.
 \end{itemize}
 
