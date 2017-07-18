@@ -2,7 +2,7 @@
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 \label{app:implementation}
 
-This section provides insights on the code from a programmer's point of view. We will not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
+This section provides insights on the code from a programmer's point of view. We do not focus on algorithms here, as we already did that in \cref{chaptImplementation}. The main focus here is on data representation and division of code into multiple modules.
 
 \section{Design and Libraries}
 Logically, the program consists of four components, and they are Physics, Graphics, Mesh Manipulation and Controllers. Controllers connect the other three components together, see~\cref{fig:architecture}. In the following list, we explain the purpose and summarise used technology in each of them.
@@ -21,7 +21,7 @@ We decided to use \textbf{Irrlicht Engine}~\footnote{http://irrlicht.sourceforge
 \section{Data representation}
 As a result of using multiple libraries for a multitude of tasks, we have to deal with a lot of different data representations of the same objects. 
 
-We will introduce the data structures that are used to represent one in-game object for multiple purposes. We can see how different data types are converted in~\cref{fig:conversions}.
+We introduce the data structures that are used to represent one in-game object for multiple purposes. We can see how different data types are converted in~\cref{fig:conversions}.
 
 \begin{figure}
         \centering
@@ -48,7 +48,7 @@ This class stores the mesh information in multiple mesh buffers. Each buffer has
 \subsection*{\tt CGAL::Nef\_polyhedron\_3}
 \label{sec:nef}
 "A Nef-poly-he-dron in dimension $d$ is a point set $P \subseteq \mathbb{R}^d$ generated from a finite number of open halfspaces by set complement and set intersection operations."~\footnote{http://doc.cgal.org/latest/Nef\_3/index.html\#Nef\_3Definition} In other words, {\tt CGAL::Nef\_polyhedron\_3} is a boundary represented data structure closed under Boolean operations. This make it ideal to perform our boolean operation on.
-This structure imposes a restriction on the data we can use to represent our objects, the underlying halfedge data structure~\footnote{doc.cgal.org/latest/HalfedgeDS/index.html\#Chapter\_Halfedge\_Data\_Structures} is restricted to orientable 2-manifolds. Common examples of non-manifold geometry are: open geometry, two neighbouring faces with opposite normals, two faces sharing vertex but no edge, self-intersecting geometry, inside faces.
+This structure imposes a restriction on the data we can use to represent our objects, the underlying halfedge data structure~\footnote{doc.cgal.org/latest/HalfedgeDS/index.html\#Chapter\_Halfedge\_Data\_Structures} is restricted to orientable 2-manifolds. Common examples of non-manifold geometry: open geometry, two neighbouring faces with opposite normals, two faces sharing vertex but no edge, self-intersecting geometry, inside faces.
 
 \subsection*{\tt gg::MObject} 
 {\tt gg::MObject} is a class designed to unite all data about one in-game object into one structure. It includes {\tt irr::scene::ISceneNode}, {\tt btRigidBody} and {\tt CGAL::Nef\_polyhedron\_3}. It implements the mechanism ensuring that upon deletion of an object, its parts are first removed from their respective engines, and then safely deallocated before {\tt gg::MObject} itself is destroyed.
@@ -76,7 +76,7 @@ In this section, we describe the functionality of each program module. Third par
 
 There are three member functions that allow us to create {\tt gg::MObject}s  with different behaviours from the same set of input parameters (see \cref{sec:data}). We can create a destructible object, an indestructible object with box collision shape and a rectangular indestructible object without input mesh.  Those functions are meant to be used exclusively for application initialization, as they generate a new convex decomposition and {\tt CGAL::Nef\_polyhedron\_3} from their mesh.
 
-Two more kinds of objects can be created: a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, we will construct it beforehand and then provide it to the Object Creator.
+Two more kinds of objects can be created: a projectile that is shot from the given position with the given impulse and a destructible object with temporary collision shape (sphere shaped). Because the object with temporary collision shape is constructed while the game is being played and construction of {\tt CGAL::Nef\_polyhedron\_3} can take a longer time, to gain controll over the construction, we will construct it beforehand and then provide it to the Object Creator.
 
 \item[Collision Resolver] implements the Collision handling process, described in~\cref{sec:collisions}. Conversions between data formats that are required during the process are externalised to Mesh Manipulators module to maintain the code readable.
 
