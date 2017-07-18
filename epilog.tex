@@ -16,9 +16,9 @@ For the boolean operations, we could tolerate meshes with the size of about 2000
 \subsection*{Future work}
 The implementation showed several points that might be viable as starting points for future research and work.
 \begin{itemize}
-\item Library for boolean operations on 3D triangular meshes optimized for use in real-time environments.
-\item Determining a centre of gravity for arbitrary closed 3D triangular objects with homogeneous distribution of mass. 
-\item Generation of the textures for the fragments of original textured object.
+\item We have used CGAL library to perform boolean operations on 3D meshes, the approach it implements has performed consistently, however CGAL is a geometric library and it is designed to provide a rich interface with multiple views on data. For the purpose of destructible environment we propose an library for boolean operations on 3D triangular meshes optimized for use in real-time environments.
+\item The implementation has shown the problem of determining a centre of gravity for arbitrary closed 3D triangular objects with homogeneous distribution of mass, after dynamically creating new meshes.
+\item We have not incorporated texture generation into implementation, instead we relied on lightning to show the objects features. The generation of the textures for the fragments of original textured object would benefit this work.
 \item Stability check
 \end{itemize}
 
