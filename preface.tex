@@ -1,33 +1,20 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-Destructible environment has been an amusing part of computer games since their beginning, from shooting through the simple bricks in Space invaders to blowing up buildings in the Battlefield series. Current development is trying to achieve highly realistic destruction effects by inventing and improving various simulation approaches of 2D and 3D destructible game worlds.
+The destructible environment has been an amusing part of computer games since their beginning, from shooting through the simple bricks in Space invaders to blowing up buildings in the Battlefield series. Current development is trying to achieve highly realistic destruction effects by inventing and improving various simulation approaches of 2D and 3D destructible game worlds.
 
-Despite of the advances in the field, the excessive complexity of accurate physical simulation introduces a trade-off: To achieve sufficient performance required to satisfy real-time constraints of the game environment (most notably acceptable and consistent frame rate), the game developers are forced to relax their demands on realism, usually by simplifying the game environment and neglecting less-important aspects of physical simulation.
+Despite the advances in the field, the excessive complexity of accurate physical simulation introduces a trade-off: To achieve sufficient performance required to satisfy real-time constraints of the game environment (most notably acceptable and consistent frame rate), the game developers are forced to relax their demands on realism, usually by simplifying the game environment and neglecting less-important aspects of physical simulation.
 
 The goal of this thesis is to review currently used techniques used to simulate such environments, implement a simple game environment to test some of the approaches and design and measure an approach based on a combination of the reviewed techniques.
 
 
 \paragraph{Related work}
-velke procento vyskumu je komercni primo do her. praca skuma niekolko takych pristupov. je t podporene rigiroznym akademickym vyskumom ktory skuma teselace, dekompizec, fyzikalne simulace a geometricke reprezentace. praca skuma dve take pristupy citet obe. 
-
-
-
-
-We specially focus on dynamically destructible rigid-bodies\cite{todo} base on boolean operations~\cite{geomod} on meshes, approach based on discrete particle method~\cite{edem} focused on inner body stress simulation, and an approach based on Voronoi tessellation~\cite{nvidia}. 
-
+Most of the research on the destructible environment is done commercially for specific games. The thesis reviews a selection of those approaches used in games. The commercial research is supported by rigorous academic research of the used methods: tessellation, convex decomposition, physical simulations and geometric representation. We primarily focus on dynamically destructible rigid-bodies~\ref{sec:methods} based on boolean operations on meshes~\cite{geomod}, approach based on discrete particle method focused on inner body stress simulation~\cite{edem} and an approach based on Voronoi tessellation~\cite{nvidia}. 
 
 \paragraph{Approach}
 We present an approach that combines boolean operations on 3D objects and Voronoi tessellation. Our application computes the difference between original mesh and generated Voronoi cell at the point of collision. We implemented our design in a simple demo application purely focused on featuring the destruction of the environment.
 
-%aby to fungovalo v hrach:
-%boli vybrane pristupy z revieved literature
-%naimplementovali sme do game world a obalili physics engine, 
-%moja implementacia je zjednoduseny kombinovany pristup
-%ani jedna implement, neni vhodna do real time lebo ma nezanedbatelny cas takze thread a visualne neskor
-%zmerame zhodnotime nas approach
-
-
+The methods were chosen from the reviewed literature to make our approach effective in the real-time environment. Our approach is implemented into a game world and encapsulated by a physics engine. The implementation is a simplification of the combination of reviewed methods. We recognise the fact that the chosen methods and implementations are not suitable for the real-time environment because of the calculation time. To maximise the gaming experience, we introduce a multiple thread solution with a delayed application and perform the calculations independently on frame-rate. The visual experience is not impacted by presenting destruction multiple frames later. We take measurements to evaluate our approach.
 
 \paragraph{Thesis structure}
-This thesis is organized as follows: \Cref{chapt:over} talks about techniques used in computer games and simulations and proposed approaches with the goal of improving already used techniques. \Cref{chapt:technology} introduces libraries that can be beneficial in creating a destructible environment. The last chapter\todo{ref} describes the design of our implementation and presents measurements of its performance. After conclusion we continue with two appendices, first/todo{ref} of them is an user guide to our application and the second /todo{ref} provides some insight into the inner structure of the application. 
+This thesis is organised as follows: \Cref{chapt:over} talks about techniques used in computer games and simulations and proposed approaches with the goal of improving already used techniques. \Cref{chapt:technology} introduces libraries that can be beneficial in creating a destructible environment. The last chapter\todo{ref} describes the design of our implementation and presents measurements of its performance. After conclusion we continue with two appendices, first/todo{ref} of them is a user guide to our application and the second /todo{ref} provides some insight into the inner structure of the application. 
 
