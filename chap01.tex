@@ -2,7 +2,7 @@
 \label{chapt:over}
 This chapter introduces the techniques used to simulate destructible environments. First, we talk about the development of the destructible environment in several games and game engines, then about general approaches to this problem.
 
-We repeatedly categorise the content of the game world in following way: We use the word \emph{object} to refer to any building, crate, door, tree or other items that occur in the game environment, but excluding terrain, distant environment like skyboxes and any in-game characters. Most of the modern 3D games use the term destructible environment as a reference to destructible objects because they do not support the destruction of terrain. We decided to comply with this terminology and, unless specified otherwise, use the term destructible environment as a reference to a destruction of game objects and not the terrain.
+We repeatedly categorize the content of the game world in following way: We use the word \emph{object} to refer to any building, crate, door, tree or other items that occur in the game environment, but excluding terrain, distant environment like skyboxes and any in-game characters. Most of the modern 3D games use the term destructible environment as a reference to destructible objects because they do not support the destruction of terrain. We decided to comply with this terminology and, unless specified otherwise, use the term destructible environment as a reference to a destruction of game objects and not the terrain.
 
 \section{Implementations in mainstream gaming}
 \label{sec:common}
@@ -24,11 +24,11 @@ In 3D games, the principal technique of implementation of destructible objects h
 
 \para{Height map approach} is closely intertwined with terrain generation. The basic principle behind modifying the environment with this method is changing the height of the terrain at given point. We can find this method used in the first 3D games that featured destructible terrain, \eg \emph{Magic Carpet (1994)}~\footnote{\url{https://ultimatehistoryvideogames.jimdo.com/magic-carpet}} or \emph{Starfighter 3000 (1994)}~\footnote{\url{https://en.wikipedia.org/wiki/Star\_Fighter\_(video\_game)}}.
 
-The height map of a 3D terrain is defined as a uniform 2D grid of values representing the height of their respective column in 3D space. A convenient approach is to use 2D grey-scale bitmap and represent the height as a colour distance from the white colour, black being the maximum. Because the grid only contains information about the discrete points, interpolation is used to create continuous terrain. We can also view this method as creating a function of two coordinates on the plane giving us the value on the vertical axis. The definition of function forbids more than one function value at each input point. Therefore this method can not represent multiple layers of terrain. The relative simplicity of the approach is counterweighted by the fact that it can only change the height of the terrain and does not allow creating caves, tunnels or similar hollow features.
+The height map of a 3D terrain is defined as a uniform 2D grid of values representing the height of their respective column in 3D space. A convenient approach is to use 2D gray-scale bitmap and represent the height as a color distance from the white color, black being the maximum. Because the grid only contains information about the discrete points, interpolation is used to create continuous terrain. We can also view this method as creating a function of two coordinates on the plane giving us the value on the vertical axis. The definition of function forbids more than one function value at each input point. Therefore this method can not represent multiple layers of terrain. The relative simplicity of the approach is counterweighted by the fact that it can only change the height of the terrain and does not allow creating caves, tunnels or similar hollow features.
 
 \para{\emph{Geo-Mod}} (\emph{Geometry Modification Technology}\cite{geomod}) is an engine developed for the \emph{Red Faction (2001)}\footnote{\url{http://redfaction.wikia.com/wiki/Red\_Faction}} video game. It approaches the modification of the terrain by creating objects representing an empty space. After every collision, a new object is created at the point of collision. This new object is then subtracted from the terrain, creating the modified terrain with the newly created hole. The difference of the meshes is calculated in real time. Game reviews suggest that the engine does not work well with the buildings and other objects. \emph{Geomod} represented the first significant attempt to create the fully destructible 3D environment that would work under real-time constraints.
 
-\para{\emph{Geo-Mod 2}}~\cite{geomod}\footnote{Geo-Mod 2.0 presentation video \url{https://www.youtube.com/watch?v=lICurOVsNv0}} does not feature destructible terrain, instead, it focuses on realistic destruction of buildings. A set of smaller objects is used to represent each building as a ragdoll (multiple objects connected with joints) for the simulation of inner stresses. Switching from using a conventional 3D model to the ragdoll simulations requires at least basic knowledge of civil engineering to properly analyse the structural stability of the building and create a ragdoll model simulating it accurately. This process is therefore done by hand in the development process and can not be modified at a runtime.  The game avoids any interaction of multiple buildings requiring simulating their behaviour at once because of the high complexity of simulation. This limits the engine in the scale of the game world and mutual proximity of destructible objects.
+\para{\emph{Geo-Mod 2}}~\cite{geomod}\footnote{Geo-Mod 2.0 presentation video \url{https://www.youtube.com/watch?v=lICurOVsNv0}} does not feature destructible terrain, instead, it focuses on realistic destruction of buildings. A set of smaller objects is used to represent each building as a ragdoll (multiple objects connected with joints) for the simulation of inner stresses. Switching from using a conventional 3D model to the ragdoll simulations requires at least basic knowledge of civil engineering to properly analyze the structural stability of the building and create a ragdoll model simulating it accurately. This process is therefore done by hand in the development process and can not be modified at a runtime.  The game avoids any interaction of multiple buildings requiring simulating their behavior at once because of the high complexity of simulation. This limits the engine in the scale of the game world and mutual proximity of destructible objects.
 
 
 \para{\emph{Frostbite}}~\footnote{\url{http://www.frostbite.com/about/frostbite-3}} engine (and mainly its component \emph{Destruction}~\cite{destruction}) is currently used in new mainstream games that feature destructible environment \eg \emph{Battlefield} series or \emph{Star Wars Battlefront (2015)}. It supports two different kinds of destruction micro-destruction on the surface and the large scale predetermined destruction on whole buildings. 
@@ -56,14 +56,14 @@ When trying to save a processing power, there is another way to do it on soft bo
 In this section, we shortly introduce two different approaches for simulation of soft bodies. Despite the fact that soft bodies are currently rarely used in computer games to the extent of destructible environment, several soft body objects can show up in a game. We also expect that with an evolution of more powerful hardware, soft body deformation will make its way into the gaming world \eg \emph{Next Car Game: Wreckfest (2018)}~\footnote{\url{http://store.steampowered.com/app/228380/Next\_Car\_Game\_Wreckfest/}} will use soft bodies to simulate car crashes.
 \label{sec:softBody}
 
-\para{Finite Element Method} (FEM) is a numerical method used to simulate the behaviour of a system that can be modelled by solving the behaviour of the smaller discrete parts, called finite elements. Each element calculates its physical state, \eg stress or temperature, and propagates the results to neighbouring elements. This model can be used for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images ~\cite{Bargteil:2007:AFE}. 
+\para{Finite Element Method} (FEM) is a numerical method used to simulate the behavior of a system that can be modelled by solving the behavior of the smaller discrete parts, called finite elements. Each element calculates its physical state, \eg stress or temperature, and propagates the results to neighboring elements. This model can be used for simulation of fluid dynamics, brittle fractures~\cite{brittlefracture}, ductility~\cite{ductilefracture}, elasticity, heat transfer and other physical properties. It is beneficial in engineering, modelling and rendering scenes for computer generated images ~\cite{Bargteil:2007:AFE}. 
 
 FEM requires a lot of computational resources and is mostly used in simulations that are not under real-time constraints. The algorithms like \citet{femingames} propose, that optimised version of FEM can be used in computer games.
 
 
 \para{Material point method} (MPM) is a numerical method for modelling an object as a continuum mass. Continuum model assumes that the object fills the space it occupies and is not a set of discrete particles. MPM simulates such materials by using two different views of the data, material points (Lagrangian elements) and Eulerian grid. MPM is a particle method but thanks to the Eulerian grid it can be applied to continuum materials. 
 
-MPM is more computationally expensive than FEM, as the grid must be reset at the end of each MPM calculation step and reinitialised at the beginning of the following step. On the other hand, MPM is a meshfree method and does not require remeshing steps and is less susceptible to numerical errors. 
+MPM is more computationally expensive than FEM, as the grid must be reset at the end of each MPM calculation step and reinitialized at the beginning of the following step. On the other hand, MPM is a meshfree method and does not require remeshing steps and is less susceptible to numerical errors. 
 
 MPM works by projecting the data from the particles to the mesh, determining and applying the velocities on the nodes of the mesh and then updating the particles based on the deformation of the mesh. After each loop, mesh needs to be reset while the data are stored in particles.
 
@@ -82,7 +82,7 @@ These steps are illustrated in \cref{fig:mpm}.
 
 MPM is useful for both fluid and soft body dynamics. It can simulate deformation, fractures, heat transfer, melting and other changes of the state of an object.
 
-A popular example of MPM deployment can be seen in snow simulation in the \emph{Disney} film \emph{Frozen (2013)}. The simulation software \emph{Matterhorn}\footnote{\url{https://www.disneyanimation.com/technology/innovations/matterhorn}} computes the behaviour of different types of snow (\eg wet, fresh, sticky) and other materials, such as sand or mud.
+A popular example of MPM deployment can be seen in snow simulation in the \emph{Disney} film \emph{Frozen (2013)}. The simulation software \emph{Matterhorn}\footnote{\url{https://www.disneyanimation.com/technology/innovations/matterhorn}} computes the behavior of different types of snow (\eg wet, fresh, sticky) and other materials, such as sand or mud.
 
 \begin{figure}
 \centering
@@ -108,7 +108,7 @@ Voronoi tessellation is a method of decomposing a solid object into smaller part
 
 \begin{description}
     \item[Delaunay tetrahedral decomposition] Given points $P$ in general position (the vertices of input mesh and a set of points inside its volume), tetrahedral mesh $DT(P)$ can be generated satisfying the following condition: no point in $P$ is inside the circumscribed sphere of any tetrahedra in $DT(P)$~\cite{cignoni1993parallel}.
-    \item[Creating Voronoi diagram] For a Delaunay tetrahedral decomposition, its dual graph (with vertices in the centre of tetrahedrons circumscribed sphere) is a Voronoi diagram (see \cref{fig:voro}).
+    \item[Creating Voronoi diagram] For a Delaunay tetrahedral decomposition, its dual graph (with vertices in the center of tetrahedrons circumscribed sphere) is a Voronoi diagram (see \cref{fig:voro}).
     
  \begin{figure}
     \centering
@@ -118,7 +118,7 @@ Voronoi tessellation is a method of decomposing a solid object into smaller part
     \label{fig:DT}
 \end{figure}
 
-    \item[Clipping the Voronoi diagram] Boundary cells of the Voronoi diagram are infinite (see \cref{fig:DT}) and need to be clipped by the original input triangular mesh. The efficient algorithm proposed by~\citet{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighbourhood propagation to determine all intersections. 
+    \item[Clipping the Voronoi diagram] Boundary cells of the Voronoi diagram are infinite (see \cref{fig:DT}) and need to be clipped by the original input triangular mesh. The efficient algorithm proposed by~\citet{yan2010efficient} for this task finds the intersection of the boundary Voronoi cell with the triangular mesh and continues with neighborhood propagation to determine all intersections. 
 \end{description}
 
  \begin{figure}
@@ -155,7 +155,7 @@ Elements are allowed to overlap at this point.
 \item Perform collision detection between the object’s surface
 and elements, making sure that they always
 stay inside the object.
-\item Repeat (3)–(4) until elements are stabilised.
+\item Repeat (3)–(4) until elements are stabilized.
 \item Construct a Delaunay diagram from the set of elements
 and put the pore springs on the Delaunay edges that connect
 the elements
@@ -204,7 +204,7 @@ In conclusion, based on \cref{table1}, the frames per second (fps) drop proporti
 \subsection{Real Time Dynamic Fracture
 with Volumetric Approximate Convex Decompositions}
 \label{sec:RTDF}
-The approach of \citet{nvidia} does not try to simulate the internal forces of an object and focuses only on rigid body decomposition. The idea behind this method is to represent the mesh as a compound shape of convex parts. The algorithm used for convex decomposition is Volumetric Approximate Convex Decomposition (VACD), which works by introducing the Voronoi decomposition into a bounding box of the mesh and then clipping the Voronoi cells by the mesh. To determine the decomposed shapes, we use a prepared fracture pattern. The fracture pattern is pre-computed and represented as a set of convex cells. The algorithm works as follows (the process is visualised in \cref{fig:vacdalg}:
+The approach of \citet{nvidia} does not try to simulate the internal forces of an object and focuses only on rigid body decomposition. The idea behind this method is to represent the mesh as a compound shape of convex parts. The algorithm used for convex decomposition is Volumetric Approximate Convex Decomposition (VACD), which works by introducing the Voronoi decomposition into a bounding box of the mesh and then clipping the Voronoi cells by the mesh. To determine the decomposed shapes, we use a prepared fracture pattern. The fracture pattern is pre-computed and represented as a set of convex cells. The algorithm works as follows (the process is visualized in \cref{fig:vacdalg}:
 \begin{enumerate}
 \item The fracture pattern is aligned with the point of impact, and rotated and scaled randomly to avoid an occurrence of same-looking patterns.
 \item The intersections of all cells with all convex parts are computed. To compute the intersection of a single cell with a single convex part, the convex part is clipped against all the planes of the cell one by one. 
@@ -227,7 +227,7 @@ pattern is applied. Source: \citet{nvidia}}
         \includegraphics[width=\textwidth]{img/vacdAlgorithm}
         \caption{Overview of the fracture algorithm. Left: The fracture pattern (red) is aligned with the impact location (black dot). Middle: All
 convex pieces are intersected with all cells. The green convex pieces can be welded to form a single piece because they cover the entire
-cell. Pieces within one cell become a new compound part (same colours). Island detection finds that the dark red compound needs to be split. Source: \citet{nvidia}}
+cell. Pieces within one cell become a new compound part (same colors). Island detection finds that the dark red compound needs to be split. Source: \citet{nvidia}}
         \label{fig:vacdalg}
 \end{figure}
 

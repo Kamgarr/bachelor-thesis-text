@@ -34,7 +34,7 @@ We assume that all the correct versions of the packages from the previous sectio
 The bundled HACD library needs to be compiled first, and then the main application is compiled. The compiling process may take a few minutes. After extracting the archive, the code is compiled by changing into the directory \emph{DestructionInGame} and running \texttt{make}.
 
 \subsection*{Hardware requirements}
-The software was tested on a system with Intel Core i3 550 CPU (3.20GHz $\times$ 4), 8GB of DDR3 RAM and 1GB ATI Radeon HD 5770 GPU. Minimal requirements should be lower, but for observing the behaviour of the algorithm, a CPU capable of running at least 3 computation threads simultaneously should be used. We also recommend at least 4GB of RAM~\footnote{The memory requirement is not needed for running the application --- compilation of CGAL headers with any optimalizations enabled require more than 2GB of RAM}. The graphics card has to support OpenGL.
+The software was tested on a system with Intel Core i3 550 CPU (3.20GHz $\times$ 4), 8GB of DDR3 RAM and 1GB ATI Radeon HD 5770 GPU. Minimal requirements should be lower, but for observing the behavior of the algorithm, a CPU capable of running at least 3 computation threads simultaneously should be used. We also recommend at least 4GB of RAM~\footnote{The memory requirement is not needed for running the application --- compilation of CGAL headers with any optimizations enabled require more than 2GB of RAM}. The graphics card has to support OpenGL.
 
 \subsection*{Using the application}
 The application is run by executing the \emph{build/game} file. One optional console parameter is provided. It is {\tt -d}, and it enables debugging information to be rendered. In other words, it draws the collision shapes and bounding boxes around the objects.
@@ -75,7 +75,7 @@ Our application is distributed among multiple folder and files. Here we describe
 To allow the user to easily change the game world without the need of recompilation the input text file describing the game setting is provided. The mentioned file is located in {\tt media/world.cfg}. 
 
 \subsection*{{\tt world.cfg} format}
-We show that the structure of the data is straightforward and therefore we have chosen not to use XML or any other standardised format. The file is interpreted by lines. Each line represents one in-game entity. First three lines have special meaning, and the rest are destructible objects. Inside the line, we use semicolons as a separator between data items.
+We show that the structure of the data is straightforward and therefore we have chosen not to use XML or any other standardized format. The file is interpreted by lines. Each line represents one in-game entity. First three lines have special meaning, and the rest are destructible objects. Inside the line, we use semicolons as a separator between data items.
 
 The \emph{first line} describes the sky-box, it is formed of 6 images in given order: top, bottom, left, right, front, back; relative to the starting viewpoint. 
 

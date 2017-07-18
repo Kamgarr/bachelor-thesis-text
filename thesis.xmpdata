@@ -2,6 +2,6 @@
 
 \Author{Marek Dobransky}
 \Title{Efficient simulation of environment destruction in games}
-\Keywords{keywords\sep more such\sep yet another}
-\Subject{Abstract of thesis}
+\Keywords{destructible environment\sep simulation\sep games\sep convex decomposition\sep polygon mesh}
+\Subject{Destructible environments have become a popular feature of computer games. Currently used game engines employ different approaches to implement such environment. This thesis studies several such approaches and implements some key ideas from available research in a new, combined approach. We use tessellations and boolean operations on triangular meshes to modify rigid-body objects that represent game environment, and create a simple application to demonstrate the approach in a real-time environment. We conclude that the proposed method is mainly suitable for computer games that feature low-polygon meshes.}
 \Publisher{Charles University}

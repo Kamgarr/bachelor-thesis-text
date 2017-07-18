@@ -20,13 +20,13 @@ This thesis has reviewed currently used techniques used to simulate destructible
 The implementation showed several points that might be viable as starting points for future research:
 \begin{itemize}
 
-\item We have used CGAL library to perform boolean operations on 3D meshes, the approach it implements has performed consistently, however CGAL is a geometric library and it is designed to provide a rich interface with multiple views on data. For the purpose of destructible environment we propose an library for boolean operations on 3D triangular meshes optimized for use in real-time environments, possibly simplifying and minimizing most other aspects of the library.
+\item We have used CGAL library to perform boolean operations on 3D meshes, the approach it implements has performed consistently. However, CGAL is a geometric library, and it is designed to provide a rich interface with multiple views on data. For the purpose of destructible environment, we propose a library for boolean operations on 3D triangular meshes optimized for use in real-time environments, possibly simplifying and minimizing most other aspects of the library.
 
-\item The implementation exhibits a problem with centres of gravity, that are misplaced for some dynamically created concave meshes. Correct computations of centers of gravity for such objects could be added to \texttt{Bullet} engine.
+\item The implementation exhibits a problem with centers of gravity, which are misplaced for some dynamically created concave meshes. Correct computations of centers of gravity for such objects could be added to \texttt{Bullet} engine.
 
 \item We have not implemented texture mapping for the simulated objects. The generation of correct texture coordinates for the fragments of original objects would benefit the realism of the result.
 
-\item It would be interesting to perform independent stability analyses of the in-game objects that would be able to \eg correctly cause demolition of an object in which a large, massive part is held in place only by a tiny support. Scanning the environment for unstable objects by exploratively running such tests can be easily performed in separate threads, \ie possibly not impacting the performance of the main simulation.
+\item It would be interesting to perform independent stability analyses of the in-game objects that would be able to \eg correctly cause the demolition of an object in which a large, massive part is held in place only by a tiny support. Scanning the environment for unstable objects by exploratively running such tests can be easily performed in separate threads, \ie possibly not impacting the performance of the main simulation.
 
 \todo{ja by som kolizie lietadla vobec neriesil, keby to bola normalna hra tak to napise game over a done.   .... V budoucnosti budou i tvrdy letadla.}
 
