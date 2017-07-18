@@ -1,24 +1,29 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
-This thesis has reviewed currently used techniques used to simulate destructible environments, implemented a simple game environment to test some of the approaches and designed and measured an approach based on a combination of the reviewed techniques. Thesis brings following results and conclusions:
+This thesis has reviewed currently used techniques used to simulate destructible environments, implemented a simple game environment to test some of the approaches, and designed and measured an approach based on a combination of the reviewed techniques:
 
 \begin{itemize}
-\item We have successfully presented an approach that combines boolean operations on 3D objects and Voronoi tessellation. The performance experiment~\cref{sec:overallperformance} has shown that the visual experience have not been impacted by presenting destruction multiple frames later as a result of multiple thread solution with a delayed application.
+\item Apart from the technique review in \cref{chapt:over}, we have added a short overview of the currently available open-source software libraries that may aid the implementation of similar simulations in \cref{chapt:technology}.
 
-\item The experiments have concluded that used techniques are viable for low polygon meshes. For the boolean operations, we could tolerate meshes with the size of about 2000 triangles.The convex decomposition has reached the critical time at around 1000 triangles. The limits have been measured by the experiment designed in the~\cref{sec:triangleperformance}.
+\item In \cref{chapt:Implementation}, we have successfully presented an approach that combines boolean operations on 3D objects with Voronoi tessellation and multi-thread computation offloading. The performance experiment in \cref{sec:overallperformance} show that the visual experience is not impacted by the computation, even though the result of the offloaded computation is presented with a delay.
 
-\item We have tested ~\citet{edem} approach in the same setting as our implementation. The result in \cref{sec:edemtest} strongly suggests that this approach is applicable only to objects divided into small number of elements.
+\item The experiments have concluded that the used technique is viable for low-polygon meshes. The convex decomposition, which was the most time-consuming task in the process, creates a noticeable delay with meshes larger than around 1000 triangles. Exact measurements are available in \cref{sec:triangleperformance}.
+
+\item We have tested the approach of \citet{edem} in the same setting as our implementation. The result in \cref{sec:edemtest} strongly suggests that this approach is applicable only to objects divided into a very small number of elements.
 \end{itemize}
 
-
 \subsection*{Future work}
-The implementation showed several points that might be viable as starting points for future research and work.
+The implementation showed several points that might be viable as starting points for future research:
 \begin{itemize}
-\item We have used CGAL library to perform boolean operations on 3D meshes, the approach it implements has performed consistently, however CGAL is a geometric library and it is designed to provide a rich interface with multiple views on data. For the purpose of destructible environment we propose an library for boolean operations on 3D triangular meshes optimized for use in real-time environments.
-\item The implementation has shown the problem of determining a centre of gravity for arbitrary closed 3D triangular objects with homogeneous distribution of mass, after dynamically creating new meshes.
-\item We have not incorporated texture generation into implementation, instead we relied on lightning to show the objects features. The generation of the textures for the fragments of original textured object would benefit this work.
-\item Most of the modern game engines do not perform stability analyses on the damaged objects. We have envisioned a independent stability analyses running in a separate thread, testing recently damaged objects.
-\todo{ja by som kolizie lietadla vobec neriesil, keby to bola normalna hra tak to napise game over a done.}
+\item We have used CGAL library to perform boolean operations on 3D meshes, the approach it implements has performed consistently, however CGAL is a geometric library and it is designed to provide a rich interface with multiple views on data. For the purpose of destructible environment we propose an library for boolean operations on 3D triangular meshes optimized for use in real-time environments, possibly simplifying and minimizing most other aspects of the library.
+
+\item The implementation exhibits a problem with centres of gravity, that are misplaced for some dynamically created concave meshes. Correct computations of centers of gravity for such objects could be added to \texttt{Bullet} engine.
+
+\item We have not implemented texture mapping for the simulated objects. The generation of correct texture coordinates for the fragments of original objects would benefit the realism of the result.
+
+\item It would be interesting to perform independent stability analyses of the in-game objects that would be able to \eg correctly cause demolition of an object in which a large, massive part is held in place only by a tiny support. Scanning the environment for unstable objects by exploratively running such tests can be easily performed in separate threads, \ie possibly not impacting the performance of the main simulation.
+
+\todo{ja by som kolizie lietadla vobec neriesil, keby to bola normalna hra tak to napise game over a done.   .... V budoucnosti budou i tvrdy letadla.}
 \end{itemize}
 
