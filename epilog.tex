@@ -1,18 +1,16 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
-This thesis has set out to research available technology for environment destruction in games and implement an efficient solution to this problem. We managed to satisfy all the goals it set out to accomplish. We analysed techniques for creating destructible environment used in computer games and methods applicable to accurate simulations. Our study of techniques also covered recent scientific papers. The acquired knowledge from those sources helped us to design our approach. To support the implementation, we took a look at a selection of libraries providing useful features for implementing a game with destructible environment.
+This thesis has reviewed currently used techniques used to simulate destructible environments, implemented a simple game environment to test some of the approaches and designed and measured an approach based on a combination of the reviewed techniques. Thesis brings following results and conclusions:
 
-Our designed algorithm works on the principle of using boolean operations on closed triangular meshes. We limited the simulation to rigid bodies. The results of boolean operations are new and more damaged objects. The most complex problem we encountered in the process of implementing our design is a convex decomposition needed for accurate collision detection. To solve this problem, we decided to deploy Horizontal Approximate Convex Decomposition algorithm.
+\begin{itemize}
+\item We have successfully presented an approach that combines boolean operations on 3D objects and Voronoi tessellation. The performance experiment~\cref{sec:overallperformance} has shown that the visual experience have not been impacted by presenting destruction multiple frames later as a result of multiple thread solution with a delayed application.
 
-The used approximation algorithm for the convex decomposition has shown a few imperfections. In hollow objects, the generated decomposition can reach far enough to an empty space, that it blocks our vehicle from flying into them. We have also shown that algorithms complexity is directly dependent on the number of triangles in the mesh and grows quickly. Both liabilities make this algorithm only suitable for the games with low polygon objects with simple, almost convex shapes.
+\item The experiments have shown the limits of used approaches and libraries. 
+For the boolean operations, we could tolerate meshes with the size of about 2000 triangles.The convex decomposition has reached the critical time at around 1000 triangles. The limits have been measured by the experiment designed in the~\cref{sec:triangleperformance}. 
+\end{itemize}
 
 
-\todo{
-experiments on subtraction\\
-performance test\\
-conclude conclusion
-}
 
 Koment: Conclusion je prakticky tosamy jako thesis goal statement v introductionu, akorat je napsany v past perfect a narozdil od referenci ktery ukazujou kde co budes resit tam davas reference ktery odkazujou na zajimavy veci (vysledky reserse a mereni) ktery si pritom zjistil. Ve vysledku muzes naprosto naplno rict co si o tom myslis. Vsechny nevyhody a prusvihy co si zpusobil muzes shrnout do...
 

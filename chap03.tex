@@ -92,6 +92,7 @@ Data are dumped into \emph{data/} folder. Three files are present in the folder.
 We designed two different experiments.  The performance test to measure the behaviour of our approach in the world with multiple objects and fast sequences of collisions. And the mesh complexity test to identify the relationship between a number of triangles and subtraction/decomposition.
 
 \subsection{Performance test}
+\label{sec:overallperformance}
 For a performance test we prepared a world configuration (copy in \emph{performance\_test.cfg}) consisting of objects with models, counts and geometric complexity specified in \cref{tab:objects}.
 We recorded about 2000 collisions by repeatedly shooting the buildings at random locations. Recorded data can be seen in \cref{fig:boxtimes}.
 
@@ -160,6 +161,7 @@ Our expectation is that a delay shorter than 300ms between the collision and ren
 The problem seems to be a high variance in overall time of the whole process starting with mesh subtraction and ending at applying convex decomposition. This can be explained by the tasks waiting in the queue for processing and shows that our solution is not well suited for a fast sequence of collisions. The problem here is that after every collision only one subtraction task is created, but the number of decompositions is nondeterministic and depends on the shape of the destructed object, the generated Voronoi cell and the position of the collision. Use of a thread pool with more advanced bookkeeping of the decomposition dependencies would aid in solving that problem (proposed in ~\cref{sec:structure}).
 
 \subsection{Performance impact of mesh complexity}
+\label{sec:triangleperformance}
 We designed an experiment to measure a relationship between a number of triangles and time required to complete the two already measured tasks. The collected data are subtraction time and convex decomposition time. For the experiment, we prepared five cubes with the same size but with a different number of triangles in their mesh. We created an isolated environment with only one cube placed in it and then executed the application to collect the data. The data were generated as a result of a collision after the cube dropped onto the ground. The experiment was repeated with each of the prepared cubes and run multiple times to collect a large sample for statistical analyses. The results of the experiment are shown in \cref{tab:subtraction-decomposition} . 
 \begin{table}
 \centering
